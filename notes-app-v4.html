@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>not·defteri</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>not·that</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -11,7 +11,7 @@
   --surface:#fff;--surface2:#faf8f5;
   --border:rgba(0,0,0,.07);--border2:rgba(0,0,0,.13);
   --text:#1c1a17;--text2:#6b6760;--text3:#b0ada8;
-  --accent:#c4773b;--accent2:#f0e4d4;--accent-text:#7a4520;
+  --accent:#4a7ab5;--accent2:#e8f0fa;--accent-text:#1e4a80;
   --lw:300px;
   --shadow-md:0 4px 16px rgba(0,0,0,.1);
 }
@@ -112,6 +112,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .tb-btn:hover{background:var(--bg2);}
 .tb-btn.on{background:var(--accent2);color:var(--accent-text);border-color:transparent;}
 .tb-btn svg{width:12px;height:12px;flex-shrink:0;}
+.tb-btn.ai{background:var(--accent2);color:var(--accent-text);border-color:transparent;font-weight:500;}
+.tb-btn.ai:hover{filter:brightness(1.05);}
+.ai-label{font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;padding:0 4px;opacity:.8;}
+.toolbar-sep{width:1px;height:18px;background:var(--border2);flex-shrink:0;}
+.fmt-toolbar{display:flex;align-items:center;gap:4px;padding:6px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface2);}
+.fmt-btn{height:24px;min-width:24px;padding:0 6px;border:none;background:none;border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s;}
+.fmt-btn:hover{background:var(--bg2);color:var(--text);}
+.fmt-btn.on{background:var(--accent2);color:var(--accent-text);}
+.fmt-btn svg{width:13px;height:13px;}
 .del-btn{margin-left:auto;width:28px;height:28px;border:none;background:none;cursor:pointer;color:var(--text3);border-radius:6px;display:flex;align-items:center;justify-content:center;transition:.12s;flex-shrink:0;}
 .del-btn:hover{background:#fce8e8;color:#c0392b;}
 
@@ -256,7 +265,7 @@ mark{background:rgba(196,119,59,.22);border-radius:2px;padding:0 1px;}
 <body data-theme="light">
 
 <div class="topbar">
-  <div class="logo">not<span>·</span>defteri</div>
+  <div class="logo">not<span id="LDOT">·</span>that</div>
   <div class="srch">
     <svg class="srch-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="SI" placeholder="Notlarda ara…" oninput="doSearch(this.value)">
@@ -264,14 +273,26 @@ mark{background:rgba(196,119,59,.22);border-radius:2px;padding:0 1px;}
   <div class="tbr">
     <div class="tgl-wrap" title="Aynı başlıklı notları birleştir">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-      <span>Birleştir</span>
+      <span id="MERGE_LBL">Birleştir</span>
       <label class="tgl"><input type="checkbox" id="MT" checked><div class="tgl-track"></div><div class="tgl-thumb"></div></label>
+    </div>
+    <div class="sep"></div>
+    <!-- Language switcher -->
+    <div style="display:flex;background:var(--bg2);border-radius:6px;border:1px solid var(--border2);overflow:hidden;">
+      <button id="LANG_TR" onclick="setLang('TR')" style="padding:3px 8px;font-size:11px;font-weight:500;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:.12s;">TR</button>
+      <button id="LANG_EN" onclick="setLang('EN')" style="padding:3px 8px;font-size:11px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);transition:.12s;">EN</button>
+    </div>
+    <!-- Theme dots -->
+    <div style="display:flex;align-items:center;gap:5px;">
+      <div onclick="setTheme('ink')" id="DOT_ink" style="width:13px;height:13px;border-radius:50%;background:#4a7ab5;cursor:pointer;border:2px solid #4a7ab5;outline:2px solid var(--border2);outline-offset:1px;flex-shrink:0;" title="Ink"></div>
+      <div onclick="setTheme('sage')" id="DOT_sage" style="width:13px;height:13px;border-radius:50%;background:#2d5016;cursor:pointer;border:2px solid transparent;flex-shrink:0;" title="Sage"></div>
+      <div onclick="setTheme('plum')" id="DOT_plum" style="width:13px;height:13px;border-radius:50%;background:#3d1a4a;cursor:pointer;border:2px solid transparent;flex-shrink:0;" title="Plum"></div>
     </div>
     <div class="sep"></div>
     <button class="ic-btn" onclick="openDlModal()" title="Word olarak indir">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
-    <button class="ic-btn" onclick="toggleTheme()" title="Tema">
+    <button class="ic-btn" onclick="toggleThemeMode()" title="Karanlık/Aydınlık">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
   </div>
@@ -283,11 +304,11 @@ mark{background:rgba(196,119,59,.22);border-radius:2px;padding:0 1px;}
     <div class="left-top">
       <button class="new-btn" onclick="newNote()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Yeni Not
+        <span id="NEW_NOTE_LBL">Yeni Not</span>
       </button>
       <div class="nav-item active" id="nav-all" onclick="setView('all')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Tüm Notlar
+        <span id="ALL_NOTES_LBL">Tüm Notlar</span>
       </div>
       <div class="nav-item" id="nav-favorites" onclick="setView('favorites')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -330,37 +351,62 @@ mark{background:rgba(196,119,59,.22);border-radius:2px;padding:0 1px;}
     <div class="editor hidden" id="ED" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
       <div class="ed-topbar">
         <div class="fpill" id="FP" onclick="openCFModal()">📁 Klasörsüz</div>
-        <button class="tb-btn" id="MDB" onclick="toggleMd()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 19V5H3v14h18zM8 15V9l4 4 4-4v6"/></svg>
-          Önizle
+        <button class="tb-btn fpill" onclick="openMediaPicker()" title="Medya ekle" style="border-radius:20px;gap:4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Medya Ekle
         </button>
-        <!-- AI buttons -->
-        <button class="tb-btn" onclick="aiAction('summary')" title="AI Özet">
+        <div class="toolbar-sep"></div>
+        <span class="ai-label">AI</span>
+        <button class="tb-btn ai" onclick="aiAction('summary')" title="Notu özetle">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          Özet
+          Özetle
         </button>
-        <button class="tb-btn" onclick="aiAction('todo')" title="Yapılacaklar">
+        <button class="tb-btn ai" onclick="aiAction('todo')" title="Yapılacaklar listesi çıkar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
-          Görevler
+          To Do List
         </button>
-        <button class="tb-btn" onclick="aiAction('grammar')" title="Dilbilgisi düzelt">
+        <button class="tb-btn ai" onclick="aiAction('grammar')" title="Yazım düzenle">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Düzelt
+          Yazım Düzenle
         </button>
-        <button class="tb-btn" onclick="aiAction('translate')" title="Çevir">
+        <button class="tb-btn ai" onclick="aiAction('translate')" title="Çevir">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
           Çevir
-        </button>
-        <button class="tb-btn" onclick="openMediaPicker()" title="Medya ekle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          Medya
         </button>
         <button class="del-btn" onclick="delNote()" title="Sil">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
         </button>
       </div>
+      <!-- Formatting toolbar -->
+      <div class="fmt-toolbar">
+        <button class="fmt-btn" onclick="fmtBold()" title="Kalın"><b style="font-size:13px;">B</b></button>
+        <button class="fmt-btn" onclick="fmtItalic()" title="İtalik"><i style="font-size:13px;">I</i></button>
+        <button class="fmt-btn" onclick="fmtH1()" title="Büyük başlık" style="font-size:11px;font-weight:600;">H1</button>
+        <button class="fmt-btn" onclick="fmtH2()" title="Küçük başlık" style="font-size:11px;font-weight:600;">H2</button>
+        <div style="width:1px;height:14px;background:var(--border2);margin:0 2px;"></div>
+        <button class="fmt-btn" onclick="fmtBullet()" title="Madde işareti">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="fmt-btn" onclick="fmtNumbered()" title="Numaralı liste">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+        </button>
+        <button class="fmt-btn" onclick="fmtQuote()" title="Alıntı">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+        </button>
+        <button class="fmt-btn" onclick="fmtCode()" title="Kod">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </button>
+        <div style="width:1px;height:14px;background:var(--border2);margin:0 2px;"></div>
+        <button class="fmt-btn" id="mdPreviewBtn" onclick="toggleMd()" title="Markdown önizle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="fmt-btn" onclick="openDriveModal()" title="Google Drive'a gönder" style="margin-left:auto;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
+          Drive
+        </button>
+      </div>
       <div class="ed-scroll" id="EDS">
-        <textarea class="title-in" id="TI" placeholder="Başlık…" rows="1" oninput="autoR(this);onTC()" onblur="checkMerge()"></textarea>
+        <textarea class="title-in" id="TI" placeholder="Başlık…" rows="1" oninput="autoR(this);onTC()" onblur="checkMerge()" onkeydown="titleKeyDown(event)"></textarea>
         <div class="dateln" id="DL"></div>
         <textarea class="body-in" id="BI" placeholder="Yazmaya başla…" oninput="onCC()"></textarea>
         <div class="mdpre hidden" id="MP"></div>
@@ -535,7 +581,23 @@ mark{background:rgba(196,119,59,.22);border-radius:2px;padding:0 1px;}
   </div>
 </div>
 
-<!-- RECORDING MODAL -->
+<!-- GOOGLE DRIVE MODAL -->
+<div class="ov hidden" id="GDO">
+  <div class="modal" style="width:380px;">
+    <h3 style="margin-bottom:8px;">Google Drive'a Gönder</h3>
+    <p id="GDText">Bu notu Google Drive hesabına aktarmak ister misin?</p>
+    <div id="GDStatus" style="font-size:12px;color:var(--text2);margin-bottom:12px;padding:8px 10px;background:var(--bg2);border-radius:8px;display:none;"></div>
+    <div class="mact">
+      <button class="btn" onclick="closeOv('GDO')">İptal</button>
+      <button class="btn p" id="GDBtn" onclick="sendToDrive()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M12 2L2 19.5h20L12 2z"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
+        Drive'a Aktar
+      </button>
+    </div>
+  </div>
+</div>
+
+
 <div class="ov hidden" id="RCO">
   <div class="modal" style="width:300px;text-align:center;">
     <h3 style="margin-bottom:8px;">Ses Kaydı</h3>
@@ -1236,6 +1298,389 @@ function doDownload(){
   const blob=new Blob(['\ufeff'+h],{type:'application/msword'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`notlar_${new Date().toISOString().split('T')[0]}.doc`;a.click();URL.revokeObjectURL(a.href);
   closeOv('DLO');
+}
+
+// ── THEME COLORS ──
+const THEMES = {
+  ink:  {accent:'#4a7ab5', accent2:'#e8f0fa', accentText:'#1e4a80'},
+  sage: {accent:'#3d7a52', accent2:'#e4f2ea', accentText:'#1e4a30'},
+  plum: {accent:'#6a4a8a', accent2:'#f0eaf8', accentText:'#3d1a5a'}
+};
+let currentTheme = localStorage.getItem('nd_theme') || 'ink';
+let currentLang  = localStorage.getItem('nd_lang')  || 'TR';
+
+const STRINGS = {
+  TR: {
+    search:'Notlarda ara…', newNote:'Yeni Not', allNotes:'Tüm Notlar',
+    favorites:'Favoriler', folders:'Klasörler', merge:'Birleştir',
+    addFolder:'Klasör ekle', summarize:'Özetle', todo:'To Do List',
+    grammar:'Yazım Düzenle', translate:'Çevir', addMedia:'Medya Ekle',
+    noNotes:'Henüz not yok', untitled:'Başlıksız not', justNow:'Az önce',
+    today:'Bugün', yesterday:'Dün', thisWeek:'Bu Hafta', collab:'Ortak Düzenleme',
+    invite:'Birini davet et', preview:'Önizle', edit:'Düzenle',
+    folderless:'📁 Klasörsüz', drive:'Drive'
+  },
+  EN: {
+    search:'Search notes…', newNote:'New Note', allNotes:'All Notes',
+    favorites:'Favorites', folders:'Folders', merge:'Merge',
+    addFolder:'Add folder', summarize:'Summarize', todo:'To Do List',
+    grammar:'Fix Writing', translate:'Translate', addMedia:'Add Media',
+    noNotes:'No notes yet', untitled:'Untitled note', justNow:'Just now',
+    today:'Today', yesterday:'Yesterday', thisWeek:'This Week', collab:'Shared',
+    invite:'Invite someone', preview:'Preview', edit:'Edit',
+    folderless:'📁 No folder', drive:'Drive'
+  }
+};
+
+function t(key) { return (STRINGS[currentLang] || STRINGS['TR'])[key] || key; }
+
+function applyTheme(name) {
+  currentTheme = name;
+  localStorage.setItem('nd_theme', name);
+  const th = THEMES[name] || THEMES.ink;
+  const root = document.documentElement;
+  root.style.setProperty('--accent', th.accent);
+  root.style.setProperty('--accent2', th.accent2);
+  root.style.setProperty('--accent-text', th.accentText);
+  // update dot borders
+  ['ink','sage','plum'].forEach(tn => {
+    const d = document.getElementById('DOT_'+tn);
+    if(!d) return;
+    d.style.outline = tn===name ? '2px solid var(--border2)' : 'none';
+    d.style.outlineOffset = '2px';
+    d.style.border = '2px solid '+d.style.background;
+  });
+  if(document.getElementById('LDOT')) document.getElementById('LDOT').style.color = th.accent;
+}
+
+function setTheme(name) { applyTheme(name); }
+
+function toggleThemeMode() {
+  document.body.setAttribute('data-theme',
+    document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('nd_lang', lang);
+  // update lang buttons
+  const tr = document.getElementById('LANG_TR');
+  const en = document.getElementById('LANG_EN');
+  if(tr && en) {
+    if(lang==='TR') {
+      tr.style.background='var(--accent)'; tr.style.color='#fff';
+      en.style.background='transparent'; en.style.color='var(--text2)';
+    } else {
+      en.style.background='var(--accent)'; en.style.color='#fff';
+      tr.style.background='transparent'; tr.style.color='var(--text2)';
+    }
+  }
+  // update placeholder
+  const si = document.getElementById('SI');
+  if(si) si.placeholder = t('search');
+  // update merge label
+  const ml = document.getElementById('MERGE_LBL');
+  if(ml) ml.textContent = t('merge');
+  // update new note button
+  const nb = document.getElementById('NEW_NOTE_LBL');
+  if(nb) nb.textContent = t('newNote');
+  // update nav
+  const navAll = document.getElementById('ALL_NOTES_LBL');
+  if(navAll) navAll.textContent = t('allNotes');
+  // re-render
+  renderNL(); renderFolders();
+}
+
+function toggleTheme() { toggleThemeMode(); }
+
+// ── TITLE ENTER → FOCUS CONTENT ──
+function titleKeyDown(ev){
+  if(ev.key==='Enter'){
+    ev.preventDefault();
+    const bi=document.getElementById('BI');
+    bi.focus();bi.setSelectionRange(0,0);
+  }
+}
+
+// ── FORMATTING ──
+function fmtInsert(before,after){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart,en=ta.selectionEnd;
+  const sel=ta.value.slice(s,en);
+  ta.value=ta.value.slice(0,s)+before+sel+after+ta.value.slice(en);
+  ta.selectionStart=s+before.length;ta.selectionEnd=en+before.length;
+  ta.focus();onCC();
+}
+function fmtLine(prefix){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart;
+  const lineStart=ta.value.lastIndexOf('\n',s-1)+1;
+  const lineEnd=ta.value.indexOf('\n',s);
+  const line=ta.value.slice(lineStart,lineEnd===-1?undefined:lineEnd);
+  if(line.startsWith(prefix)){
+    ta.value=ta.value.slice(0,lineStart)+line.slice(prefix.length)+(lineEnd===-1?'':ta.value.slice(lineEnd));
+  } else {
+    ta.value=ta.value.slice(0,lineStart)+prefix+ta.value.slice(lineStart);
+  }
+  ta.focus();onCC();
+}
+function fmtBold(){fmtInsert('**','**');}
+function fmtItalic(){fmtInsert('*','*');}
+function fmtH1(){fmtLine('# ');}
+function fmtH2(){fmtLine('## ');}
+function fmtBullet(){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart;
+  const ls=ta.value.lastIndexOf('\n',s-1)+1;
+  const le=ta.value.indexOf('\n',s);
+  const line=ta.value.slice(ls,le===-1?undefined:le);
+  if(line.startsWith('- ')){ta.value=ta.value.slice(0,ls)+line.slice(2)+(le===-1?'':ta.value.slice(le));}
+  else{ta.value=ta.value.slice(0,ls)+'- '+ta.value.slice(ls);}
+  ta.focus();onCC();
+}
+function fmtNumbered(){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart;
+  const ls=ta.value.lastIndexOf('\n',s-1)+1;
+  const before=ta.value.slice(0,ls);
+  const prevLines=before.split('\n');
+  let n=1;
+  for(let i=prevLines.length-1;i>=0;i--){if(/^\d+\.\s/.test(prevLines[i]))n++;else break;}
+  ta.value=ta.value.slice(0,ls)+`${n}. `+ta.value.slice(ls);
+  ta.focus();onCC();
+}
+function fmtQuote(){fmtLine('> ');}
+function fmtCode(){fmtInsert('`','`');}
+
+// Auto-continue lists
+document.addEventListener('DOMContentLoaded',()=>{
+  const bi=document.getElementById('BI');
+  if(!bi)return;
+  bi.addEventListener('keydown',ev=>{
+    if(ev.key!=='Enter')return;
+    const ta=ev.target,s=ta.selectionStart;
+    const ls=ta.value.lastIndexOf('\n',s-1)+1;
+    const line=ta.value.slice(ls,s);
+    const bm=line.match(/^(- )/),nm=line.match(/^(\d+)\. /);
+    if(bm){
+      ev.preventDefault();
+      if(line.trim()==='- '){ta.value=ta.value.slice(0,ls)+ta.value.slice(s);ta.selectionStart=ta.selectionEnd=ls;}
+      else{const ins='\n- ';ta.value=ta.value.slice(0,s)+ins+ta.value.slice(s);ta.selectionStart=ta.selectionEnd=s+ins.length;}
+      onCC();
+    } else if(nm){
+      ev.preventDefault();
+      const next=parseInt(nm[1])+1;
+      if(line.trim()===nm[0].trim()){ta.value=ta.value.slice(0,ls)+ta.value.slice(s);ta.selectionStart=ta.selectionEnd=ls;}
+      else{const ins=`\n${next}. `;ta.value=ta.value.slice(0,s)+ins+ta.value.slice(s);ta.selectionStart=ta.selectionEnd=s+ins.length;}
+      onCC();
+    }
+  });
+});
+
+// ── GOOGLE DRIVE ──
+function openDriveModal(){
+  const n=getN();if(!n){alert(currentLang==='TR'?'Önce bir not seç.':'Select a note first.');return;}
+  document.getElementById('GDText').textContent=`"${n.title||t('untitled')}" ${currentLang==='TR'?'notunu Google Drive\'a aktarmak ister misin?':'— send to Google Drive?'}`;
+  document.getElementById('GDStatus').style.display='none';
+  openOv('GDO');
+}
+function sendToDrive(){
+  const status=document.getElementById('GDStatus');
+  status.style.display='block';
+  status.innerHTML=currentLang==='TR'?'⚠️ Google Drive entegrasyonu Supabase kurulumundan sonra aktif olacak.':'⚠️ Google Drive integration will be active after Supabase setup.';
+}
+
+init();
+// Apply saved theme and lang on load
+document.addEventListener('DOMContentLoaded',()=>{
+  applyTheme(currentTheme);
+  setLang(currentLang);
+});
+  if(ev.key==='Enter'){
+    ev.preventDefault();
+    const bi=document.getElementById('BI');
+    bi.focus();
+    bi.setSelectionRange(0,0);
+  }
+}
+
+// ── FORMATTING ──
+function fmtInsert(before,after){
+  const ta=document.getElementById('BI');
+  if(document.getElementById('MP')&&!document.getElementById('MP').classList.contains('hidden'))return;
+  const s=ta.selectionStart,e=ta.selectionEnd;
+  const sel=ta.value.slice(s,e);
+  ta.value=ta.value.slice(0,s)+before+sel+after+ta.value.slice(e);
+  ta.selectionStart=s+before.length;
+  ta.selectionEnd=e+before.length;
+  ta.focus();onCC();
+}
+function fmtLine(prefix){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart;
+  const lineStart=ta.value.lastIndexOf('\n',s-1)+1;
+  const lineEnd=ta.value.indexOf('\n',s);
+  const line=ta.value.slice(lineStart,lineEnd===-1?undefined:lineEnd);
+  // toggle: if already has prefix, remove it
+  if(line.startsWith(prefix)){
+    ta.value=ta.value.slice(0,lineStart)+line.slice(prefix.length)+(lineEnd===-1?'':ta.value.slice(lineEnd));
+  } else {
+    ta.value=ta.value.slice(0,lineStart)+prefix+ta.value.slice(lineStart);
+  }
+  ta.focus();onCC();
+}
+function fmtBold(){fmtInsert('**','**');}
+function fmtItalic(){fmtInsert('*','*');}
+function fmtH1(){fmtLine('# ');}
+function fmtH2(){fmtLine('## ');}
+function fmtBullet(){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart;
+  // get current line
+  const lineStart=ta.value.lastIndexOf('\n',s-1)+1;
+  const lineEnd=ta.value.indexOf('\n',s);
+  const line=ta.value.slice(lineStart,lineEnd===-1?undefined:lineEnd);
+  if(line.startsWith('- ')){
+    ta.value=ta.value.slice(0,lineStart)+line.slice(2)+(lineEnd===-1?'':ta.value.slice(lineEnd));
+  } else {
+    ta.value=ta.value.slice(0,lineStart)+'- '+ta.value.slice(lineStart);
+  }
+  ta.focus();onCC();
+}
+function fmtNumbered(){
+  const ta=document.getElementById('BI');
+  const s=ta.selectionStart;
+  const lineStart=ta.value.lastIndexOf('\n',s-1)+1;
+  // count existing numbered lines before this
+  const before=ta.value.slice(0,lineStart);
+  const prevLines=before.split('\n');
+  let n=1;
+  for(let i=prevLines.length-1;i>=0;i--){
+    if(/^\d+\.\s/.test(prevLines[i]))n++;
+    else break;
+  }
+  ta.value=ta.value.slice(0,lineStart)+`${n}. `+ta.value.slice(lineStart);
+  ta.focus();onCC();
+}
+function fmtQuote(){fmtLine('> ');}
+function fmtCode(){fmtInsert('`','`');}
+
+// Auto-continue bullet/numbered lists on Enter
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('BI').addEventListener('keydown',ev=>{
+    if(ev.key!=='Enter')return;
+    const ta=ev.target;
+    const s=ta.selectionStart;
+    const lineStart=ta.value.lastIndexOf('\n',s-1)+1;
+    const line=ta.value.slice(lineStart,s);
+    const bulletMatch=line.match(/^(- )/);
+    const numMatch=line.match(/^(\d+)\. /);
+    if(bulletMatch){
+      ev.preventDefault();
+      if(line.trim()==='- '){
+        // empty bullet → remove
+        ta.value=ta.value.slice(0,lineStart)+ta.value.slice(s);
+        ta.selectionStart=ta.selectionEnd=lineStart;
+      } else {
+        const ins='\n- ';
+        ta.value=ta.value.slice(0,s)+ins+ta.value.slice(s);
+        ta.selectionStart=ta.selectionEnd=s+ins.length;
+      }
+      onCC();
+    } else if(numMatch){
+      ev.preventDefault();
+      const next=parseInt(numMatch[1])+1;
+      if(line.trim()===numMatch[0].trim()){
+        ta.value=ta.value.slice(0,lineStart)+ta.value.slice(s);
+        ta.selectionStart=ta.selectionEnd=lineStart;
+      } else {
+        const ins=`\n${next}. `;
+        ta.value=ta.value.slice(0,s)+ins+ta.value.slice(s);
+        ta.selectionStart=ta.selectionEnd=s+ins.length;
+      }
+      onCC();
+    }
+  });
+});
+
+// ── GOOGLE DRIVE ──
+let driveAccessToken=null;
+const DRIVE_CLIENT_ID=''; // Supabase kurulumunda eklenecek
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
+
+function openDriveModal(){
+  const n=getN();if(!n){alert('Önce bir not seç.');return;}
+  document.getElementById('GDText').textContent=`"${n.title||'Başlıksız not'}" notunu Google Drive'a aktarmak ister misin?`;
+  document.getElementById('GDStatus').style.display='none';
+  openOv('GDO');
+}
+
+function sendToDrive(){
+  const n=getN();if(!n)return;
+  const status=document.getElementById('GDStatus');
+  const btn=document.getElementById('GDBtn');
+
+  // Check if Google API is available
+  if(!window.gapi||!DRIVE_CLIENT_ID){
+    status.style.display='block';
+    status.innerHTML='⚠️ Google Drive entegrasyonu için API anahtarı gerekiyor. Supabase kurulumundan sonra aktif olacak.';
+    return;
+  }
+
+  btn.disabled=true;btn.textContent='Gönderiliyor…';
+  status.style.display='block';
+  status.textContent='Google hesabına bağlanılıyor…';
+
+  const content=`# ${n.title||'Başlıksız not'}\n\n${n.content}`;
+  const fileName=`${n.title||'Başlıksız not'}.md`;
+
+  // Check if previously exported
+  const prevFileId=n.driveFileId;
+  if(prevFileId){
+    // Ask update or new
+    if(confirm(`Bu not daha önce Drive'a aktarılmıştı. Mevcut dosyayı güncelleyeyim mi?\n\nEvet → Güncelle\nHayır → Yeni dosya oluştur`)){
+      updateDriveFile(n,prevFileId,content,status,btn);
+    } else {
+      createDriveFile(n,fileName,content,status,btn);
+    }
+  } else {
+    createDriveFile(n,fileName,content,status,btn);
+  }
+}
+
+function createDriveFile(n,fileName,content,status,btn){
+  status.textContent='Dosya oluşturuluyor…';
+  const metadata={name:fileName,mimeType:'text/plain'};
+  const form=new FormData();
+  form.append('metadata',new Blob([JSON.stringify(metadata)],{type:'application/json'}));
+  form.append('file',new Blob([content],{type:'text/plain'}));
+  fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
+    method:'POST',
+    headers:{Authorization:`Bearer ${driveAccessToken}`},
+    body:form
+  }).then(r=>r.json()).then(data=>{
+    n.driveFileId=data.id;save();
+    status.innerHTML=`✅ Drive'a aktarıldı! <a href="https://drive.google.com/file/d/${data.id}" target="_blank" style="color:var(--accent)">Görüntüle</a>`;
+    btn.disabled=false;btn.textContent='Tekrar Gönder';
+  }).catch(()=>{
+    status.textContent='❌ Hata oluştu. Tekrar dene.';
+    btn.disabled=false;btn.innerHTML='Drive\'a Aktar';
+  });
+}
+
+function updateDriveFile(n,fileId,content,status,btn){
+  status.textContent='Güncelleniyor…';
+  fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{
+    method:'PATCH',
+    headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'text/plain'},
+    body:content
+  }).then(r=>r.json()).then(()=>{
+    status.innerHTML=`✅ Drive dosyası güncellendi! <a href="https://drive.google.com/file/d/${fileId}" target="_blank" style="color:var(--accent)">Görüntüle</a>`;
+    btn.disabled=false;btn.textContent='Tekrar Güncelle';
+  }).catch(()=>{
+    status.textContent='❌ Hata oluştu. Tekrar dene.';
+    btn.disabled=false;
+  });
 }
 
 init();

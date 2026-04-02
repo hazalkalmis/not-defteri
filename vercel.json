@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/notes-app-v4.html" }
+    { "source": "/(.*)", "destination": "/notthat-v8.html" }
   ]
 }

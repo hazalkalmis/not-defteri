@@ -1601,18 +1601,18 @@ async function callAI(action,content,extra=''){
   bodyEl.innerHTML=`<span style="color:var(--text3)">${currentLang==='TR'?'Düşünüyor…':'Thinking…'}</span>`;
   panel.classList.remove('hidden');
   const prompts={
-    summary:`Bu notu 3-4 cümleyle özetle. Sadece özeti yaz:\n\n${content}`,
-    todo:`Bu nottan yapılacaklar listesi çıkar. "- [ ] " ile başlat:\n\n${content}`,
-    grammar:`Yazım ve dilbilgisi hatalarını düzelt. Sadece düzeltilmiş metni yaz:\n\n${content}`,
-    translate:`Bu metni ${extra} diline çevir. Sadece çeviriyi yaz:\n\n${content}`
+    summary:`Bu notu 3-4 cümleyle özetle. Sadece özeti yaz, başka hiçbir şey ekleme:\n\n${content}`,
+    todo:`Bu metinden yapılacaklar listesi çıkar. Her maddeyi "- " ile başlat, başka hiçbir şey ekleme:\n\n${content}`,
+    grammar:`Yazım ve dilbilgisi hatalarını düzelt. Sadece düzeltilmiş metni yaz, açıklama ekleme:\n\n${content}`,
+    translate:`Bu metni ${extra} diline çevir. Sadece çeviriyi yaz, başka hiçbir şey ekleme:\n\n${content}`
   };
   try{
-    const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompts[action]}]})});
+    const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompts[action]})});
     const data=await res.json();
-    const text=data.content?.[0]?.text||'Yanıt alınamadı.';
-    if(action==='todo'){bodyEl.innerHTML='<ul>'+text.split('\n').filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^-\s*\[\s*\]\s*/,'').replace(/^[-•]\s*/,''))}</li>`).join('')+'</ul>';}
+    const text=data.text||'Yanıt alınamadı.';
+    if(action==='todo'){bodyEl.innerHTML='<ul>'+text.split('\n').filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^-\s*/,'').trim())}</li>`).join('')+'</ul>';}
     else{bodyEl.innerHTML=esc(text).replace(/\n/g,'<br>');}
-  }catch{bodyEl.innerHTML=`<span style="color:#c0392b">${s('drivePending').replace('Google Drive','AI API')}</span>`;}
+  }catch{bodyEl.innerHTML=`<span style="color:#c0392b">${currentLang==='TR'?'AI bağlantısı kurulamadı.':'Could not connect to AI.'}</span>`;}
 }
 
 // ── FOLDER (placeholder) ──

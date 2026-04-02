@@ -265,6 +265,15 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .ctx-sub-menu{position:absolute;left:100%;top:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);min-width:160px;padding:4px;display:none;z-index:901;}
 .ctx-sub:hover .ctx-sub-menu{display:block;}
 
+/* ── MERGE PILLS ── */
+.merge-pill{display:flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:7px;border:1.5px solid transparent;font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:.15s;white-space:nowrap;}
+.merge-pill{background:var(--accent2);color:var(--accent-text);border-color:rgba(74,122,181,.2);}
+.merge-pill:hover{filter:brightness(.95);}
+.merge-pill.off{background:var(--bg2);color:var(--text3);border-color:var(--border2);}
+.merge-pill.off:hover{color:var(--text2);}
+.merge-pill-todo{background:var(--work2);color:var(--work-text);border-color:rgba(196,119,59,.2);}
+.merge-pill-todo:hover{filter:brightness(.95);}
+
 /* ── SHOW ALL / OVERFLOW ── */
 .cards-overflow{display:none;padding:4px 8px 6px;}
 .cards-overflow.open{display:block;}
@@ -296,14 +305,17 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <input type="text" id="SEARCH_INPUT" oninput="doSearch(this.value)">
   </div>
   <div class="tbr">
-    <div class="tgl-wrap">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-      <span id="MERGE_LBL">Birleştir</span>
-      <label class="tgl"><input type="checkbox" id="MERGE_TOGGLE" checked><div class="tgl-track"></div><div class="tgl-thumb"></div></label>
-    </div>
-    <div class="vsep"></div>
-    <button class="ic-btn" onclick="openMergeTodoModal()" title="To Do'ları Birleştir" style="font-size:10px;font-weight:600;color:var(--text2);">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13"/><polyline points="3 6 4 7 6 5"/><polyline points="3 12 4 13 6 11"/><polyline points="3 18 4 19 6 17"/></svg>
+    <button class="merge-pill" id="MERGE_PILL" 
+      onclick="toggleMergeMode()"
+      title="Aynı isimli kartları birleştirir">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      <span id="MERGE_LBL">İsim Birleştir</span>
+    </button>
+    <button class="merge-pill merge-pill-todo" id="MERGE_TODO_PILL"
+      onclick="openMergeTodoModal()"
+      title="To Do kartlarında yapılmamış To Do'ları birleştirir">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
+      <span id="LBL_MERGE_TODO_BTN">To Do Birleştir</span>
     </button>
     <div class="vsep"></div>
     <div class="lang-seg">
@@ -477,6 +489,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         <div class="todo-header">
           <textarea class="title-input" id="TODO_TITLE" rows="1" style="color:var(--work);"
             oninput="autoResize(this);onTodoTitleChange()"
+            onblur="checkMergeTodo()"
             onkeydown="todoTitleKeyDown(event)"></textarea>
           <div class="date-line" id="TODO_DATE" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"></div>
         </div>
@@ -517,6 +530,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
 <!-- CONTEXT MENU -->
 <div class="ctx-menu" id="CTX_MENU"></div>
+
+<!-- MERGE TOGGLE (hidden, kept for JS compat) -->
+<input type="checkbox" id="MERGE_TOGGLE" checked style="display:none;">
 
 <!-- MERGE MODAL -->
 <div class="ov hidden" id="MERGE_MODAL">
@@ -726,7 +742,9 @@ const STR={
     personal:'Özel',work:'İş',merge:'Birleştir',media:'Medya Ekle',
     empty:'Bir not seç veya yeni not oluştur',untitled:'Başlıksız not',
     justNow:'Az önce',today:'Bugün',yesterday:'Dün',thisWeek:'Bu Hafta',
-    summarize:'Özetle',todo:'To Do',grammar:'Yazım',translate:'Çevir',
+    summarize:'Özetle',todo:'Görevler',grammar:'Düzelt',translate:'Çevir',
+    summarizeTip:'Yazılanı Özetle',todoTip:'Görev Listesi Çıkar',grammarTip:'Yazımı Düzelt',translateTip:'Metni Çevir',
+    mergePill:'İsim Birleştir',mergeTodoPill:'To Do Birleştir',
     generalNote:'Genel Not',todoNote:'To Do',
     chooseTodo:'To Do Türü Seç',daily:'Günlük',weekly:'Haftalık',
     monthly:'Aylık',free:'Serbest',titlePh:'Başlık…',bodyPh:'Yazmaya başla…',
@@ -745,7 +763,9 @@ const STR={
     personal:'Personal',work:'Work',merge:'Merge',media:'Add Media',
     empty:'Select a note or create a new one',untitled:'Untitled note',
     justNow:'Just now',today:'Today',yesterday:'Yesterday',thisWeek:'This Week',
-    summarize:'Summarize',todo:'To Do',grammar:'Fix',translate:'Translate',
+    summarize:'Summarize',todo:'Tasks',grammar:'Fix Spelling',translate:'Translate',
+    summarizeTip:'Summarize Note',todoTip:'Extract Action Items',grammarTip:'Fix Spelling & Grammar',translateTip:'Translate Text',
+    mergePill:'Name Merge',mergeTodoPill:'To Do Merge',
     generalNote:'General Note',todoNote:'To Do',
     chooseTodo:'Choose To Do Type',daily:'Daily',weekly:'Weekly',
     monthly:'Monthly',free:'Free',titlePh:'Title…',bodyPh:'Start writing…',
@@ -778,7 +798,7 @@ function show(id){document.getElementById(id).classList.remove('hidden');}
 const THEME_WORK={
   ink: {work:'#c4773b',work2:'#f0e4d4',workText:'#7a4520'},
   sage:{work:'#7a5c2e',work2:'#f0e8d4',workText:'#4a3010'},
-  plum:{work:'#7a3d6a',work2:'#f0dff0',workText:'#4a1a40'}
+  plum:{work:'#c06030',work2:'#fae8d8',workText:'#7a3010'}
 };
 function setTheme(name){
   currentTheme=name;localStorage.setItem('nt_theme',name);
@@ -802,6 +822,18 @@ function toggleDarkMode(){
   localStorage.setItem('nt_darkmode',isDark?'light':'dark');
 }
 
+// ── MERGE MODE TOGGLE ──
+let mergeEnabled=true;
+function toggleMergeMode(){
+  mergeEnabled=!mergeEnabled;
+  document.getElementById('MERGE_TOGGLE').checked=mergeEnabled;
+  const pill=document.getElementById('MERGE_PILL');
+  pill.classList.toggle('off',!mergeEnabled);
+  pill.title=mergeEnabled
+    ?(currentLang==='TR'?'Aynı isimli kartları birleştirir':'Merges cards with the same title')
+    :(currentLang==='TR'?'Birleştirme kapalı':'Merge disabled');
+}
+
 // ── LANGUAGE ──
 function setLang(lang){
   currentLang=lang;localStorage.setItem('nt_lang',lang);
@@ -812,7 +844,10 @@ function setLang(lang){
 }
 function applyLangLabels(){
   document.getElementById('SEARCH_INPUT').placeholder=s('search');
-  document.getElementById('MERGE_LBL').textContent=s('merge');
+  document.getElementById('MERGE_LBL').textContent=s('mergePill');
+  document.getElementById('LBL_MERGE_TODO_BTN').textContent=s('mergeTodoPill');
+  document.getElementById('MERGE_PILL').title=currentLang==='TR'?'Aynı isimli kartları birleştirir':'Merges cards with the same title';
+  document.getElementById('MERGE_TODO_PILL').title=currentLang==='TR'?'To Do kartlarında yapılmamış To Do\'ları birleştirir':'Merges incomplete to-dos from selected cards';
   document.getElementById('LBL_PERSONAL').textContent=s('personal');
   document.getElementById('LBL_WORK').textContent=s('work');
   document.getElementById('LBL_NEW_NOTE').textContent=s('newNote');
@@ -821,12 +856,15 @@ function applyLangLabels(){
   document.getElementById('LBL_EMPTY').textContent=s('empty');
   document.getElementById('LBL_FAV_TITLE').textContent=s('favTitle');
   document.getElementById('LBL_FAV_SUB').textContent=s('favSub');
-  document.getElementById('LBL_FAV_START_BTN')?.textContent;
   document.getElementById('FAV_START_BTN').textContent=s('favPlay');
   document.getElementById('AI_BTN_1').textContent=s('summarize');
+  document.getElementById('AI_BTN_1').title=s('summarizeTip');
   document.getElementById('AI_BTN_2').textContent=s('todo');
+  document.getElementById('AI_BTN_2').title=s('todoTip');
   document.getElementById('AI_BTN_3').textContent=s('grammar');
+  document.getElementById('AI_BTN_3').title=s('grammarTip');
   document.getElementById('AI_BTN_4').textContent=s('translate');
+  document.getElementById('AI_BTN_4').title=s('translateTip');
   document.getElementById('TYPE_LABEL').textContent=getCurrentTypeLabel();
   document.getElementById('TITLE_INPUT').placeholder=s('titlePh');
   document.getElementById('BODY_INPUT').placeholder=s('bodyPh');
@@ -847,6 +885,10 @@ function applyLangLabels(){
   document.getElementById('MERGE_TITLE').textContent=s('sameTitle');
   document.getElementById('MERGE_YES').textContent=s('mergeYes');
   document.getElementById('MERGE_NO').textContent=s('mergeNo');
+  document.getElementById('LBL_MERGE_TODO_TITLE').textContent=currentLang==='TR'?'To Do\'ları Birleştir':'Merge To Do Cards';
+  document.getElementById('LBL_MERGE_TODO_SUB').textContent=currentLang==='TR'
+    ?'Birleştirmek istediğin To Do kartlarını seç. Sadece tamamlanmamış maddeler yeni karta gelir.'
+    :'Select To Do cards to merge. Only incomplete items will be included.';
 }
 function getCurrentTypeLabel(){
   const n=getActive();
@@ -922,6 +964,21 @@ function getActive(){return notes.find(x=>x.id===activeId);}
 function onTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TITLE_INPUT'));}
 function onBodyChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);}
 function onTodoTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TODO_TITLE'));}
+function checkMergeTodo(){
+  saveNote();
+  if(!document.getElementById('MERGE_TOGGLE').checked||!activeId)return;
+  const title=document.getElementById('TODO_TITLE').value.trim();if(!title)return;
+  const cur=getActive();if(!cur||cur.type!=='todo')return;
+  if(cur.todoItems&&cur.todoItems.length>0)return; // already has items, don't prompt
+  const ex=notes.find(n=>n.id!==activeId&&n.type==='todo'&&n.title.trim().toLowerCase()===title.toLowerCase());
+  if(!ex)return;
+  pendingMerge={eid:ex.id,nid:activeId};
+  document.getElementById('MERGE_TITLE').textContent=s('sameTitle');
+  document.getElementById('MERGE_TEXT').textContent=`"${ex.title}" ${s('sameTitleQ')}`;
+  document.getElementById('MERGE_YES').textContent=s('mergeYes');
+  document.getElementById('MERGE_NO').textContent=s('mergeNo');
+  openModal('MERGE_MODAL');
+}
 function saveNote(){
   const n=getActive();if(!n)return;
   if(n.type==='todo'){n.title=document.getElementById('TODO_TITLE').value;}
@@ -1009,20 +1066,51 @@ function selectTodoType(type){
 function renderTodoItems(n){
   const container=document.getElementById('TODO_ITEMS');
   if(!n.todoItems||!n.todoItems.length){container.innerHTML='';return;}
-  // group by subheader
-  let html='';let currentSub=null;
+  let html='';
   n.todoItems.forEach((item,i)=>{
     if(item.subHeader){
-      currentSub=item.subHeader;
       html+=`<div class="todo-sub-hdr">${esc(item.subHeader)}</div>`;
     } else {
-      html+=`<div class="todo-item" onclick="toggleTodoItem(${i})">
-        <div class="todo-cb${item.done?' done':''}"></div>
-        <span class="todo-text${item.done?' done':''}">${esc(item.text)}</span>
+      html+=`<div class="todo-item" data-idx="${i}">
+        <div class="todo-cb${item.done?' done':''}" onclick="toggleTodoItem(${i})" style="flex-shrink:0;cursor:pointer;"></div>
+        <input class="todo-edit-input${item.done?' done':''}" value="${esc(item.text)}"
+          onchange="editTodoItem(${i},this.value)"
+          onkeydown="todoItemKeyDown(event,${i})"
+          style="flex:1;background:none;border:none;outline:none;font-size:13px;
+            font-family:'DM Sans',sans-serif;color:var(--text);line-height:1.5;
+            padding:0;${item.done?'text-decoration:line-through;color:var(--text3);':''}">
       </div>`;
     }
   });
   container.innerHTML=html;
+}
+function editTodoItem(idx,val){
+  const n=getActive();if(!n||!n.todoItems)return;
+  n.todoItems[idx].text=val;
+  save();renderAllCards();
+}
+function todoItemKeyDown(ev,idx){
+  if(ev.key==='Enter'){
+    ev.preventDefault();
+    // focus the add input if last item, else next item
+    const n=getActive();if(!n)return;
+    const inputs=[...document.querySelectorAll('.todo-edit-input')];
+    const cur=inputs.findIndex(el=>el===ev.target);
+    if(cur>=0&&cur<inputs.length-1){inputs[cur+1].focus();}
+    else{document.getElementById('ADD_TODO_INPUT').focus();}
+  }
+  if(ev.key==='Backspace'&&ev.target.value===''){
+    ev.preventDefault();
+    const n=getActive();if(!n||!n.todoItems)return;
+    n.todoItems.splice(idx,1);
+    save();showTodoView(n);renderAllCards();
+    // focus previous or add input
+    setTimeout(()=>{
+      const inputs=[...document.querySelectorAll('.todo-edit-input')];
+      if(inputs.length)inputs[Math.max(0,idx-1)].focus();
+      else document.getElementById('ADD_TODO_INPUT').focus();
+    },30);
+  }
 }
 function toggleTodoItem(idx){
   const n=getActive();if(!n||!n.todoItems)return;
@@ -1519,7 +1607,7 @@ async function callAI(action,content,extra=''){
     translate:`Bu metni ${extra} diline çevir. Sadece çeviriyi yaz:\n\n${content}`
   };
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompts[action]}]})});
+    const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompts[action]}]})});
     const data=await res.json();
     const text=data.content?.[0]?.text||'Yanıt alınamadı.';
     if(action==='todo'){bodyEl.innerHTML='<ul>'+text.split('\n').filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^-\s*\[\s*\]\s*/,'').replace(/^[-•]\s*/,''))}</li>`).join('')+'</ul>';}

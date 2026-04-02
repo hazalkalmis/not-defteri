@@ -1,5 +1,6 @@
 {
+  "version": 2,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/notthat-v8.html" }
+    { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }

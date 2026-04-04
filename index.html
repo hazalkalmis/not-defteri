@@ -301,18 +301,308 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .media-area{margin-top:12px;}
 
 .hidden{display:none!important;}
+
+/* ══════════════════════════════════════════
+   MOBİL OPTİMİZASYON  (≤ 768px)
+   ══════════════════════════════════════════ */
+
+/* ── Mobil overlay için sol panel ── */
+@media (max-width: 768px) {
+
+  /* Topbar: kompakt */
+  .topbar {
+    padding: 0 10px;
+    gap: 8px;
+    position: relative;
+  }
+
+  /* Arama inputu küçük ekranda gizle, ikon ile aç */
+  .srch {
+    display: none;
+  }
+  .srch.mobile-open {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    right: 10px;
+    z-index: 100;
+    max-width: none;
+    flex: none;
+    width: calc(100% - 20px);
+  }
+  .srch.mobile-open input {
+    width: 100%;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  /* Topbar sağ taraf: sadece ikonlar */
+  .tbr {
+    margin-left: auto;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Merge pilleri ve lang-seg'i gizle */
+  .merge-pill, .merge-pill-todo, .lang-seg, .tdots, .vsep {
+    display: none !important;
+  }
+
+  /* Topbar ikonları */
+  .ic-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Mobil menü düğmesi */
+  .mob-menu-btn {
+    display: flex !important;
+  }
+  .mob-search-btn {
+    display: flex !important;
+  }
+
+  /* ── Sol panel: drawer olarak ── */
+  .app {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .left {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    bottom: 0;
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    z-index: 500;
+    transform: translateX(-100%);
+    transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s;
+    box-shadow: none;
+  }
+
+  .left.mob-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,.18);
+  }
+
+  /* Sol panel collapse handle'ı mobilde gizle */
+  .col-handle, .resize-handle {
+    display: none !important;
+  }
+
+  /* Drawer backdrop */
+  .mob-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: 48px;
+    background: rgba(0,0,0,.35);
+    z-index: 499;
+    backdrop-filter: blur(1px);
+  }
+  .mob-backdrop.visible {
+    display: block;
+  }
+
+  /* ── Sağ panel: tam genişlik ── */
+  .right {
+    width: 100% !important;
+    flex: 1;
+  }
+
+  /* ── Editor topbar: 2 satıra geç ── */
+  .ed-topbar {
+    height: auto;
+    min-height: 44px;
+    flex-wrap: wrap;
+    padding: 6px 10px;
+    gap: 4px;
+    row-gap: 6px;
+  }
+
+  /* AI buton grubu tam satır al */
+  .ai-group {
+    width: 100%;
+    margin-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 4px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ai-group::-webkit-scrollbar { display: none; }
+
+  .ai-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  /* Delete butonu en sağa */
+  .del-btn {
+    margin-left: auto;
+  }
+
+  /* ── Format bar: yatay scroll ── */
+  .fmt-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    gap: 1px;
+    padding: 0 10px;
+    height: 36px;
+  }
+  .fmt-bar::-webkit-scrollbar { display: none; }
+
+  .drive-btn {
+    flex-shrink: 0;
+  }
+  .fsel {
+    flex-shrink: 0;
+  }
+
+  /* ── Editor scroll ── */
+  .ed-scroll {
+    padding: 16px 14px 60px;
+  }
+
+  .title-input {
+    font-size: 22px;
+  }
+
+  /* ── Kartlar ── */
+  .ncard {
+    padding: 1px 0;
+  }
+  .nc-body {
+    padding: 7px 10px;
+  }
+  .nc-title {
+    font-size: 13px;
+  }
+  .nc-prev {
+    font-size: 12px;
+  }
+
+  /* Drag handle mobilde göster */
+  .nc-drag {
+    opacity: .3 !important;
+  }
+
+  /* ── Modaller: tam genişlik, aşağıdan çık ── */
+  .ov {
+    align-items: flex-end;
+  }
+  .modal,
+  .dl-modal,
+  .flash-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 16px 32px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* Flash modal özel */
+  .flash-modal {
+    width: 100% !important;
+    border-radius: 16px 16px 0 0;
+  }
+  .flash-area {
+    height: 160px;
+  }
+  .flash-word {
+    font-size: 22px;
+  }
+
+  /* ── Aux paneller ── */
+  .aux-panel {
+    padding: 16px 14px;
+  }
+  .aux-title {
+    font-size: 18px;
+  }
+
+  /* ── Yeni not butonları ── */
+  .new-btns {
+    padding: 4px 8px 8px;
+    gap: 6px;
+  }
+  .nbtn {
+    height: 32px;
+    font-size: 12px;
+  }
+
+  /* ── Space section başlıkları ── */
+  .space-hdr {
+    padding: 10px 12px 6px;
+  }
+  .space-name {
+    font-size: 13px;
+  }
+
+  /* ── Context menu: dokunuşa uygun ── */
+  .ctx-item {
+    padding: 11px 14px;
+    font-size: 14px;
+  }
+
+  /* ── Geri dön butonu (editor'dan kart listesine) ── */
+  .mob-back-btn {
+    display: flex !important;
+  }
+
+  /* ── Body overflow düzelt ── */
+  body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* ── Sadece masaüstünde görünecek elemanlar ── */
+.mob-menu-btn,
+.mob-search-btn,
+.mob-back-btn {
+  display: none;
+}
+
+/* ── Küçük mobil (≤ 380px) ── */
+@media (max-width: 380px) {
+  .topbar { padding: 0 6px; gap: 4px; }
+  .logo { font-size: 14px; }
+  .ed-scroll { padding: 12px 10px 60px; }
+  .title-input { font-size: 20px; }
+  .ai-btn { height: 26px; padding: 0 8px; font-size: 11px; }
+  .fpill, .media-pill, .type-pill { font-size: 11px; padding: 2px 7px; }
+}
 </style>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div class="topbar">
+  <!-- Mobil: hamburger menü -->
+  <button class="ic-btn mob-menu-btn" id="MOB_MENU_BTN" onclick="toggleMobilePanel()" title="Notlar">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
   <div class="logo">not<span class="logo-dot" id="LOGO_DOT">·</span>that</div>
-  <div class="srch">
+  <div class="srch" id="SRCH_BOX">
     <svg class="srch-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="SEARCH_INPUT" oninput="doSearch(this.value)">
   </div>
   <div class="tbr">
+    <!-- Mobil: arama ikonu -->
+    <button class="ic-btn mob-search-btn" id="MOB_SEARCH_BTN" onclick="toggleMobileSearch()" title="Ara">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
     <button class="merge-pill" id="MERGE_PILL" 
       onclick="toggleMergeMode()"
       title="Aynı isimli kartları birleştirir">
@@ -344,6 +634,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     </button>
   </div>
 </div>
+
+<!-- Mobil drawer backdrop -->
+<div class="mob-backdrop" id="MOB_BACKDROP" onclick="closeMobilePanel()"></div>
 
 <!-- APP -->
 <div class="app">
@@ -426,6 +719,10 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
     <div class="editor-area hidden" id="EDITOR_AREA" style="flex-direction:column;flex:1;overflow:hidden;">
       <div class="ed-topbar">
+        <!-- Mobil: geri dön butonu -->
+        <button class="ic-btn mob-back-btn" id="MOB_BACK_BTN" onclick="mobileBackToList()" title="Geri" style="margin-right:2px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
         <div class="fpill" id="FOLDER_PILL" onclick="openChangeFolderModal()">📁 Klasörsüz</div>
         <div class="media-pill" onclick="openMediaModal()">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -967,6 +1264,8 @@ function openNote(id){
   // view
   if(n.type==='todo'){showTodoView(n);}else{showNormalView();}
   renderMedia(n);renderAllCards();
+  // mobil: drawer'ı kapat
+  if(typeof isMobile==='function' && isMobile()) closeMobilePanel();
 }
 function getActive(){return notes.find(x=>x.id===activeId);}
 function onTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TITLE_INPUT'));}
@@ -1684,6 +1983,44 @@ function init(){
   fa.addEventListener('touchend',ev=>{const dx=ev.changedTouches[0].clientX-touchStartX;if(Math.abs(dx)>40)dx<0?nextCard():prevCard();});
   fa.addEventListener('wheel',ev=>{ev.preventDefault();if(ev.deltaX>30||ev.deltaY>30)nextCard();else if(ev.deltaX<-30||ev.deltaY<-30)prevCard();},{passive:false});
 }
+// ── MOBİL PANEL / DRAWER ──
+function isMobile(){ return window.innerWidth <= 768; }
+
+function toggleMobilePanel(){
+  const left = document.getElementById('LEFT');
+  const bd   = document.getElementById('MOB_BACKDROP');
+  const isOpen = left.classList.contains('mob-open');
+  if(isOpen){ closeMobilePanel(); }
+  else { left.classList.add('mob-open'); bd.classList.add('visible'); }
+}
+function closeMobilePanel(){
+  document.getElementById('LEFT').classList.remove('mob-open');
+  document.getElementById('MOB_BACKDROP').classList.remove('visible');
+}
+function toggleMobileSearch(){
+  const srch = document.getElementById('SRCH_BOX');
+  const isOpen = srch.classList.contains('mobile-open');
+  if(isOpen){
+    srch.classList.remove('mobile-open');
+    srch.querySelector('input').value='';
+    doSearch('');
+  } else {
+    srch.classList.add('mobile-open');
+    setTimeout(()=>srch.querySelector('input').focus(), 50);
+  }
+}
+function mobileBackToList(){
+  if(!isMobile()) return;
+  toggleMobilePanel();
+}
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>768){
+    closeMobilePanel();
+    const srch=document.getElementById('SRCH_BOX');
+    srch&&srch.classList.remove('mobile-open');
+  }
+});
+
 init();
 </script>
 </body>

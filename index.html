@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QFR16Y6KQF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-QFR16Y6KQF');
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>not·that</title>
@@ -352,8 +344,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     flex-shrink: 0;
   }
 
-  /* Merge pilleri ve lang-seg'i gizle */
-  .merge-pill, .merge-pill-todo, .lang-seg, .tdots, .vsep {
+  /* Merge pill (İsim Birleştir kaldırıldı), lang-seg'i gizle */
+  .merge-pill:not(.merge-pill-todo), .lang-seg, .tdots, .vsep {
     display: none !important;
   }
 
@@ -610,12 +602,6 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <!-- Mobil: arama ikonu -->
     <button class="ic-btn mob-search-btn" id="MOB_SEARCH_BTN" onclick="toggleMobileSearch()" title="Ara">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    </button>
-    <button class="merge-pill" id="MERGE_PILL" 
-      onclick="toggleMergeMode()"
-      title="Aynı isimli kartları birleştirir">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-      <span id="MERGE_LBL">İsim Birleştir</span>
     </button>
     <button class="merge-pill merge-pill-todo" id="MERGE_TODO_PILL"
       onclick="openMergeTodoModal()"
@@ -1140,11 +1126,6 @@ let mergeEnabled=true;
 function toggleMergeMode(){
   mergeEnabled=!mergeEnabled;
   document.getElementById('MERGE_TOGGLE').checked=mergeEnabled;
-  const pill=document.getElementById('MERGE_PILL');
-  pill.classList.toggle('off',!mergeEnabled);
-  pill.title=mergeEnabled
-    ?(currentLang==='TR'?'Aynı isimli kartları birleştirir':'Merges cards with the same title')
-    :(currentLang==='TR'?'Birleştirme kapalı':'Merge disabled');
 }
 
 // ── LANGUAGE ──
@@ -1157,9 +1138,7 @@ function setLang(lang){
 }
 function applyLangLabels(){
   document.getElementById('SEARCH_INPUT').placeholder=s('search');
-  document.getElementById('MERGE_LBL').textContent=s('mergePill');
   document.getElementById('LBL_MERGE_TODO_BTN').textContent=s('mergeTodoPill');
-  document.getElementById('MERGE_PILL').title=currentLang==='TR'?'Aynı isimli kartları birleştirir':'Merges cards with the same title';
   document.getElementById('MERGE_TODO_PILL').title=currentLang==='TR'?'To Do kartlarında yapılmamış To Do\'ları birleştirir':'Merges incomplete to-dos from selected cards';
   document.getElementById('LBL_PERSONAL').textContent=s('personal');
   document.getElementById('LBL_WORK').textContent=s('work');

@@ -301,6 +301,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .media-area{margin-top:12px;}
 
 .hidden{display:none!important;}
+</style>
+</head>
 <body>
 
 <!-- TOPBAR -->
@@ -1604,21 +1606,21 @@ async function callAI(action,content,extra=''){
   const panel=document.getElementById('AI_RESULT'),titleEl=document.getElementById('AI_RESULT_TITLE'),bodyEl=document.getElementById('AI_RESULT_BODY');
   const labels={summary:s('summarize'),todo:s('todo'),grammar:s('grammar'),translate:s('translate')};
   titleEl.textContent=labels[action]||action;
-  bodyEl.innerHTML=`<span style="color:var(--text3)">${currentLang==='TR'?'Düşünüyor…':'Thinking…'}</span>`;
+  bodyEl.innerHTML='<span style="color:var(--text3)">'+(currentLang==='TR'?'Düşünüyor…':'Thinking…')+'</span>';
   panel.classList.remove('hidden');
-  const prompts={
-    summary:`Bu notu 3-4 cümleyle özetle. Sadece özeti yaz, başka hiçbir şey ekleme:\n\n${content}`,
-    todo:`Bu metinden yapılacaklar listesi çıkar. Her maddeyi "- " ile başlat, başka hiçbir şey ekleme:\n\n${content}`,
-    grammar:`Yazım ve dilbilgisi hatalarını düzelt. Sadece düzeltilmiş metni yaz, açıklama ekleme:\n\n${content}`,
-    translate:`Bu metni ${extra} diline çevir. Sadece çeviriyi yaz, başka hiçbir şey ekleme:\n\n${content}`
+  var prompts={
+    summary:'Bu notu 3-4 cümleyle özetle. Sadece özeti yaz, başka hiçbir şey ekleme:\n\n'+content,
+    todo:'Bu metinden yapılacaklar listesi çıkar. Her maddeyi "- " ile başlat, başka hiçbir şey ekleme:\n\n'+content,
+    grammar:'Yazım ve dilbilgisi hatalarını düzelt. Sadece düzeltilmiş metni yaz, açıklama ekleme:\n\n'+content,
+    translate:'Bu metni '+extra+' diline çevir. Sadece çeviriyi yaz, başka hiçbir şey ekleme:\n\n'+content
   };
   try{
-    const res=await fetch('/.netlify/functions/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompts[action]})});
-    const data=await res.json();
-    const text=data.text||'Yanıt alınamadı.';
-    if(action==='todo'){bodyEl.innerHTML='<ul>'+text.split('\n').filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^-\s*/,'').trim())}</li>`).join('')+'</ul>';}
+    var res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompts[action]})});
+    var data=await res.json();
+    var text=data.text||'Yanıt alınamadı.';
+    if(action==='todo'){bodyEl.innerHTML='<ul>'+text.split('\n').filter(function(l){return l.trim();}).map(function(l){return '<li>'+esc(l.replace(/^-\s*/,'').trim())+'</li>';}).join('')+'</ul>';}
     else{bodyEl.innerHTML=esc(text).replace(/\n/g,'<br>');}
-  }catch{bodyEl.innerHTML=`<span style="color:#c0392b">${currentLang==='TR'?'AI bağlantısı kurulamadı.':'Could not connect to AI.'}</span>`;}
+  }catch(e){bodyEl.innerHTML='<span style="color:#c0392b">'+(currentLang==='TR'?'AI bağlantısı kurulamadı.':'Could not connect to AI.')+'</span>';}
 }
 
 // ── FOLDER (placeholder) ──
@@ -1639,12 +1641,25 @@ function updateDlList(){
 function toggleSelAll(checked){document.querySelectorAll('.dl-chk').forEach(cb=>cb.checked=checked);updateDlCount();}
 function updateDlCount(){document.getElementById('DL_COUNT').textContent=[...document.querySelectorAll('.dl-chk:checked')].length;}
 function doDownload(){
-  const ids=[...document.querySelectorAll('.dl-chk:checked')].map(cb=>cb.value);if(!ids.length)return;
-  const ns=ids.map(id=>notes.find(n=>n.id===id)).filter(Boolean).sort((a,b)=>new Date(a.updatedAt)-new Date(b.updatedAt));
-  let h=`<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'><title>not·that</title><style>body{font-family:Calibri,sans-serif;font-size:11pt;line-height:1.6;margin:2cm;}h1{font-size:18pt;margin-top:18pt;}h2{font-size:12pt;color:#4a7ab5;margin-top:14pt;}.dt{font-size:9pt;color:#999;}.body{white-space:pre-wrap;}hr{border:none;border-top:1px solid #ddd;margin:12pt 0;}</style></head><body><h1 style="font-size:22pt">not·that</h1><div class="dt">${new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</div><hr>`;
-  let ll='';ns.forEach(n=>{const d=new Date(n.updatedAt),lb=d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});if(lb!==ll){h+=`<h2>${lb}</h2>`;ll=lb;}h+=`<h1>${esc(n.title||s('untitled'))}</h1><div class="dt">${d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</div><div class="body">${esc(n.content)}</div><hr>`;});
+  var ids=[...document.querySelectorAll('.dl-chk:checked')].map(function(cb){return cb.value;});
+  if(!ids.length)return;
+  var ns=ids.map(function(id){return notes.find(function(n){return n.id===id;});}).filter(Boolean).sort(function(a,b){return new Date(a.updatedAt)-new Date(b.updatedAt);});
+  var today=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  var h='<html><head><meta charset="utf-8"><title>not-that</title></head><body><h1>not-that</h1><div>'+today+'</div><hr>';
+  var ll='';
+  ns.forEach(function(n){
+    var d=new Date(n.updatedAt);
+    var lb=d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+    if(lb!==ll){h+='<h2>'+lb+'</h2>';ll=lb;}
+    h+='<h1>'+esc(n.title||s('untitled'))+'</h1>';
+    h+='<div>'+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})+'</div>';
+    h+='<div>'+esc(n.content)+'</div><hr>';
+  });
   h+='</body></html>';
-  const blob=new Blob(['\ufeff'+h],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`notthat_${new Date().toISOString().split('T')[0]}.doc`;a.click();URL.revokeObjectURL(a.href);closeModal('DL_MODAL');
+  var fname='notthat_'+new Date().toISOString().split('T')[0]+'.doc';
+  var blob=new Blob(['﻿'+h],{type:'application/msword'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;a.click();
+  URL.revokeObjectURL(a.href);closeModal('DL_MODAL');
 }
 
 // ── DRIVE ──

@@ -1613,7 +1613,7 @@ async function callAI(action,content,extra=''){
     translate:`Bu metni ${extra} diline çevir. Sadece çeviriyi yaz, başka hiçbir şey ekleme:\n\n${content}`
   };
   try{
-    const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompts[action]})});
+    const res=await fetch('/.netlify/functions/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:prompts[action]})});
     const data=await res.json();
     const text=data.text||'Yanıt alınamadı.';
     if(action==='todo'){bodyEl.innerHTML='<ul>'+text.split('\n').filter(l=>l.trim()).map(l=>`<li>${esc(l.replace(/^-\s*/,'').trim())}</li>`).join('')+'</ul>';}

@@ -622,6 +622,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <div class="tdot" id="DOT_plum" style="background:#3d1a4a;" onclick="setTheme('plum')" title="Plum"></div>
     </div>
     <div class="vsep"></div>
+    <button class="ic-btn" id="FAV_BTN" onclick="showFavPanel()" title="Favoriler">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
     <button class="ic-btn" onclick="openDlModal()" title="İndir">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     </button>
@@ -1573,7 +1576,7 @@ function renderCards(space){
         <div class="nc-title" ${isTodo?`style="color:var(--work);"`:''}>
           ${esc(n.title||s('untitled'))}
           ${isTodo?`<span class="nc-badge">To Do</span>`:''}
-          ${hasFlash&&!isTodo?`<span style="font-size:10px;color:var(--accent);">⚡</span>`:''}
+          ${hasFlash&&!isTodo?`<span style="font-size:10px;color:var(--accent);cursor:pointer;" title="Flash Card" onclick="event.stopPropagation();openFlash('${n.id}')">⚡</span>`:''}
         </div>
         <div class="nc-prev">${esc(prev||'…')}</div>
         <div class="nc-meta">
@@ -1825,6 +1828,12 @@ function renderFlashDots(){
     const fv=favCards.some(f=>f.front===c.front&&f.back===c.back);
     return`<div class="fdot${i===flashIdx?' cur':''}${fv?' fav':''}"></div>`;
   }).join('');
+}
+function showFavPanel(){
+  hide('EMPTY_STATE');hide('EDITOR_AREA');hide('SEARCH_PANEL');
+  const fp=document.getElementById('FAV_PANEL');
+  fp.classList.remove('hidden');
+  renderFavList();
 }
 function renderFavList(){
   const btn=document.getElementById('FAV_START_BTN'),list=document.getElementById('FAV_LIST');

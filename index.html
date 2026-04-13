@@ -2852,43 +2852,38 @@ function doDownload(){
 
 // ── INIT ──
 async function init(){
-  // restore dark mode & theme
   const savedMode=localStorage.getItem('nt_darkmode');
   if(savedMode)document.body.setAttribute('data-theme',savedMode);
   setTheme(currentTheme);
   setLang(currentLang);
   const today=new Date().toISOString().split('T')[0];
   const ago=new Date(Date.now()-30*864e5).toISOString().split('T')[0];
-  document.getElementById('DL_FROM').value=ago;document.getElementById('DL_TO').value=today;
+  document.getElementById('DL_FROM').value=ago;
+  document.getElementById('DL_TO').value=today;
 
-  // Check Drive OAuth token in URL hash
-  checkDriveOAuthCallback();
-
-  // Init Supabase
   const sbReady = initSupabase();
 
   if (sbReady) {
-    // Check existing session
-    const { data: { session } } = await sbClient.auth.getSession();
-    if (session) {
-      currentUser = session.user;
-      await onSignedIn();
-    } else {
-      // No session — show auth screen, load local notes as preview
-      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
-      renderAllCards();
-    }
-    // Listen for auth state changes (Google OAuth callback dahil)
+    // onAuthStateChange'i ÖNCE kur — Google OAuth callback'ini kaçırmamak için
     sbClient.auth.onAuthStateChange(async (event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') && session && !currentUser) {
+      if (session && !currentUser && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
         currentUser = session.user;
+        // Drive OAuth token'ı yakala
+        checkDriveOAuthCallback();
         await onSignedIn();
       } else if (event === 'SIGNED_OUT') {
         currentUser = null;
       }
     });
+
+    // Mevcut session kontrolü
+    const { data: { session } } = await sbClient.auth.getSession();
+    if (!session) {
+      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+      renderAllCards();
+    }
+    // currentUser zaten onAuthStateChange'de set edildi
   } else {
-    // Supabase not configured — run in local-only mode, hide auth screen
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('SYNC_DOT').style.display = 'none';
     notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
@@ -2897,7 +2892,6 @@ async function init(){
   }
 
   updateDlList();
-
   document.addEventListener('click',hideCtx);
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){hideCtx();document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden'));}});
   const fa=document.getElementById('FLASH_AREA');

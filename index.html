@@ -1496,23 +1496,7 @@ async function signOut() {
   if (!confirm('Çıkış yapmak istediğine emin misin?')) return;
   signingOut = true;
   if (sbClient) await sbClient.auth.signOut();
-  currentUser = null;
-  notes = [];
-  favCards = [];
-  activeId = null;
-  driveAccessToken = null;
-  renderAllCards();
-  hide('EDITOR_AREA'); show('EMPTY_STATE');
-  document.getElementById('USER_PILL').style.display = 'none';
-  const authScreen = document.getElementById('auth-screen');
-  authScreen.style.display = 'flex';
-  authScreen.style.opacity = '1';
-  authScreen.style.pointerEvents = 'all';
-  document.getElementById('auth-email').value = '';
-  document.getElementById('auth-pass').value = '';
-  document.getElementById('auth-err').style.display = 'none';
-  document.getElementById('auth-ok').style.display = 'none';
-  setTimeout(() => { signingOut = false; }, 2000);
+  window.location.reload();
 }
 
 // ── CLOUD SYNC ──

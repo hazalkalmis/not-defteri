@@ -1304,7 +1304,19 @@ async function doAuth() {
       await onSignedIn();
     }
   } catch(e) {
-    showAuthErr(e.message || 'Sign in failed.');
+    const msg = e.message || '';
+    if (msg.includes('already registered') || msg.includes('User already registered')) {
+      showAuthErr('This email is already registered. Please sign in instead.');
+    } else if (msg.includes('Email not confirmed')) {
+      showAuthErr('Please confirm your email first.');
+      // Resend butonu göster
+      const errEl = document.getElementById('auth-err');
+      errEl.innerHTML += ' <button onclick="resendConfirmation()" style="background:none;border:none;color:#c0392b;text-decoration:underline;cursor:pointer;font-size:12px;padding:0;">Resend email</button>';
+    } else if (msg.includes('Invalid login credentials')) {
+      showAuthErr('Incorrect email or password.');
+    } else {
+      showAuthErr(msg || 'Something went wrong. Please try again.');
+    }
   }
   btn.disabled = false;
   btn.textContent = authMode === 'login' ? 'Sign in' : 'Sign up';
@@ -1313,6 +1325,21 @@ async function doAuth() {
 function showAuthErr(msg) {
   const el = document.getElementById('auth-err');
   el.textContent = msg; el.style.display = 'block';
+}
+
+async function resendConfirmation() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) return;
+  const { error } = await sbClient.auth.resend({ type: 'signup', email });
+  const errEl = document.getElementById('auth-err');
+  const okEl  = document.getElementById('auth-ok');
+  if (error) {
+    errEl.textContent = 'Could not resend. Try again shortly.';
+  } else {
+    errEl.style.display = 'none';
+    okEl.textContent = 'Confirmation email resent! Check your inbox.';
+    okEl.style.display = 'block';
+  }
 }
 
 async function onSignedIn() {

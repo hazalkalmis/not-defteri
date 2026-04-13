@@ -1501,7 +1501,15 @@ async function signOut() {
   renderAllCards();
   hide('EDITOR_AREA'); show('EMPTY_STATE');
   document.getElementById('USER_PILL').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
+  const authScreen = document.getElementById('auth-screen');
+  authScreen.style.display = 'flex';
+  authScreen.style.opacity = '1';
+  authScreen.style.pointerEvents = 'all';
+  // Clear form
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-pass').value = '';
+  document.getElementById('auth-err').style.display = 'none';
+  document.getElementById('auth-ok').style.display = 'none';
 }
 
 // ── CLOUD SYNC ──

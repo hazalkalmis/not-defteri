@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>not·that</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23f5f3ee'/><text x='4' y='23' font-family='Georgia,serif' font-size='16' font-weight='500' fill='%231c1a17'>n</text><circle cx='18' cy='17' r='2.5' fill='%234a7ab5'/><text x='20' y='23' font-family='Georgia,serif' font-size='16' font-weight='500' fill='%231c1a17'>t</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --bg:#f5f3ee;--bg2:#eceae3;--bg3:#dedad1;
@@ -585,9 +587,208 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   .ai-btn { height: 26px; padding: 0 8px; font-size: 11px; }
   .fpill, .media-pill, .type-pill { font-size: 11px; padding: 2px 7px; }
 }
+
+/* ── AUTH SCREEN ── */
+#auth-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; flex-direction: row;
+  isolation: isolate;
+}
+.auth-left {
+  width: 440px; flex-shrink: 0; background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 48px 52px; position: relative; z-index: 10001;
+  pointer-events: all;
+}
+.auth-right {
+  flex: 1; background: #150d27;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden; gap: 32px; padding: 40px;
+}
+.auth-right-logo {
+  font-family: 'Lora', serif; font-size: 18px; font-weight: 500;
+  color: rgba(255,255,255,.85); letter-spacing: -.2px;
+  position: absolute; top: 32px; right: 36px;
+}
+.auth-right-logo span { color: #8b6bbf; }
+.auth-video-wrap {
+  width: 100%; max-width: 600px; border-radius: 14px;
+  overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,.5);
+  border: 1px solid rgba(255,255,255,.07);
+}
+.auth-video-wrap video { width: 100%; display: block; }
+.auth-features {
+  display: flex; gap: 28px; flex-wrap: wrap; justify-content: center;
+}
+.auth-feat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: rgba(255,255,255,.45);
+  font-family: 'DM Sans', sans-serif;
+}
+.auth-feat-dot { width: 5px; height: 5px; border-radius: 50%; background: #6a4a8a; flex-shrink: 0; }
+@media (max-width: 768px) {
+  .auth-right { display: none; }
+  .auth-left { width: 100%; padding: 40px 28px; }
+}
+.auth-form { width: 100%; }
+.auth-card { width: 100%; }
+.auth-logo {
+  font-family: 'Lora', serif; font-size: 22px; font-weight: 500;
+  color: var(--text); letter-spacing: -.3px; margin-bottom: 6px;
+}
+.auth-logo span { color: var(--accent); }
+.auth-sub { font-size: 13px; color: var(--text2); margin-bottom: 28px; }
+.auth-tabs {
+  display: flex; border: 1px solid var(--border2); border-radius: 8px;
+  overflow: hidden; margin-bottom: 20px;
+}
+.auth-tab {
+  flex: 1; padding: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--text2); transition: .15s;
+}
+.auth-tab.on { background: var(--accent); color: #fff; }
+.auth-field { margin-bottom: 12px; }
+.auth-label { font-size: 11px; color: var(--text2); margin-bottom: 5px; display: block; }
+.auth-input {
+  width: 100%; height: 38px; background: var(--bg2);
+  border: 1px solid var(--border2); border-radius: 8px;
+  padding: 0 12px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--text); outline: none; transition: .15s;
+}
+.auth-input:focus { border-color: var(--accent); }
+.auth-btn {
+  width: 100%; height: 38px; background: var(--accent); color: #fff;
+  border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 8px;
+  transition: .15s;
+}
+.auth-btn:hover { filter: brightness(1.08); }
+.auth-btn:disabled { opacity: .6; cursor: default; }
+.auth-err {
+  font-size: 12px; color: #c0392b; background: #fce8e8;
+  border-radius: 7px; padding: 8px 12px; margin-top: 10px; display: none;
+}
+.auth-ok {
+  font-size: 12px; color: #2d6a2d; background: #e8f4e8;
+  border-radius: 7px; padding: 8px 12px; margin-top: 10px; display: none;
+}
+/* ── SWIPE TO DELETE/SHARE ── */
+.ncard { position: relative; }
+.ncard-swipe-inner { display: flex; align-items: stretch; transition: transform .2s ease; }
+.ncard-actions {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  display: flex; align-items: stretch; transform: translateX(100%);
+  transition: transform .2s ease; border-radius: 0 7px 7px 0; overflow: hidden;
+}
+.ncard.swiped .ncard-actions { transform: translateX(0); }
+.ncard.swiped .ncard-swipe-inner { transform: translateX(-120px); }
+.ncard-action {
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+  padding: 0 14px; font-size: 10px; font-weight: 500; cursor: pointer;
+  gap: 3px; white-space: nowrap; font-family: 'DM Sans', sans-serif; border: none;
+}
+.ncard-action svg { flex-shrink: 0; }
+.ncard-action.share { background: var(--accent); color: #fff; }
+.ncard-action.delete { background: #e74c3c; color: #fff; }
+/* ── CALC LINE ── */
+.calc-line {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--accent2); border-radius: 7px;
+  padding: 5px 10px; margin: 4px 0;
+  border: 1px solid rgba(74,122,181,.15);
+}
+.calc-expr {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--accent-text);
+}
+.calc-result { font-weight: 500; color: var(--accent-text); font-size: 13px; white-space: nowrap; }
+.calc-result.error { color: #c0392b; }
+/* user pill in topbar */
+.user-pill {
+  display: flex; align-items: center; gap: 6px; padding: 3px 10px 3px 5px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 99px; cursor: pointer; font-size: 12px; color: var(--text2);
+  transition: .12s; white-space: nowrap; flex-shrink: 0;
+}
+.user-pill:hover { border-color: var(--accent); color: var(--accent-text); }
+.user-avatar {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; flex-shrink: 0;
+}
+/* sync indicator */
+.sync-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #3d7a52; flex-shrink: 0; transition: background .3s;
+}
+.sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
+.sync-dot.error { background: #c0392b; }
+/* Drive modal status */
+#DRIVE_STATUS { transition: all .2s; }
 </style>
 </head>
 <body>
+
+<!-- ── AUTH SCREEN ── -->
+<div id="auth-screen">
+  <!-- SOL: Form -->
+  <div class="auth-left">
+    <div class="auth-form">
+      <div class="auth-logo">not<span>·</span>that</div>
+      <div class="auth-sub">Note that, easily.</div>
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tab-login" onclick="switchAuthTab('login')">Sign in</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Sign up</button>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" id="auth-pass" type="password" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doAuth()" />
+      </div>
+      <button class="auth-btn" id="auth-submit" onclick="doAuth()">Sign in</button>
+      <div class="auth-err" id="auth-err"></div>
+      <div class="auth-ok" id="auth-ok"></div>
+    </div>
+  </div>
+  <!-- SAĞ: Video -->
+  <div class="auth-right">
+    <div class="auth-right-logo">not<span>·</span>that</div>
+    <div class="auth-video-wrap" style="position:relative;" onclick="unmuteVideo()">
+      <video id="AUTH_VIDEO" autoplay muted loop playsinline controls
+        style="width:100%;display:block;"
+        src="https://irnnpsvkjectyoujyggq.supabase.co/storage/v1/object/public/not-that/notthat_web.mp4">
+      </video>
+      <div id="VIDEO_UNMUTE_HINT" style="
+        position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
+        background:rgba(0,0,0,.55);color:#fff;font-size:11px;
+        padding:5px 12px;border-radius:99px;pointer-events:none;
+        font-family:'DM Sans',sans-serif;white-space:nowrap;
+        backdrop-filter:blur(4px);
+      ">🔇 Ses için tıkla</div>
+    </div>
+    <script>
+    function unmuteVideo(){
+      const v=document.getElementById('AUTH_VIDEO');
+      const hint=document.getElementById('VIDEO_UNMUTE_HINT');
+      if(v&&v.muted){v.muted=false;if(hint)hint.style.display='none';}
+    }
+    </script>
+    <div class="auth-features">
+      <div class="auth-feat"><div class="auth-feat-dot"></div>Personal &amp; work notes</div>
+      <div class="auth-feat"><div class="auth-feat-dot"></div>AI tools</div>
+      <div class="auth-feat"><div class="auth-feat-dot"></div>Flash cards</div>
+      <div class="auth-feat"><div class="auth-feat-dot"></div>Card merging</div>
+    </div>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -631,6 +832,12 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <button class="ic-btn" onclick="toggleDarkMode()" title="Karanlık mod">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
+    <div class="vsep"></div>
+    <div class="sync-dot" id="SYNC_DOT" title="Bulut senkronizasyonu"></div>
+    <div class="user-pill" id="USER_PILL" onclick="signOut()" style="display:none;" title="Çıkış yap">
+      <div class="user-avatar" id="USER_AVATAR">?</div>
+      <span id="USER_EMAIL_SHORT"></span>
+    </div>
   </div>
 </div>
 
@@ -771,6 +978,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
           Drive
         </button>
+        <button class="fb" onclick="insertCalcLine()" title="Hesaplama satırı ekle" style="font-size:14px;font-weight:500;color:var(--accent);">∑</button>
       </div>
 
       <!-- Normal note editor -->
@@ -783,6 +991,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         <textarea class="body-input" id="BODY_INPUT"
           oninput="onBodyChange()"
           onkeydown="bodyKeyDown(event)"></textarea>
+        <div id="CALC_OVERLAY" style="padding:0;"></div>
         <div class="media-area" id="MEDIA_AREA"></div>
         <input type="file" id="IMG_INPUT" accept="image/*" class="hidden" onchange="handleImgFile(this)">
         <input type="file" id="AUD_INPUT" accept="audio/*" class="hidden" onchange="handleAudFile(this)">
@@ -998,13 +1207,20 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
 <!-- DRIVE MODAL -->
 <div class="ov hidden" id="DRIVE_MODAL">
-  <div class="modal" style="width:360px;">
+  <div class="modal" style="width:380px;">
     <h3 style="margin-bottom:8px;">Google Drive'a Gönder</h3>
-    <p id="DRIVE_TEXT"></p>
-    <div id="DRIVE_STATUS" style="font-size:12px;color:var(--text2);padding:8px 10px;background:var(--bg2);border-radius:8px;display:none;margin-bottom:12px;"></div>
+    <p id="DRIVE_TEXT" style="margin-bottom:12px;"></p>
+    <div id="DRIVE_STATUS" style="font-size:12px;color:var(--text2);padding:10px 12px;background:var(--bg2);border-radius:8px;display:none;margin-bottom:12px;line-height:1.6;"></div>
+    <div id="DRIVE_OAUTH_AREA" style="display:none;margin-bottom:12px;">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Google hesabınla Drive'a bağlanmak için:</div>
+      <button class="btn-p" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="startDriveOAuth()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/></svg>
+        Google ile Drive'a Bağlan
+      </button>
+    </div>
     <div class="mact">
       <button class="btn" onclick="closeModal('DRIVE_MODAL')">İptal</button>
-      <button class="btn-p" onclick="sendToDrive()">Drive'a Aktar</button>
+      <button class="btn-p" id="DRIVE_SEND_BTN" onclick="sendToDrive()" style="display:none;">Drive'a Aktar</button>
     </div>
   </div>
 </div>
@@ -1023,6 +1239,414 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 </div>
 
 <script>
+// ══════════════════════════════════════════
+// SUPABASE YAPILANDIRMASI
+// Aşağıdaki değerleri kendi Supabase projenle değiştir:
+// 1. https://app.supabase.com → Yeni proje oluştur
+// 2. Settings → API → Project URL ve anon key'i buraya yapıştır
+// ══════════════════════════════════════════
+const SUPABASE_URL  = 'https://irnnpsvkjectyoujyggq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlybm5wc3ZramVjdHlvdWp5Z2dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTIyMDEsImV4cCI6MjA5MTY2ODIwMX0.4enDq9pzGwK9-eX65svXqUF_9k2SBf2h0EHL25FtSA0';
+
+// Google Drive OAuth Client ID (Google Cloud Console → API & Services → Credentials)
+const GDRIVE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';  // örn: 123456789-abc.apps.googleusercontent.com
+
+let sbClient = null;
+let currentUser = null;
+let driveAccessToken = null;
+let authMode = 'login';
+
+function initSupabase() {
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return false;
+  try {
+    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    return true;
+  } catch(e) { console.error('Supabase init error:', e); return false; }
+}
+
+// ── AUTH UI ──
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('on', mode === 'login');
+  document.getElementById('tab-register').classList.toggle('on', mode === 'register');
+  document.getElementById('auth-submit').textContent = mode === 'login' ? 'Sign in' : 'Sign up';
+  document.getElementById('auth-err').style.display = 'none';
+  document.getElementById('auth-ok').style.display = 'none';
+}
+
+async function doAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass  = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-err');
+  const okEl  = document.getElementById('auth-ok');
+  const btn   = document.getElementById('auth-submit');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+
+  if (!email || !pass) { showAuthErr('E-posta ve şifre gerekli.'); return; }
+  if (!sbClient) { showAuthErr('Supabase henüz yapılandırılmadı. SUPABASE_URL ve SUPABASE_ANON_KEY değerlerini index.html içine gir.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = authMode === 'login' ? 'Signing in…' : 'Creating account…';
+
+  try {
+    let result;
+    if (authMode === 'login') {
+      result = await sbClient.auth.signInWithPassword({ email, password: pass });
+    } else {
+      result = await sbClient.auth.signUp({ email, password: pass });
+    }
+    if (result.error) throw result.error;
+    if (authMode === 'register' && !result.data?.session) {
+      okEl.textContent = 'Account created! Check your email to confirm.';
+      okEl.style.display = 'block';
+    } else {
+      currentUser = result.data.user || result.data.session?.user;
+      await onSignedIn();
+    }
+  } catch(e) {
+    showAuthErr(e.message || 'Sign in failed.');
+  }
+  btn.disabled = false;
+  btn.textContent = authMode === 'login' ? 'Sign in' : 'Sign up';
+}
+
+function showAuthErr(msg) {
+  const el = document.getElementById('auth-err');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+async function onSignedIn() {
+  // Auth ekranını gizle, uygulamayı göster
+  document.getElementById('auth-screen').style.display = 'none';
+  // Kullanıcı pill'ini göster
+  const email = currentUser.email || '';
+  const initials = email.charAt(0).toUpperCase();
+  document.getElementById('USER_AVATAR').textContent = initials;
+  document.getElementById('USER_EMAIL_SHORT').textContent = email.split('@')[0];
+  document.getElementById('USER_PILL').style.display = 'flex';
+  // Önce localStorage'dan eski notları aktar, sonra buluttan yükle
+  await migrateLocalNotes();
+  await loadNotesFromCloud();
+}
+
+// ── LOCAL → CLOUD MIGRATION ──
+// Kullanıcı ilk kez giriş yaptığında localStorage'daki notları
+// Supabase'e toplu aktarır; sonra localStorage'ı temizler.
+async function migrateLocalNotes() {
+  const MIGRATION_KEY = 'nt_migrated_' + currentUser.id;
+  if (localStorage.getItem(MIGRATION_KEY)) return; // zaten aktarıldı
+
+  const localNotes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+  const localFavs  = JSON.parse(localStorage.getItem('nt_favs')  || '[]');
+
+  if (!localNotes.length && !localFavs.length) {
+    localStorage.setItem(MIGRATION_KEY, '1');
+    return; // aktarılacak bir şey yok
+  }
+
+  // Kullanıcıya bilgi ver
+  setSyncState('syncing');
+  showMigrationBanner(localNotes.length);
+
+  try {
+    // Notları toplu upsert — zaten bulutta olanları ezmez (created_at'e göre)
+    if (localNotes.length) {
+      const rows = localNotes.map(n => ({
+        id:          n.id,
+        user_id:     currentUser.id,
+        title:       n.title       || '',
+        content:     n.content     || '',
+        space:       n.space       || 'personal',
+        type:        n.type        || 'normal',
+        todo_items:  n.todoItems   || [],
+        todo_type:   n.todoType    || null,
+        images:      n.images      || [],
+        audios:      n.audios      || [],
+        font_family: n.fontFamily  || null,
+        font_size:   n.fontSize    || null,
+        space_order: n.spaceOrder  ?? null,
+        created_at:  n.createdAt   || new Date().toISOString(),
+        updated_at:  n.updatedAt   || new Date().toISOString(),
+      }));
+      const { error } = await supabase
+        .from('notes')
+        .upsert(rows, { onConflict: 'id', ignoreDuplicates: false });
+      if (error) throw error;
+    }
+
+    // Favorileri aktar
+    if (localFavs.length) {
+      await sbClient.from('user_favs').upsert(
+        { user_id: currentUser.id, fav_cards: localFavs },
+        { onConflict: 'user_id' }
+      );
+    }
+
+    // Aktarım tamamlandı — localStorage'ı temizle
+    localStorage.removeItem('nt_notes');
+    localStorage.removeItem('nt_favs');
+    localStorage.setItem(MIGRATION_KEY, '1');
+    setSyncState('ok');
+    hideMigrationBanner(localNotes.length);
+  } catch(e) {
+    console.error('Migration error:', e);
+    setSyncState('error');
+    hideMigrationBanner(0);
+  }
+}
+
+function showMigrationBanner(count) {
+  let banner = document.getElementById('MIGRATION_BANNER');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'MIGRATION_BANNER';
+    banner.style.cssText = `
+      position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+      background:var(--surface); border:1px solid var(--border2);
+      border-radius:10px; padding:12px 20px; font-size:13px;
+      color:var(--text2); z-index:9000; box-shadow:0 4px 16px rgba(0,0,0,.12);
+      display:flex; align-items:center; gap:10px; white-space:nowrap;
+    `;
+    document.body.appendChild(banner);
+  }
+  banner.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="flex-shrink:0;animation:pulse 1s infinite"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span><b>${count}</b> yerel not buluta aktarılıyor…</span>
+  `;
+  banner.style.display = 'flex';
+}
+
+function hideMigrationBanner(count) {
+  const banner = document.getElementById('MIGRATION_BANNER');
+  if (!banner) return;
+  if (count > 0) {
+    banner.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3d7a52" stroke-width="2" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><b>${count}</b> not başarıyla buluta aktarıldı.</span>
+    `;
+    setTimeout(() => { banner.style.display = 'none'; }, 3500);
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+async function signOut() {
+  if (!confirm('Çıkış yapmak istediğine emin misin?')) return;
+  if (sbClient) await sbClient.auth.signOut();
+  currentUser = null;
+  notes = [];
+  favCards = [];
+  activeId = null;
+  renderAllCards();
+  hide('EDITOR_AREA'); show('EMPTY_STATE');
+  document.getElementById('USER_PILL').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ── CLOUD SYNC ──
+function setSyncState(state) { // 'ok' | 'syncing' | 'error'
+  const dot = document.getElementById('SYNC_DOT');
+  dot.className = 'sync-dot' + (state === 'syncing' ? ' syncing' : state === 'error' ? ' error' : '');
+  dot.title = state === 'ok' ? 'Senkronize' : state === 'syncing' ? 'Kaydediliyor…' : 'Senkronizasyon hatası';
+}
+
+async function loadNotesFromCloud() {
+  if (!supabase || !currentUser) return;
+  setSyncState('syncing');
+  try {
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    // Map snake_case DB columns → camelCase app fields
+    notes = (data || []).map(r => ({
+      id: r.id,
+      title: r.title || '',
+      content: r.content || '',
+      space: r.space || 'personal',
+      type: r.type || 'normal',
+      todoItems: r.todo_items || [],
+      todoType: r.todo_type || null,
+      createdAt: r.created_at,
+      updatedAt: r.updated_at,
+      images: r.images || [],
+      audios: r.audios || [],
+      fontFamily: r.font_family,
+      fontSize: r.font_size,
+      spaceOrder: r.space_order,
+    }));
+    // Load favs
+    const { data: fdata } = await supabase
+      .from('user_favs')
+      .select('fav_cards')
+      .eq('user_id', currentUser.id)
+      .single();
+    if (fdata?.fav_cards) favCards = fdata.fav_cards;
+    renderAllCards();
+    setSyncState('ok');
+  } catch(e) {
+    console.error('Cloud load error:', e);
+    setSyncState('error');
+    // Fallback: local storage
+    notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+    renderAllCards();
+  }
+}
+
+async function saveNoteToCloud(note) {
+  if (!supabase || !currentUser) return;
+  setSyncState('syncing');
+  try {
+    const row = {
+      id: note.id,
+      user_id: currentUser.id,
+      title: note.title,
+      content: note.content,
+      space: note.space,
+      type: note.type,
+      todo_items: note.todoItems || [],
+      todo_type: note.todoType || null,
+      images: note.images || [],
+      audios: note.audios || [],
+      font_family: note.fontFamily || null,
+      font_size: note.fontSize || null,
+      space_order: note.spaceOrder ?? null,
+      updated_at: note.updatedAt,
+      created_at: note.createdAt,
+    };
+    const { error } = await sbClient.from('notes').upsert(row, { onConflict: 'id' });
+    if (error) throw error;
+    setSyncState('ok');
+  } catch(e) {
+    console.error('Cloud save error:', e);
+    setSyncState('error');
+  }
+}
+
+async function deleteNoteFromCloud(noteId) {
+  if (!supabase || !currentUser) return;
+  try {
+    await sbClient.from('notes').delete().eq('id', noteId).eq('user_id', currentUser.id);
+  } catch(e) { console.error('Cloud delete error:', e); }
+}
+
+async function saveFavsToCloud() {
+  if (!supabase || !currentUser) return;
+  try {
+    await sbClient.from('user_favs').upsert(
+      { user_id: currentUser.id, fav_cards: favCards },
+      { onConflict: 'user_id' }
+    );
+  } catch(e) { console.error('Cloud favs save error:', e); }
+}
+
+// ── GOOGLE DRIVE OAUTH ──
+function startDriveOAuth() {
+  if (GDRIVE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
+    const st = document.getElementById('DRIVE_STATUS');
+    st.style.display = 'block';
+    st.style.color = '#c0392b';
+    st.textContent = '⚠️ GDRIVE_CLIENT_ID henüz ayarlanmamış. Google Cloud Console\'dan bir OAuth client ID oluştur ve index.html\'e ekle.';
+    return;
+  }
+  const scope = 'https://www.googleapis.com/auth/drive.file';
+  const redirectUri = window.location.origin + window.location.pathname;
+  const url = `https://accounts.google.com/o/oauth2/v2/auth`
+    + `?client_id=${encodeURIComponent(GDRIVE_CLIENT_ID)}`
+    + `&redirect_uri=${encodeURIComponent(redirectUri)}`
+    + `&response_type=token`
+    + `&scope=${encodeURIComponent(scope)}`;
+  window.location.href = url;
+}
+
+function checkDriveOAuthCallback() {
+  const hash = window.location.hash;
+  if (!hash.includes('access_token')) return;
+  const params = new URLSearchParams(hash.slice(1));
+  const token = params.get('access_token');
+  if (token) {
+    driveAccessToken = token;
+    history.replaceState(null, '', window.location.pathname);
+  }
+}
+
+// ── DRIVE MODAL ──
+function openDriveModal() {
+  const n = getActive(); if (!n) return;
+  document.getElementById('DRIVE_TEXT').textContent =
+    `"${n.title || 'Başlıksız not'}" notunu Google Drive'a .txt olarak aktar.`;
+  document.getElementById('DRIVE_STATUS').style.display = 'none';
+  document.getElementById('DRIVE_STATUS').style.color = 'var(--text2)';
+  const oauthArea = document.getElementById('DRIVE_OAUTH_AREA');
+  const sendBtn   = document.getElementById('DRIVE_SEND_BTN');
+  if (driveAccessToken) {
+    oauthArea.style.display = 'none';
+    sendBtn.style.display = 'inline-flex';
+  } else {
+    oauthArea.style.display = 'block';
+    sendBtn.style.display = 'none';
+  }
+  openModal('DRIVE_MODAL');
+}
+
+async function sendToDrive() {
+  const n = getActive(); if (!n) return;
+  if (!driveAccessToken) { startDriveOAuth(); return; }
+  const st = document.getElementById('DRIVE_STATUS');
+  st.style.display = 'block';
+  st.style.color = 'var(--text2)';
+  st.textContent = '⏳ Drive\'a yükleniyor…';
+  document.getElementById('DRIVE_SEND_BTN').disabled = true;
+
+  const content = n.type === 'todo'
+    ? (n.title || '') + '\n\n' + (n.todoItems || []).map(i => i.subHeader ? `\n## ${i.subHeader}` : `[${i.done ? 'x' : ' '}] ${i.text}`).join('\n')
+    : (n.title || '') + '\n\n' + (n.content || '');
+  const filename = (n.title || 'not') + '.txt';
+  const blob = new Blob([content], { type: 'text/plain' });
+
+  // Multipart upload
+  const boundary = 'not_that_boundary';
+  const meta = JSON.stringify({ name: filename, mimeType: 'text/plain' });
+  const body = [
+    `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n`,
+    `--${boundary}\r\nContent-Type: text/plain\r\n\r\n${content}\r\n`,
+    `--${boundary}--`
+  ].join('');
+
+  try {
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${driveAccessToken}`,
+        'Content-Type': `multipart/related; boundary=${boundary}`,
+      },
+      body,
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      // Token expired?
+      if (res.status === 401) {
+        driveAccessToken = null;
+        document.getElementById('DRIVE_OAUTH_AREA').style.display = 'block';
+        document.getElementById('DRIVE_SEND_BTN').style.display = 'none';
+        st.style.color = '#c0392b';
+        st.textContent = '⚠️ Google oturumu sona erdi. Tekrar bağlan.';
+        return;
+      }
+      throw new Error(err.error?.message || 'Drive yükleme hatası');
+    }
+    const data = await res.json();
+    st.style.color = '#2d6a2d';
+    st.textContent = `✓ "${filename}" Drive'a yüklendi!`;
+  } catch(e) {
+    st.style.color = '#c0392b';
+    st.textContent = '⚠️ Hata: ' + e.message;
+  }
+  document.getElementById('DRIVE_SEND_BTN').disabled = false;
+}
+
 // ── STATE ──
 let notes   = JSON.parse(localStorage.getItem('nt_notes')   || '[]');
 let favCards= JSON.parse(localStorage.getItem('nt_favs')    || '[]');
@@ -1087,7 +1711,20 @@ const STR={
 function s(k){return(STR[currentLang]||STR.TR)[k]||k;}
 
 // ── PERSIST ──
-function save(){localStorage.setItem('nt_notes',JSON.stringify(notes));localStorage.setItem('nt_favs',JSON.stringify(favCards));}
+function save(){
+  localStorage.setItem('nt_notes',JSON.stringify(notes));
+  localStorage.setItem('nt_favs',JSON.stringify(favCards));
+}
+function saveWithCloud(noteId) {
+  save();
+  if (noteId) {
+    const n = notes.find(x => x.id === noteId);
+    if (n) saveNoteToCloud(n);
+  }
+  if (!noteId) { // favs changed
+    saveFavsToCloud();
+  }
+}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 function now(){return new Date().toISOString();}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1193,7 +1830,162 @@ function getCurrentTypeLabel(){
   return s('generalNote');
 }
 
-// ── RESIZE ──
+// ── SWIPE TO DELETE / SHARE ──
+let swipedCard = null;
+function initSwipe(el, nid) {
+  let startX = 0, startY = 0, dx = 0, swiping = false;
+  el.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiping = false; dx = 0;
+  }, { passive: true });
+  el.addEventListener('touchmove', e => {
+    dx = e.touches[0].clientX - startX;
+    const dy = Math.abs(e.touches[0].clientY - startY);
+    if (Math.abs(dx) > dy && Math.abs(dx) > 8) swiping = true;
+    if (swiping && dx < 0) {
+      const inner = el.querySelector('.ncard-swipe-inner');
+      if (inner) inner.style.transform = `translateX(${Math.max(dx, -120)}px)`;
+    }
+  }, { passive: true });
+  el.addEventListener('touchend', () => {
+    if (swiping && dx < -60) {
+      if (swipedCard && swipedCard !== el) closeSwipe(swipedCard);
+      el.classList.add('swiped');
+      swipedCard = el;
+    } else {
+      const inner = el.querySelector('.ncard-swipe-inner');
+      if (inner) inner.style.transform = '';
+    }
+  });
+  // Touchpad / mouse için: mouseenter sağ kenara yakınsa göster
+  el.addEventListener('mouseleave', () => {
+    if (el !== swipedCard) {
+      const inner = el.querySelector('.ncard-swipe-inner');
+      if (inner) inner.style.transform = '';
+    }
+  });
+}
+function closeSwipe(el) {
+  if (!el) return;
+  el.classList.remove('swiped');
+  const inner = el.querySelector('.ncard-swipe-inner');
+  if (inner) inner.style.transform = '';
+  swipedCard = null;
+}
+function shareNote(nid) {
+  closeSwipe(swipedCard);
+  const n = notes.find(x => x.id === nid); if (!n) return;
+  let text = n.title ? n.title + '\n\n' : '';
+  if (n.type === 'todo') {
+    text += (n.todoItems || []).map((item, i) => {
+      if (item.subHeader) return '\n' + item.subHeader;
+      return (i + 1) + '. ' + (item.done ? '✓ ' : '') + item.text;
+    }).join('\n');
+  } else {
+    text += n.content;
+  }
+  if (navigator.share) {
+    navigator.share({ title: n.title || 'not·that', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showFlash(currentLang === 'TR' ? 'Not kopyalandı ✓' : 'Note copied ✓');
+    });
+  }
+}
+function showFlash(msg) {
+  let el = document.getElementById('FLASH_MSG');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'FLASH_MSG';
+    el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 18px;border-radius:99px;font-size:13px;z-index:9000;pointer-events:none;transition:opacity .3s;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg; el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 2000);
+}
+
+// ── HESAPLAMA MOTORU ──
+function insertCalcLine() {
+  const ta = document.getElementById('BODY_INPUT');
+  if (!ta) return;
+  const pos = ta.selectionStart;
+  const before = ta.value.slice(0, pos);
+  const after  = ta.value.slice(pos);
+  const nl = before.length && !before.endsWith('\n') ? '\n' : '';
+  ta.value = before + nl + '= ' + after;
+  ta.selectionStart = ta.selectionEnd = pos + nl.length + 2;
+  ta.focus();
+  onBodyChange();
+}
+
+function evalCalcExpr(expr) {
+  try {
+    // Güvenli eval — sadece sayı ve operatör
+    const clean = expr.replace(/[^0-9+\-*\/().% ]/g, '').trim();
+    if (!clean) return null;
+    // eslint-disable-next-line no-new-func
+    const result = Function('"use strict"; return (' + clean + ')')();
+    if (!isFinite(result)) return 'Hata';
+    // Güzel formatla
+    return Number.isInteger(result) ? result.toString() : parseFloat(result.toFixed(6)).toString();
+  } catch { return 'Hata'; }
+}
+
+function renderCalcLines() {
+  const ta = document.getElementById('BODY_INPUT');
+  const area = document.getElementById('CALC_OVERLAY');
+  if (!ta || !area) return;
+  const lines = ta.value.split('\n');
+  const calcLines = lines.map((line, i) => ({ line, i, isCalc: line.trimStart().startsWith('= ') }));
+  const hasCalc = calcLines.some(c => c.isCalc);
+  area.innerHTML = '';
+  if (!hasCalc) return;
+  calcLines.forEach(({ line, isCalc }) => {
+    if (!isCalc) return;
+    const expr = line.trimStart().slice(2).split('→')[0].trim();
+    const result = evalCalcExpr(expr);
+    if (result === null) return;
+    const div = document.createElement('div');
+    div.className = 'calc-line';
+    div.innerHTML = `<span style="color:var(--accent-text);font-size:13px;font-family:'DM Sans',sans-serif;">= ${expr}</span>
+      <span class="calc-result${result==='Hata'?' error':''}">→ ${result}</span>`;
+    area.appendChild(div);
+  });
+}
+
+// Textarea'daki = satırlarını inline güncelle
+function processCalcInBody() {
+  const ta = document.getElementById('BODY_INPUT');
+  if (!ta) return;
+  const lines = ta.value.split('\n');
+  let changed = false;
+  const newLines = lines.map(line => {
+    if (!line.trimStart().startsWith('= ')) return line;
+    const expr = line.trimStart().slice(2).split('→')[0].trim();
+    const result = evalCalcExpr(expr);
+    if (result === null || result === 'Hata') return line;
+    const newLine = '= ' + expr + ' → ' + result;
+    if (newLine !== line) changed = true;
+    return newLine;
+  });
+  if (changed) {
+    const sel = ta.selectionStart;
+    ta.value = newLines.join('\n');
+    ta.selectionStart = ta.selectionEnd = sel;
+  }
+}
+
+// ── NUMBERED LIST FIX — "1." yazıp Enter ──
+// (bodyKeyDown fonksiyonuna ek olarak "1." yazıp boşluk bırakıldığında da çalışır)
+function checkAutoNumberedList(ta) {
+  const pos = ta.selectionStart;
+  const before = ta.value.slice(0, pos);
+  const match = before.match(/(\n|^)(\d+)\.\s$/);
+  if (match) return; // zaten işlendi
+}
+
 function startResize(e){
   resizing=true;resizeStartX=e.clientX;resizeStartW=document.getElementById('LEFT').offsetWidth;
   document.addEventListener('mousemove',doResize);document.addEventListener('mouseup',stopResize);e.preventDefault();
@@ -1236,7 +2028,7 @@ function getActive(){return notes.find(x=>x.id===activeId);}
 function newNote(space,type){
   const n={id:uid(),title:'',content:'',space:space||'personal',type:type||'normal',
     todoItems:[],todoType:null,createdAt:now(),updatedAt:now(),images:[],audios:[]};
-  notes.unshift(n);save();renderAllCards();openNote(n.id);
+  notes.unshift(n);save();saveNoteToCloud(n);renderAllCards();openNote(n.id);
   setTimeout(()=>document.getElementById('TITLE_INPUT').focus(),60);
 }
 function openNote(id){
@@ -1261,7 +2053,7 @@ function openNote(id){
 }
 function getActive(){return notes.find(x=>x.id===activeId);}
 function onTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TITLE_INPUT'));}
-function onBodyChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);}
+function onBodyChange(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{saveNote();processCalcInBody();},500);renderCalcLines();}
 function onTodoTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TODO_TITLE'));}
 function checkMergeTodo(){
   saveNote();
@@ -1282,10 +2074,14 @@ function saveNote(){
   const n=getActive();if(!n)return;
   if(n.type==='todo'){n.title=document.getElementById('TODO_TITLE').value;}
   else{n.title=document.getElementById('TITLE_INPUT').value;n.content=document.getElementById('BODY_INPUT').value;}
-  n.updatedAt=now();save();renderAllCards();updateDateLine(n);
+  n.updatedAt=now();
+  save();
+  saveNoteToCloud(n);
+  renderAllCards();updateDateLine(n);
 }
 function deleteNote(){
   if(!activeId||!confirm(currentLang==='TR'?'Bu notu silmek istiyor musun?':'Delete this note?'))return;
+  deleteNoteFromCloud(activeId);
   notes=notes.filter(x=>x.id!==activeId);activeId=null;save();
   renderAllCards();hide('EDITOR_AREA');show('EMPTY_STATE');
 }
@@ -1359,7 +2155,7 @@ function selectTodoType(type){
   else if(type==='monthly')suggestedTitle=now2.toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
   const n={id:uid(),title:suggestedTitle,content:'',space:pendingTodoSpace||'work',type:'todo',
     todoType:type,todoItems:[],createdAt:now(),updatedAt:now(),images:[],audios:[]};
-  notes.unshift(n);save();renderAllCards();openNote(n.id);
+  notes.unshift(n);save();saveNoteToCloud(n);renderAllCards();openNote(n.id);
   setTimeout(()=>document.getElementById('TODO_TITLE').focus(),60);
 }
 function renderTodoItems(n){
@@ -1386,7 +2182,7 @@ function renderTodoItems(n){
 function editTodoItem(idx,val){
   const n=getActive();if(!n||!n.todoItems)return;
   n.todoItems[idx].text=val;
-  save();renderAllCards();
+  save();saveNoteToCloud(n);renderAllCards();
 }
 function todoItemKeyDown(ev,idx){
   if(ev.key==='Enter'){
@@ -1414,7 +2210,7 @@ function todoItemKeyDown(ev,idx){
 function toggleTodoItem(idx){
   const n=getActive();if(!n||!n.todoItems)return;
   n.todoItems[idx].done=!n.todoItems[idx].done;
-  save();showTodoView(n);renderAllCards();
+  save();saveNoteToCloud(n);showTodoView(n);renderAllCards();
 }
 function addTodoItem(ev){
   if(ev.key!=='Enter')return;
@@ -1428,7 +2224,7 @@ function addTodoItem(ev){
   } else {
     n.todoItems.push({text,done:false});
   }
-  input.value='';save();showTodoView(n);renderAllCards();
+  input.value='';save();saveNoteToCloud(n);showTodoView(n);renderAllCards();
 }
 
 // ── MERGE ──
@@ -1469,10 +2265,22 @@ function todoTitleKeyDown(ev){
   if(ev.key==='Enter'){ev.preventDefault();document.getElementById('ADD_TODO_INPUT').focus();}
 }
 function bodyKeyDown(ev){
-  if(ev.key!=='Enter')return;
   const ta=ev.target,pos=ta.selectionStart;
   const ls=ta.value.lastIndexOf('\n',pos-1)+1;
   const line=ta.value.slice(ls,pos);
+
+  // = satırında Enter → hesapla ve yeni satır
+  if(ev.key==='Enter' && line.trimStart().startsWith('= ')){
+    ev.preventDefault();
+    processCalcInBody();
+    const newPos=ta.selectionStart;
+    ta.value=ta.value.slice(0,newPos)+'\n'+ta.value.slice(newPos);
+    ta.selectionStart=ta.selectionEnd=newPos+1;
+    onBodyChange();
+    return;
+  }
+
+  if(ev.key!=='Enter')return;
   const bm=line.match(/^(- )/),nm=line.match(/^(\d+)\. /);
   if(bm){
     ev.preventDefault();
@@ -1486,6 +2294,14 @@ function bodyKeyDown(ev){
     else{const ins=`\n${next}. `;ta.value=ta.value.slice(0,pos)+ins+ta.value.slice(pos);ta.selectionStart=ta.selectionEnd=pos+ins.length;}
     onBodyChange();
   }
+}
+
+// "1. " yazıp devam edince otomatik numara listesi başlat (input event)
+function checkNumberedListStart(ta){
+  const pos=ta.selectionStart;
+  const ls=ta.value.lastIndexOf('\n',pos-1)+1;
+  const line=ta.value.slice(ls,pos);
+  // "1. " yazıldıysa ve daha önce liste yoksa — zaten bodyKeyDown hallediyor
 }
 
 // ── FORMAT ──
@@ -1511,8 +2327,8 @@ function fmt(type){
   ta.value=ta.value.slice(0,s2)+ins+ta.value.slice(e);
   ta.selectionStart=s2+off;ta.selectionEnd=e+off;ta.focus();onBodyChange();
 }
-function applyFont(font){const ta=document.getElementById('BODY_INPUT');ta.style.fontFamily=font;const n=getActive();if(n){n.fontFamily=font;save();}}
-function applySize(size){const ta=document.getElementById('BODY_INPUT');ta.style.fontSize=size;const n=getActive();if(n){n.fontSize=size;save();}}
+function applyFont(font){const ta=document.getElementById('BODY_INPUT');ta.style.fontFamily=font;const n=getActive();if(n){n.fontFamily=font;save();saveNoteToCloud(n);}}
+function applySize(size){const ta=document.getElementById('BODY_INPUT');ta.style.fontSize=size;const n=getActive();if(n){n.fontSize=size;save();saveNoteToCloud(n);}}
 
 // ── RENDER CARDS ──
 function renderAllCards(){
@@ -1562,27 +2378,37 @@ function renderCards(space){
       ?(n.todoItems||[]).filter(i=>!i.subHeader).slice(0,3).map(i=>i.done?`✓ ${i.text}`:i.text).join(' · ')
       :n.content.replace(/#+\s/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/\n/g,' ').trim().slice(0,55);
     const accentColor=isTodo?'var(--work)':'var(--accent)';
-    return `<div class="ncard${n.id===activeId?' active':''}"
-      onclick="openNote('${n.id}')"
+    return `<div class="ncard${n.id===activeId?' active':''}" data-nid="${n.id}"
       oncontextmenu="showNoteCtx(event,'${n.id}')"
       draggable="true"
       ondragstart="dragNoteStart(event,'${n.id}')"
       ondragover="dragNoteOver(event,'${n.id}')"
-      ondrop="dragNoteDrop(event,'${n.id}',this)"
-      data-nid="${n.id}">
-      <div class="nc-drag">⋮⋮</div>
-      <div class="nc-bar" style="background:${accentColor};"></div>
-      <div class="nc-body">
-        <div class="nc-title" ${isTodo?`style="color:var(--work);"`:''}>
-          ${esc(n.title||s('untitled'))}
-          ${isTodo?`<span class="nc-badge">To Do</span>`:''}
-          ${hasFlash&&!isTodo?`<span style="font-size:10px;color:var(--accent);cursor:pointer;" title="Flash Card" onclick="event.stopPropagation();openFlash('${n.id}')">⚡</span>`:''}
+      ondrop="dragNoteDrop(event,'${n.id}',this)">
+      <div class="ncard-swipe-inner" onclick="openNote('${n.id}')">
+        <div class="nc-drag">⋮⋮</div>
+        <div class="nc-bar" style="background:${accentColor};"></div>
+        <div class="nc-body">
+          <div class="nc-title" ${isTodo?`style="color:var(--work);"`:''}>
+            ${esc(n.title||s('untitled'))}
+            ${isTodo?`<span class="nc-badge">To Do</span>`:''}
+            ${hasFlash&&!isTodo?`<span style="font-size:10px;color:var(--accent);cursor:pointer;" title="Flash Card" onclick="event.stopPropagation();openFlash('${n.id}')">⚡</span>`:''}
+          </div>
+          <div class="nc-prev">${esc(prev||'…')}</div>
+          <div class="nc-meta">
+            <span class="nc-date">${relDate(n.updatedAt)}</span>
+            ${isTodo&&total>0?`<span style="font-size:10px;color:${done===total?'#3d7a52':'var(--text3)'};">${done}/${total} ✓</span>`:''}
+          </div>
         </div>
-        <div class="nc-prev">${esc(prev||'…')}</div>
-        <div class="nc-meta">
-          <span class="nc-date">${relDate(n.updatedAt)}</span>
-          ${isTodo&&total>0?`<span style="font-size:10px;color:${done===total?'#3d7a52':'var(--text3)'};">${done}/${total} ✓</span>`:''}
-        </div>
+      </div>
+      <div class="ncard-actions">
+        <button class="ncard-action share" onclick="shareNote('${n.id}')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Paylaş
+        </button>
+        <button class="ncard-action delete" onclick="deleteNoteById('${n.id}');closeSwipe(null)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Sil
+        </button>
       </div>
     </div>`;
   }
@@ -1616,6 +2442,10 @@ function renderCards(space){
   });
 
   container.innerHTML=mainHtml;
+  // swipe init
+  container.querySelectorAll('.ncard').forEach(el => {
+    initSwipe(el, el.dataset.nid);
+  });
 
   if(overflowContainer){
     if(overHtml){
@@ -1691,6 +2521,8 @@ function dragNoteDrop(ev,targetNid,el){
   }
   save();renderAllCards();
   if(activeId===srcNid){updateFolderPill(src);}
+  // Cloud sync both affected notes
+  saveNoteToCloud(src);
 }
 function dropNoteToSpace(ev,space){
   ev.preventDefault();
@@ -1699,7 +2531,7 @@ function dropNoteToSpace(ev,space){
   const src=notes.find(n=>n.id===srcNid);
   if(!src||src.space===space)return;
   src.space=space;src.spaceOrder=undefined;
-  save();renderAllCards();
+  save();saveNoteToCloud(src);renderAllCards();
   if(activeId===srcNid){updateFolderPill(src);}
 }
 
@@ -1746,7 +2578,7 @@ function doMergeTodos(){
   const merged={id:uid(),title:combinedTitle,content:'',space:selectedNotes[0].space,
     type:'todo',todoType:'free',todoItems:combinedItems,
     createdAt:now(),updatedAt:now(),images:[],audios:[]};
-  notes.unshift(merged);save();renderAllCards();openNote(merged.id);
+  notes.unshift(merged);save();saveNoteToCloud(merged);renderAllCards();openNote(merged.id);
   closeModal('MERGE_TODO_MODAL');
 }
 
@@ -1768,11 +2600,12 @@ function showNoteCtx(ev,nid){
 }
 function moveNoteToSpace(nid,space){
   const n=notes.find(x=>x.id===nid);if(!n)return;
-  n.space=space;n.spaceOrder=undefined;save();renderAllCards();
+  n.space=space;n.spaceOrder=undefined;save();saveNoteToCloud(n);renderAllCards();
   if(activeId===nid){updateFolderPill(n);}
 }
 function deleteNoteById(nid){
   if(!confirm(currentLang==='TR'?'Bu notu silmek istiyor musun?':'Delete this note?'))return;
+  deleteNoteFromCloud(nid);
   notes=notes.filter(x=>x.id!==nid);
   if(activeId===nid){activeId=null;hide('EDITOR_AREA');show('EMPTY_STATE');}
   save();renderAllCards();
@@ -1817,7 +2650,7 @@ function toggleFlashFav(){
   const c=flashCards[flashIdx];
   const i=favCards.findIndex(f=>f.front===c.front&&f.back===c.back);
   if(i>=0)favCards.splice(i,1);else{const n=getActive();favCards.push({front:c.front,back:c.back,source:n?n.title:''});}
-  save();updateFlashFavBtn();renderFlashDots();
+  save();saveFavsToCloud();updateFlashFavBtn();renderFlashDots();
 }
 function updateFlashFavBtn(){
   const c=flashCards[flashIdx];const on=favCards.some(f=>f.front===c.front&&f.back===c.back);
@@ -1863,8 +2696,8 @@ function doSearch(q){
 function openMediaModal(){openModal('MEDIA_MODAL');}
 function handleImgFile(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>addImg(ev.target.result);r.readAsDataURL(file);input.value='';}
 function handleAudFile(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>addAud(ev.target.result);r.readAsDataURL(file);input.value='';}
-function addImg(src){const n=getActive();if(!n)return;if(!n.images)n.images=[];n.images.push(src);save();renderMedia(n);}
-function addAud(src){const n=getActive();if(!n)return;if(!n.audios)n.audios=[];n.audios.push(src);save();renderMedia(n);}
+function addImg(src){const n=getActive();if(!n)return;if(!n.images)n.images=[];n.images.push(src);save();saveNoteToCloud(n);renderMedia(n);}
+function addAud(src){const n=getActive();if(!n)return;if(!n.audios)n.audios=[];n.audios.push(src);save();saveNoteToCloud(n);renderMedia(n);}
 function renderMedia(n){
   const area=document.getElementById('MEDIA_AREA');if(!n){area.innerHTML='';return;}
   let h='';
@@ -1959,13 +2792,9 @@ function doDownload(){
   URL.revokeObjectURL(a.href);closeModal('DL_MODAL');
 }
 
-// ── DRIVE ──
-function openDriveModal(){const n=getActive();if(!n)return;document.getElementById('DRIVE_TEXT').textContent=`"${n.title||s('untitled')}" — ${currentLang==='TR'?'Google Drive\'a aktarmak ister misin?':'Send to Google Drive?'}`;document.getElementById('DRIVE_STATUS').style.display='none';openModal('DRIVE_MODAL');}
-function sendToDrive(){const st=document.getElementById('DRIVE_STATUS');st.style.display='block';st.textContent=s('drivePending');}
-
 // ── INIT ──
-function init(){
-  // restore dark mode
+async function init(){
+  // restore dark mode & theme
   const savedMode=localStorage.getItem('nt_darkmode');
   if(savedMode)document.body.setAttribute('data-theme',savedMode);
   setTheme(currentTheme);
@@ -1973,7 +2802,44 @@ function init(){
   const today=new Date().toISOString().split('T')[0];
   const ago=new Date(Date.now()-30*864e5).toISOString().split('T')[0];
   document.getElementById('DL_FROM').value=ago;document.getElementById('DL_TO').value=today;
-  updateDlList();renderAllCards();
+
+  // Check Drive OAuth token in URL hash
+  checkDriveOAuthCallback();
+
+  // Init Supabase
+  const sbReady = initSupabase();
+
+  if (sbReady) {
+    // Check existing session
+    const { data: { session } } = await sbClient.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      await onSignedIn();
+    } else {
+      // No session — show auth screen, load local notes as preview
+      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+      renderAllCards();
+    }
+    // Listen for auth state changes
+    sbClient.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        currentUser = session.user;
+        await onSignedIn();
+      } else if (event === 'SIGNED_OUT') {
+        currentUser = null;
+      }
+    });
+  } else {
+    // Supabase not configured — run in local-only mode, hide auth screen
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('SYNC_DOT').style.display = 'none';
+    notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+    favCards = JSON.parse(localStorage.getItem('nt_favs') || '[]');
+    renderAllCards();
+  }
+
+  updateDlList();
+
   document.addEventListener('click',hideCtx);
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){hideCtx();document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden'));}});
   const fa=document.getElementById('FLASH_AREA');

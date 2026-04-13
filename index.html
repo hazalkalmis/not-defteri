@@ -1284,8 +1284,9 @@ async function signInWithGoogle() {
   const { error } = await sbClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'https://notthat.net',
-      scopes: 'https://www.googleapis.com/auth/drive.file'
+      redirectTo: window.location.origin,
+      scopes: 'https://www.googleapis.com/auth/drive.file',
+      queryParams: { access_type: 'offline', prompt: 'consent' }
     }
   });
   if (error) showAuthErr(error.message);
@@ -2877,9 +2878,9 @@ async function init(){
       notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
       renderAllCards();
     }
-    // Listen for auth state changes
+    // Listen for auth state changes (Google OAuth callback dahil)
     sbClient.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') && session && !currentUser) {
         currentUser = session.user;
         await onSignedIn();
       } else if (event === 'SIGNED_OUT') {

@@ -1494,9 +1494,14 @@ function hideMigrationBanner(count) {
 
 async function signOut() {
   if (!confirm('Çıkış yapmak istediğine emin misin?')) return;
-  signingOut = true;
-  if (sbClient) await sbClient.auth.signOut();
-  window.location.reload();
+  // Supabase session'ını localStorage'dan temizle
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('sb-') || key.includes('supabase')) {
+      localStorage.removeItem(key);
+    }
+  });
+  // Sayfayı yenile — session olmayacağı için login ekranı açılır
+  window.location.href = window.location.origin;
 }
 
 // ── CLOUD SYNC ──

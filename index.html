@@ -754,6 +754,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           onkeydown="if(event.key==='Enter')doAuth()" />
       </div>
       <button class="auth-btn" id="auth-submit" onclick="doAuth()">Sign in</button>
+      <div id="forgot-wrap" style="text-align:right;margin-top:8px;">
+        <button onclick="switchAuthTab('forgot')" id="forgot-link" style="background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;">Şifremi unuttum</button>
+      </div>
       <div style="display:flex;align-items:center;gap:10px;margin:14px 0 4px;">
         <div style="flex:1;height:1px;background:var(--border2);"></div>
         <span style="font-size:12px;color:var(--text3);">or</span>
@@ -1302,12 +1305,49 @@ function switchAuthTab(mode) {
   authMode = mode;
   document.getElementById('tab-login').classList.toggle('on', mode === 'login');
   document.getElementById('tab-register').classList.toggle('on', mode === 'register');
-  document.getElementById('auth-submit').textContent = mode === 'login' ? 'Sign in' : 'Sign up';
   document.getElementById('auth-err').style.display = 'none';
   document.getElementById('auth-ok').style.display = 'none';
+  const passField = document.getElementById('auth-pass').closest('.auth-field');
+  const forgotWrap = document.getElementById('forgot-wrap');
+  const orDiv = forgotWrap ? forgotWrap.nextElementSibling : null;
+  const googleBtn = document.querySelector('[onclick="signInWithGoogle()"]');
+  if (mode === 'forgot') {
+    document.getElementById('auth-submit').textContent = 'Sıfırlama Maili Gönder';
+    if (passField) passField.style.display = 'none';
+    if (forgotWrap) forgotWrap.style.display = 'none';
+    if (googleBtn) googleBtn.parentElement.style.display = 'none';
+  } else {
+    document.getElementById('auth-submit').textContent = mode === 'login' ? 'Sign in' : 'Sign up';
+    if (passField) passField.style.display = 'block';
+    if (forgotWrap) forgotWrap.style.display = mode === 'login' ? 'block' : 'none';
+    if (googleBtn) googleBtn.parentElement.style.display = 'flex';
+  }
+}
+
+async function doForgotPassword() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) { showAuthErr('E-posta adresini gir.'); return; }
+  if (!sbClient) { showAuthErr('Supabase bağlantısı yok.'); return; }
+  const btn = document.getElementById('auth-submit');
+  btn.disabled = true;
+  btn.textContent = 'Gönderiliyor…';
+  const { error } = await sbClient.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  btn.disabled = false;
+  btn.textContent = 'Sıfırlama Maili Gönder';
+  if (error) {
+    showAuthErr(error.message);
+  } else {
+    const okEl = document.getElementById('auth-ok');
+    okEl.textContent = 'Şifre sıfırlama maili gönderildi. Gelen kutunu kontrol et.';
+    okEl.style.display = 'block';
+    setTimeout(() => switchAuthTab('login'), 3000);
+  }
 }
 
 async function doAuth() {
+  if (authMode === 'forgot') { doForgotPassword(); return; }
   const email = document.getElementById('auth-email').value.trim();
   const pass  = document.getElementById('auth-pass').value;
   const errEl = document.getElementById('auth-err');
@@ -3021,6 +3061,12 @@ function doDownload(){
 
 // ── INIT ──
 async function init(){
+  // URL'deki # kalıntısını temizle (Supabase/Drive OAuth callback'inden kalabilir)
+  if (window.location.hash && !window.location.hash.includes('access_token')) {
+    history.replaceState(null, '', window.location.pathname);
+  } else if (window.location.hash === '#') {
+    history.replaceState(null, '', window.location.pathname);
+  }
   const savedMode=localStorage.getItem('nt_darkmode');
   if(savedMode)document.body.setAttribute('data-theme',savedMode);
   setTheme(currentTheme);
@@ -3042,6 +3088,10 @@ async function init(){
       if (signingOut) return;
       if (session && !currentUser && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
         currentUser = session.user;
+        // Supabase auth sonrası URL hash'ini temizle
+        if (window.location.hash) {
+          history.replaceState(null, '', window.location.pathname);
+        }
         checkDriveOAuthCallback();
         await onSignedIn();
       }

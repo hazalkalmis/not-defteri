@@ -921,7 +921,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 </div>
 
 <!-- ── AUTH SCREEN ── -->
-<div id="auth-screen">
+<div id="auth-screen" style="display:none;">
   <!-- SOL: Form -->
   <div class="auth-left">
     <div class="auth-form">
@@ -3257,6 +3257,7 @@ function showLanding() {
   if (!lp) return;
   if (!currentUser) {
     lp.style.display = 'block';
+    // auth gizli kalır
   }
 }
 function hideLanding(mode) {
@@ -3370,11 +3371,11 @@ function endTour() {
 
 // ── INIT ──
 async function init(){
-  // URL'deki # kalıntısını temizle (Supabase/Drive OAuth callback'inden kalabilir)
-  if (window.location.hash && !window.location.hash.includes('access_token')) {
-    history.replaceState(null, '', window.location.pathname);
-  } else if (window.location.hash === '#') {
-    history.replaceState(null, '', window.location.pathname);
+  // URL'deki # kalıntısını her zaman temizle
+  if (window.location.hash) {
+    if (!window.location.hash.includes('access_token')) {
+      history.replaceState(null, '', window.location.pathname);
+    }
   }
   const savedMode=localStorage.getItem('nt_darkmode');
   if(savedMode)document.body.setAttribute('data-theme',savedMode);

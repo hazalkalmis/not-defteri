@@ -595,11 +595,11 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   isolation: isolate;
 }
 .auth-left {
-  width: 440px; flex-shrink: 0; background: var(--bg);
+  width: 440px; min-width: 320px; flex-shrink: 0; background: var(--bg);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   padding: 48px 52px; position: relative; z-index: 10001;
-  pointer-events: all;
+  pointer-events: all; overflow-y: auto;
 }
 .auth-right {
   flex: 1; background: #150d27;
@@ -731,7 +731,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 #DRIVE_STATUS { transition: all .2s; }
 
 /* ── LANDING PAGE ── */
-#landing-page{position:fixed;inset:0;z-index:9998;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;}
+#landing-page{position:fixed;inset:0;z-index:10002;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;}
 .lp-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(255,255,255,.06);}
 .lp-logo{font-family:'Lora',serif;font-size:20px;font-weight:500;color:#e8e0f0;letter-spacing:-.3px;}
 .lp-logo span{color:#8b6bbf;}
@@ -3257,9 +3257,6 @@ function showLanding() {
   if (!lp) return;
   if (!currentUser) {
     lp.style.display = 'block';
-    // Auth ekranını gizle — ikisi çakışmasın
-    const auth = document.getElementById('auth-screen');
-    if (auth) auth.style.display = 'none';
   }
 }
 function hideLanding(mode) {

@@ -3255,9 +3255,11 @@ function doDownload(){
 function showLanding() {
   const lp = document.getElementById('landing-page');
   if (!lp) return;
-  // Session yoksa her zaman göster
   if (!currentUser) {
     lp.style.display = 'block';
+    // Auth ekranını gizle — ikisi çakışmasın
+    const auth = document.getElementById('auth-screen');
+    if (auth) auth.style.display = 'none';
   }
 }
 function hideLanding(mode) {

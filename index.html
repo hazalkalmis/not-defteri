@@ -590,7 +590,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
 /* ── AUTH SCREEN ── */
 #auth-screen {
-  position: fixed; inset: 0; z-index: 10000;
+  position: fixed; inset: 0; z-index: 10001;
   display: flex; flex-direction: row;
   isolation: isolate;
 }
@@ -798,12 +798,12 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <span class="lp-logo">not<span>·</span>that</span>
     <div class="lp-nav-btns">
       <button class="lp-signin" onclick="hideLanding('login')">Sign in</button>
-      <button class="lp-cta-btn" onclick="hideLanding('register')">Get started — free</button>
+      <button class="lp-cta-btn" onclick="hideLanding('register')">Get started - free</button>
     </div>
   </nav>
 
   <div class="lp-hero">
-    <div class="lp-badge">Free · No credit card needed</div>
+    <div class="lp-badge">All Access</div>
     <h1 class="lp-h1">Keep your notes<br>in one place. <span>Simply.</span></h1>
     <p class="lp-sub">Personal notes, work lists, flash cards and AI — all in one place. No clutter.</p>
     <div class="lp-hero-btns">
@@ -818,9 +818,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <div class="lp-dot" style="background:#f39c12;"></div>
       <div class="lp-dot" style="background:#2ecc71;"></div>
     </div>
-    <div class="lp-preview-inner">
+      <div class="lp-preview-inner">
       <div class="lp-preview-left">
-        <div style="font-size:10px;color:#8b6bbf;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Personal</div>
+        <div style="font-size:10px;color:#c4a0e8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Personal</div>
         <div style="background:#2a1f3d;border-radius:6px;padding:8px 10px;margin-bottom:6px;border-left:3px solid #8b6bbf;">
           <div style="font-size:12px;color:#e8e0f0;margin-bottom:2px;">Book notes</div>
           <div style="font-size:10px;color:#5a4a7a;">Just now</div>
@@ -829,7 +829,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <div style="font-size:12px;color:#9090b0;margin-bottom:2px;">Weekly plan</div>
           <div style="font-size:10px;color:#3a3a5a;">Yesterday</div>
         </div>
-        <div style="font-size:10px;color:#5a4a7a;text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;">Work</div>
+        <div style="font-size:10px;color:#c4773b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;">Work</div>
         <div style="padding:8px 10px;">
           <div style="font-size:12px;color:#9090b0;margin-bottom:2px;">Meeting notes</div>
           <div style="font-size:10px;color:#3a3a5a;">2 days ago</div>
@@ -843,10 +843,10 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           Small changes lead to remarkable results. The key is building systems, not setting goals...
         </div>
         <div style="display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);">
-          <span style="background:#2a1f3d;color:#8b6bbf;font-size:11px;padding:4px 10px;border-radius:6px;">Summarize</span>
-          <span style="background:#2a1f3d;color:#8b6bbf;font-size:11px;padding:4px 10px;border-radius:6px;">To Do</span>
-          <span style="background:#2a1f3d;color:#8b6bbf;font-size:11px;padding:4px 10px;border-radius:6px;">Translate</span>
-          <span style="background:#2a1f3d;color:#8b6bbf;font-size:11px;padding:4px 10px;border-radius:6px;">Drive</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Summarize</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">To Do</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Translate</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Drive</span>
         </div>
       </div>
     </div>
@@ -913,8 +913,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <div class="tour-tooltip-footer">
       <span class="tour-step-count" id="TOUR_COUNT"></span>
       <div class="tour-btns">
-        <button class="tour-skip" onclick="endTour()">Skip</button>
-        <button class="tour-next" id="TOUR_NEXT_BTN" onclick="tourNext()">Next</button>
+        <button class="tour-skip">Skip</button>
+        <button class="tour-next" id="TOUR_NEXT_BTN">Next →</button>
       </div>
     </div>
   </div>
@@ -3280,8 +3280,7 @@ const TOUR_PHASE1 = [
 const TOUR_PHASE2 = [
   { selector: '.drive-btn', title: 'Export to Drive', text: 'Send this note directly to your Google Drive.', pos: 'top' },
   { selector: '#FAV_NOTE_BTN', title: 'Favorite this note', text: 'Mark a note as favorite to find it quickly.', pos: 'top' },
-  { selector: 'button[onclick="insertCalcLine()"]', title: 'Calculator', text: 'Add a calculation line — type = and it computes instantly.', pos: 'top' },
-  { selector: 'button[onclick*="openFlash"]', title: 'Flash cards', text: 'Write "word: meaning" in your note to create flash cards.', pos: 'bottom' },
+  { selector: '#FAV_NOTE_BTN', title: 'Calculator', text: 'Add a calculation line — start a line with = to compute instantly.', pos: 'top' },
 ];
 
 let tourPhase = 1, tourStep = 0, tourSteps = [];
@@ -3289,26 +3288,32 @@ let tourPhase = 1, tourStep = 0, tourSteps = [];
 function startTourPhase1() {
   if (localStorage.getItem('nt_tour_p1_done')) return;
   tourPhase = 1; tourStep = 0; tourSteps = TOUR_PHASE1;
-  showTourStep();
+  renderTourStep();
 }
 function startTourPhase2() {
   if (localStorage.getItem('nt_tour_p2_done')) return;
   tourPhase = 2; tourStep = 0; tourSteps = TOUR_PHASE2;
-  showTourStep();
+  renderTourStep();
 }
 
-function showTourStep() {
+function renderTourStep() {
   const step = tourSteps[tourStep];
   if (!step) { endTour(); return; }
   const el = document.querySelector(step.selector);
-  if (!el) { tourStep++; showTourStep(); return; }
+  if (!el) { tourStep++; renderTourStep(); return; }
 
   const overlay = document.getElementById('TOUR_OVERLAY');
   const highlight = document.getElementById('TOUR_HIGHLIGHT');
   const tooltip = document.getElementById('TOUR_TOOLTIP');
+  
   overlay.classList.remove('hidden');
   highlight.classList.remove('hidden');
   tooltip.classList.remove('hidden');
+  
+  // pointer-events overlay'e ver ki click geçsin
+  overlay.style.pointerEvents = 'none';
+  highlight.style.pointerEvents = 'none';
+  tooltip.style.pointerEvents = 'all';
 
   const rect = el.getBoundingClientRect();
   const pad = 6;
@@ -3322,38 +3327,44 @@ function showTourStep() {
   document.getElementById('TOUR_COUNT').textContent = (tourStep + 1) + ' / ' + tourSteps.length;
 
   const isLast = tourStep === tourSteps.length - 1;
-  document.getElementById('TOUR_NEXT_BTN').textContent = isLast ? 'Done' : 'Next';
+  const nextBtn = document.getElementById('TOUR_NEXT_BTN');
+  nextBtn.textContent = isLast ? 'Done' : 'Next →';
+  nextBtn.onclick = function() { tourNext(); };
+  document.querySelector('.tour-skip').onclick = function() { endTour(); };
 
   // Tooltip konumu
-  const tw = 220, th = 120, margin = 14;
+  const tw = 230, th = 130, margin = 16;
   let top, left;
   if (step.pos === 'right') {
     top = rect.top; left = rect.right + margin;
-    if (left + tw > window.innerWidth) left = rect.left - tw - margin;
+    if (left + tw > window.innerWidth - 8) left = rect.left - tw - margin;
   } else if (step.pos === 'bottom') {
     top = rect.bottom + margin; left = rect.left;
-    if (left + tw > window.innerWidth) left = window.innerWidth - tw - 16;
   } else if (step.pos === 'top') {
     top = rect.top - th - margin; left = rect.left;
-    if (left + tw > window.innerWidth) left = window.innerWidth - tw - 16;
     if (top < 8) top = rect.bottom + margin;
   } else {
     top = rect.bottom + margin; left = rect.left;
   }
+  if (left + tw > window.innerWidth - 8) left = window.innerWidth - tw - 8;
+  if (left < 8) left = 8;
   tooltip.style.top = Math.max(8, top) + 'px';
-  tooltip.style.left = Math.max(8, left) + 'px';
+  tooltip.style.left = left + 'px';
 }
 
 function tourNext() {
   tourStep++;
   if (tourStep >= tourSteps.length) { endTour(); return; }
-  showTourStep();
+  renderTourStep();
 }
 
 function endTour() {
-  document.getElementById('TOUR_OVERLAY').classList.add('hidden');
-  document.getElementById('TOUR_HIGHLIGHT').classList.add('hidden');
-  document.getElementById('TOUR_TOOLTIP').classList.add('hidden');
+  const overlay = document.getElementById('TOUR_OVERLAY');
+  const highlight = document.getElementById('TOUR_HIGHLIGHT');
+  const tooltip = document.getElementById('TOUR_TOOLTIP');
+  if (overlay) overlay.classList.add('hidden');
+  if (highlight) highlight.classList.add('hidden');
+  if (tooltip) tooltip.classList.add('hidden');
   if (tourPhase === 1) localStorage.setItem('nt_tour_p1_done', '1');
   if (tourPhase === 2) localStorage.setItem('nt_tour_p2_done', '1');
 }

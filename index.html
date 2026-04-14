@@ -3256,9 +3256,8 @@ function doDownload(){
 function showLanding() {
   const lp = document.getElementById('landing-page');
   if (!lp) return;
-  // Sadece daha önce hiç giriş yapmamış kullanıcılara göster
-  const seen = localStorage.getItem('nt_landing_seen');
-  if (!seen) {
+  // Session yoksa her zaman göster
+  if (!currentUser) {
     lp.style.display = 'block';
   }
 }

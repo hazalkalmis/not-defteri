@@ -1662,7 +1662,7 @@ async function migrateLocalNotes() {
         created_at:  n.createdAt   || new Date().toISOString(),
         updated_at:  n.updatedAt   || new Date().toISOString(),
       }));
-      const { error } = await supabase
+      const { error } = await sbClient
         .from('notes')
         .upsert(rows, { onConflict: 'id', ignoreDuplicates: false });
       if (error) throw error;
@@ -1738,10 +1738,10 @@ function setSyncState(state) { // 'ok' | 'syncing' | 'error'
 }
 
 async function loadNotesFromCloud() {
-  if (!supabase || !currentUser) return;
+  if (!sbClient || !currentUser) return;
   setSyncState('syncing');
   try {
-    const { data, error } = await supabase
+    const { data, error } = await sbClient
       .from('notes')
       .select('*')
       .eq('user_id', currentUser.id)
@@ -1765,12 +1765,13 @@ async function loadNotesFromCloud() {
       spaceOrder: r.space_order,
     }));
     // Load favs
-    const { data: fdata } = await supabase
+    const { data: fdata } = await sbClient
       .from('user_favs')
       .select('fav_cards')
       .eq('user_id', currentUser.id)
       .single();
     if (fdata?.fav_cards) favCards = fdata.fav_cards;
+    if (fdata?.fav_notes) favNotes = fdata.fav_notes;
     renderAllCards();
     setSyncState('ok');
     // İlk girişte tur başlat
@@ -1785,7 +1786,7 @@ async function loadNotesFromCloud() {
 }
 
 async function saveNoteToCloud(note) {
-  if (!supabase || !currentUser) return;
+  if (!sbClient || !currentUser) return;
   setSyncState('syncing');
   try {
     const row = {
@@ -1815,14 +1816,14 @@ async function saveNoteToCloud(note) {
 }
 
 async function deleteNoteFromCloud(noteId) {
-  if (!supabase || !currentUser) return;
+  if (!sbClient || !currentUser) return;
   try {
     await sbClient.from('notes').delete().eq('id', noteId).eq('user_id', currentUser.id);
   } catch(e) { console.error('Cloud delete error:', e); }
 }
 
 async function saveFavsToCloud() {
-  if (!supabase || !currentUser) return;
+  if (!sbClient || !currentUser) return;
   try {
     await sbClient.from('user_favs').upsert(
       { user_id: currentUser.id, fav_cards: favCards },
@@ -2684,14 +2685,12 @@ function updateFavNoteBtn(nid) {
 }
 function saveFavNotesToCloud() {
   if (!sbClient || !currentUser) return;
-  // favNotes'u user_favs tablosunda ayrı bir kolona veya localStorage'da tutuyoruz
-  // Şimdilik localStorage yeterli — cloud'a da yazalım
   try {
     sbClient.from('user_favs').upsert(
       { user_id: currentUser.id, fav_cards: favCards, fav_notes: favNotes },
       { onConflict: 'user_id' }
     );
-  } catch(e) {}
+  } catch(e) { console.error('Fav notes cloud save error:', e); }
 }
 
 // ── RENDER CARDS ──
@@ -3399,6 +3398,7 @@ async function init(){
     if (!session) {
       notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
       renderAllCards();
+      showLanding();
     }
     // currentUser zaten onAuthStateChange'de set edildi
   } else {
@@ -3411,7 +3411,6 @@ async function init(){
 
   updateDlList();
   updateAILimitUI();
-  showLanding();
   document.addEventListener('click',hideCtx);
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){hideCtx();document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden'));}});
   const fa=document.getElementById('FLASH_AREA');

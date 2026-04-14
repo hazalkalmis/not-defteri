@@ -731,7 +731,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 #DRIVE_STATUS { transition: all .2s; }
 
 /* ── LANDING PAGE ── */
-#landing-page{position:fixed;inset:0;z-index:9999;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;}
+#landing-page{position:fixed;inset:0;z-index:10001;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;}
 .lp-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(255,255,255,.06);}
 .lp-logo{font-family:'Lora',serif;font-size:20px;font-weight:500;color:#e8e0f0;letter-spacing:-.3px;}
 .lp-logo span{color:#8b6bbf;}
@@ -3264,6 +3264,9 @@ function hideLanding(mode) {
   const lp = document.getElementById('landing-page');
   if (lp) lp.style.display = 'none';
   localStorage.setItem('nt_landing_seen', '1');
+  // Auth screen'i göster
+  const auth = document.getElementById('auth-screen');
+  if (auth) auth.style.display = 'flex';
   if (mode) switchAuthTab(mode);
 }
 
@@ -3398,6 +3401,8 @@ async function init(){
     if (!session) {
       notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
       renderAllCards();
+      // Auth screen'i gizle, landing göster
+      document.getElementById('auth-screen').style.display = 'none';
       showLanding();
     }
     // currentUser zaten onAuthStateChange'de set edildi

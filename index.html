@@ -600,6 +600,13 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   align-items: center; justify-content: center;
   padding: 48px 52px; position: relative; z-index: 10001;
   pointer-events: all; overflow-y: auto;
+  box-sizing: border-box;
+}
+.auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 .auth-right {
   flex: 1; background: #150d27;
@@ -632,7 +639,6 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   .auth-right { display: none; }
   .auth-left { width: 100%; padding: 40px 28px; }
 }
-.auth-form { width: 100%; }
 .auth-card { width: 100%; }
 .auth-logo {
   font-family: 'Lora', serif; font-size: 22px; font-weight: 500;
@@ -731,7 +737,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 #DRIVE_STATUS { transition: all .2s; }
 
 /* ── LANDING PAGE ── */
-#landing-page{position:fixed;inset:0;z-index:10002;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;}
+#landing-page{position:fixed;inset:0;z-index:10002;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;transition:opacity .2s;}
 .lp-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(255,255,255,.06);}
 .lp-logo{font-family:'Lora',serif;font-size:20px;font-weight:500;color:#e8e0f0;letter-spacing:-.3px;}
 .lp-logo span{color:#8b6bbf;}
@@ -793,7 +799,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 <body>
 
 <!-- ── LANDING PAGE ── -->
-<div id="landing-page" style="display:none;">
+<div id="landing-page" style="opacity:0;pointer-events:none;">
   <nav class="lp-nav">
     <span class="lp-logo">not<span>·</span>that</span>
     <div class="lp-nav-btns">
@@ -921,7 +927,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 </div>
 
 <!-- ── AUTH SCREEN ── -->
-<div id="auth-screen" style="display:none;">
+<div id="auth-screen">
   <!-- SOL: Form -->
   <div class="auth-left">
     <div class="auth-form">
@@ -1605,7 +1611,7 @@ async function resendConfirmation() {
 async function onSignedIn() {
   document.getElementById('auth-screen').style.display = 'none';
   const lp = document.getElementById('landing-page');
-  if (lp) lp.style.display = 'none';
+  if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
   localStorage.setItem('nt_landing_seen', '1');
   const email = currentUser.email || '';
   const initials = email.charAt(0).toUpperCase();
@@ -3256,8 +3262,8 @@ function showLanding() {
   const lp = document.getElementById('landing-page');
   if (!lp) return;
   if (!currentUser) {
-    lp.style.display = 'block';
-    // auth gizli kalır
+    lp.style.opacity = '1';
+    lp.style.pointerEvents = 'all';
   }
 }
 function hideLanding(mode) {
@@ -3412,8 +3418,6 @@ async function init(){
     if (!session) {
       notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
       renderAllCards();
-      // Auth screen'i gizle, landing göster
-      document.getElementById('auth-screen').style.display = 'none';
       showLanding();
     }
     // currentUser zaten onAuthStateChange'de set edildi

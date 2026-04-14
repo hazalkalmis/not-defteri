@@ -991,11 +991,13 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <option value="16px">16px</option>
           <option value="18px">18px</option>
         </select>
+        <div class="fb-sep"></div>
         <button class="drive-btn" onclick="openDriveModal()">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
           Drive
         </button>
         <button class="fb" onclick="insertCalcLine()" title="Hesaplama satırı ekle" style="font-size:14px;font-weight:500;color:var(--accent);">∑</button>
+        <button class="fb" id="FAV_NOTE_BTN" onclick="toggleNoteFav()" title="Favorile" style="font-size:15px;line-height:1;">♡</button>
       </div>
 
       <!-- Normal note editor -->
@@ -1045,7 +1047,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <!-- Favorites panel -->
     <div class="aux-panel hidden" id="FAV_PANEL">
       <div class="aux-title" id="LBL_FAV_TITLE">Favoriler</div>
-      <div class="aux-sub" id="LBL_FAV_SUB">Flash kartlarda ★ ile favorilediğin çiftler.</div>
+      <div class="aux-sub" id="LBL_FAV_SUB">Flash kartlarda ♥ ile favorilediğin çiftler.</div>
       <button class="fav-start-btn hidden" id="FAV_START_BTN" onclick="openFlashFromFavs()">⚡ Favorilerle Flash Kart Oyna</button>
       <div id="FAV_LIST"></div>
     </div>
@@ -1237,7 +1239,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     </div>
     <div class="mact">
       <button onclick="closeModal('DRIVE_MODAL')" style="height:33px;padding:0 15px;border-radius:8px;font-size:13px;border:none;background:#e8e8e8;color:#888;cursor:pointer;font-family:'DM Sans',sans-serif;">İptal</button>
-      <button id="DRIVE_SEND_BTN" onclick="sendToDrive()" style="display:none;height:33px;padding:0 15px;border-radius:8px;font-size:13px;border:none;background:#f0eaf8;color:#3d1a5a;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">Drive'a Aktar</button>
+      <button id="DRIVE_SEND_BTN" onclick="sendToDrive()" style="display:none;height:33px;padding:0 15px;border-radius:8px;font-size:13px;border:none;background:#f0eaf8;color:#3d1a5a;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;align-items:center;justify-content:center;">Drive'a Aktar</button>
     </div>
   </div>
 </div>
@@ -1598,6 +1600,11 @@ async function saveFavsToCloud() {
 }
 
 // ── GOOGLE DRIVE OAUTH ──
+function getDriveRedirectUri() {
+  // Hash ve query string olmadan tam URL — Google Console'a eklenmesi gereken değer bu
+  return window.location.origin + window.location.pathname.replace(/\/$/, '');
+}
+
 function startDriveOAuth() {
   if (GDRIVE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
     const st = document.getElementById('DRIVE_STATUS');
@@ -1607,12 +1614,17 @@ function startDriveOAuth() {
     return;
   }
   const scope = 'https://www.googleapis.com/auth/drive.file';
-  const redirectUri = window.location.origin + window.location.pathname;
+  const redirectUri = getDriveRedirectUri();
+  // Önce Drive modal'ı kapat, token dönünce yeniden açılacak
+  closeModal('DRIVE_MODAL');
+  // state parametresi ile nereden geldiğimizi işaretle
   const url = `https://accounts.google.com/o/oauth2/v2/auth`
     + `?client_id=${encodeURIComponent(GDRIVE_CLIENT_ID)}`
     + `&redirect_uri=${encodeURIComponent(redirectUri)}`
     + `&response_type=token`
-    + `&scope=${encodeURIComponent(scope)}`;
+    + `&scope=${encodeURIComponent(scope)}`
+    + `&state=drive_oauth`
+    + `&prompt=select_account`;
   window.location.href = url;
 }
 
@@ -1623,7 +1635,12 @@ function checkDriveOAuthCallback() {
   const token = params.get('access_token');
   if (token) {
     driveAccessToken = token;
+    // URL'yi temizle
     history.replaceState(null, '', window.location.pathname);
+    // OAuth'dan döndükten sonra Drive modal'ı otomatik aç
+    setTimeout(() => {
+      openDriveModal();
+    }, 400);
   }
 }
 
@@ -1705,6 +1722,7 @@ async function sendToDrive() {
 // ── STATE ──
 let notes   = JSON.parse(localStorage.getItem('nt_notes')   || '[]');
 let favCards= JSON.parse(localStorage.getItem('nt_favs')    || '[]');
+let favNotes= JSON.parse(localStorage.getItem('nt_favnotes')|| '[]');
 let activeId= null, currentSpace='personal', saveTimer=null, pendingMerge=null;
 let flashCards=[], flashIdx=0, flashFlipped=false;
 let mediaRecorder=null, recChunks=[], recTimer=null, recSecs=0;
@@ -1732,7 +1750,7 @@ const STR={
     chooseTodo:'To Do Türü Seç',daily:'Günlük',weekly:'Haftalık',
     monthly:'Aylık',free:'Serbest',titlePh:'Başlık…',bodyPh:'Yazmaya başla…',
     addItem:'Madde ekle…',cancel:'İptal',favTitle:'Favoriler',
-    favSub:'Flash kartlarda ★ ile favorilediğin çiftler.',
+    favSub:'Flash kartlarda ♥ ile favorilediğin çiftler.',
     favPlay:'⚡ Favorilerle Flash Kart Oyna',noFav:'Henüz favori kart yok.',
     flashCards:'Flash Kartlar',frontHint:'ön yüz — tıkla',backHint:'arka yüz',
     download:'Word Olarak İndir',filterDate:'Son düzenlenme tarihine göre filtrele:',
@@ -1753,7 +1771,7 @@ const STR={
     chooseTodo:'Choose To Do Type',daily:'Daily',weekly:'Weekly',
     monthly:'Monthly',free:'Free',titlePh:'Title…',bodyPh:'Start writing…',
     addItem:'Add item…',cancel:'Cancel',favTitle:'Favorites',
-    favSub:'Cards you starred with ★ in flash card mode.',
+    favSub:'Cards you starred with ♥ in flash card mode.',
     favPlay:'⚡ Play Flash Cards from Favorites',noFav:'No favorite cards yet.',
     flashCards:'Flash Cards',frontHint:'front — tap to flip',backHint:'back',
     download:'Download as Word',filterDate:'Filter by last edited date:',
@@ -1769,6 +1787,7 @@ function s(k){return(STR[currentLang]||STR.TR)[k]||k;}
 function save(){
   localStorage.setItem('nt_notes',JSON.stringify(notes));
   localStorage.setItem('nt_favs',JSON.stringify(favCards));
+  localStorage.setItem('nt_favnotes',JSON.stringify(favNotes));
 }
 function saveWithCloud(noteId) {
   save();
@@ -1888,23 +1907,28 @@ function getCurrentTypeLabel(){
 // ── SWIPE TO DELETE / SHARE ──
 let swipedCard = null;
 function initSwipe(el, nid) {
-  let startX = 0, startY = 0, dx = 0, swiping = false;
-  el.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    swiping = false; dx = 0;
-  }, { passive: true });
-  el.addEventListener('touchmove', e => {
-    dx = e.touches[0].clientX - startX;
-    const dy = Math.abs(e.touches[0].clientY - startY);
+  let startX = 0, startY = 0, dx = 0, swiping = false, pointerDown = false;
+
+  function onStart(clientX, clientY) {
+    startX = clientX;
+    startY = clientY;
+    swiping = false;
+    dx = 0;
+    pointerDown = true;
+  }
+  function onMove(clientX, clientY) {
+    if (!pointerDown) return;
+    dx = clientX - startX;
+    const dy = Math.abs(clientY - startY);
     if (Math.abs(dx) > dy && Math.abs(dx) > 8) swiping = true;
     if (swiping && dx < 0) {
       const inner = el.querySelector('.ncard-swipe-inner');
       if (inner) inner.style.transform = `translateX(${Math.max(dx, -120)}px)`;
     }
-  }, { passive: true });
-  el.addEventListener('touchend', () => {
-    if (swiping && dx < -60) {
+  }
+  function onEnd() {
+    pointerDown = false;
+    if (swiping && dx < -55) {
       if (swipedCard && swipedCard !== el) closeSwipe(swipedCard);
       el.classList.add('swiped');
       swipedCard = el;
@@ -1912,12 +1936,35 @@ function initSwipe(el, nid) {
       const inner = el.querySelector('.ncard-swipe-inner');
       if (inner) inner.style.transform = '';
     }
+  }
+
+  // Touch events
+  el.addEventListener('touchstart', e => {
+    onStart(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  el.addEventListener('touchmove', e => {
+    onMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  el.addEventListener('touchend', onEnd);
+
+  // Mouse events (masaüstü)
+  el.addEventListener('mousedown', e => {
+    // Sadece sol tık ve aksiyonlar üzerinde değilse
+    if (e.button !== 0) return;
+    if (e.target.closest('.ncard-actions')) return;
+    onStart(e.clientX, e.clientY);
   });
-  // Touchpad / mouse için: mouseenter sağ kenara yakınsa göster
+  el.addEventListener('mousemove', e => {
+    if (!pointerDown) return;
+    onMove(e.clientX, e.clientY);
+    if (swiping) e.preventDefault();
+  });
+  el.addEventListener('mouseup', onEnd);
   el.addEventListener('mouseleave', () => {
+    if (pointerDown) { onEnd(); }
     if (el !== swipedCard) {
       const inner = el.querySelector('.ncard-swipe-inner');
-      if (inner) inner.style.transform = '';
+      if (inner && !el.classList.contains('swiped')) inner.style.transform = '';
     }
   });
 }
@@ -2103,6 +2150,7 @@ function openNote(id){
   // view
   if(n.type==='todo'){showTodoView(n);}else{showNormalView();}
   renderMedia(n);renderAllCards();
+  updateFavNoteBtn(n.id);
   // mobil: drawer'ı kapat
   if(typeof isMobile==='function' && isMobile()) closeMobilePanel();
 }
@@ -2384,6 +2432,35 @@ function fmt(type){
 }
 function applyFont(font){const ta=document.getElementById('BODY_INPUT');ta.style.fontFamily=font;const n=getActive();if(n){n.fontFamily=font;save();saveNoteToCloud(n);}}
 function applySize(size){const ta=document.getElementById('BODY_INPUT');ta.style.fontSize=size;const n=getActive();if(n){n.fontSize=size;save();saveNoteToCloud(n);}}
+
+// ── FAVORİ NOTLAR ──
+function toggleNoteFav() {
+  const n = getActive(); if (!n) return;
+  const idx = favNotes.indexOf(n.id);
+  if (idx >= 0) { favNotes.splice(idx, 1); }
+  else { favNotes.push(n.id); }
+  save();
+  updateFavNoteBtn(n.id);
+  renderFavPanel();
+}
+function updateFavNoteBtn(nid) {
+  const btn = document.getElementById('FAV_NOTE_BTN');
+  if (!btn) return;
+  const isFav = favNotes.includes(nid);
+  btn.textContent = isFav ? '♥' : '♡';
+  btn.style.color = isFav ? '#e8a030' : 'var(--text2)';
+}
+function saveFavNotesToCloud() {
+  if (!sbClient || !currentUser) return;
+  // favNotes'u user_favs tablosunda ayrı bir kolona veya localStorage'da tutuyoruz
+  // Şimdilik localStorage yeterli — cloud'a da yazalım
+  try {
+    sbClient.from('user_favs').upsert(
+      { user_id: currentUser.id, fav_cards: favCards, fav_notes: favNotes },
+      { onConflict: 'user_id' }
+    );
+  } catch(e) {}
+}
 
 // ── RENDER CARDS ──
 function renderAllCards(){
@@ -2721,15 +2798,60 @@ function showFavPanel(){
   hide('EMPTY_STATE');hide('EDITOR_AREA');hide('SEARCH_PANEL');
   const fp=document.getElementById('FAV_PANEL');
   fp.classList.remove('hidden');
-  renderFavList();
+  renderFavPanel();
 }
-function renderFavList(){
-  const btn=document.getElementById('FAV_START_BTN'),list=document.getElementById('FAV_LIST');
-  if(!favCards.length){btn.classList.add('hidden');list.innerHTML=`<div style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0;">${s('noFav')}</div>`;return;}
-  btn.classList.remove('hidden');
-  list.innerHTML=favCards.map((f,i)=>
-    `<div class="fav-card"><div style="flex:1"><div class="fav-word">${esc(f.front)}</div><div class="fav-meaning">${esc(f.back)}</div><div class="fav-src">${esc(f.source||'')}</div></div><button class="fav-rm" onclick="favCards.splice(${i},1);save();renderFavList()">×</button></div>`
-  ).join('');
+function renderFavPanel(){
+  const list=document.getElementById('FAV_LIST');
+  const btn=document.getElementById('FAV_START_BTN');
+
+  // ── Favori Notlar ──
+  const favNoteList=favNotes.map(id=>notes.find(n=>n.id===id)).filter(Boolean);
+  let html='';
+
+  html+=`<div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Favori Notlar</div>`;
+  if(favNoteList.length){
+    html+=favNoteList.map(n=>{
+      const isTodo=n.type==='todo';
+      const accentColor=isTodo?'var(--work)':'var(--accent)';
+      const prev=isTodo
+        ?(n.todoItems||[]).filter(i=>!i.subHeader).slice(0,2).map(i=>i.text).join(' · ')
+        :n.content.replace(/#+\s/g,'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/\n/g,' ').trim().slice(0,60);
+      return `<div class="fav-card" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:4px;" onclick="openNote('${n.id}')">
+        <div style="display:flex;align-items:center;width:100%;gap:8px;">
+          <div style="width:3px;height:32px;background:${accentColor};border-radius:2px;flex-shrink:0;"></div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(n.title||'Başlıksız not')}</div>
+            <div style="font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(prev||'…')}</div>
+          </div>
+          <button onclick="event.stopPropagation();removeFavNote('${n.id}');" style="border:none;background:none;cursor:pointer;color:var(--text3);font-size:18px;flex-shrink:0;line-height:1;">×</button>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    html+=`<div style="font-size:13px;color:var(--text3);text-align:center;padding:10px 0 16px;">${currentLang==='TR'?'Henüz favori not yok.':'No favorite notes yet.'}</div>`;
+  }
+
+  // ── Flash Kart Favorileri ──
+  html+=`<div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-top:16px;margin-bottom:8px;">Flash Kart Favorileri</div>`;
+  if(favCards.length){
+    html+=favCards.map((f,i)=>
+      `<div class="fav-card"><div style="flex:1"><div class="fav-word">${esc(f.front)}</div><div class="fav-meaning">${esc(f.back)}</div><div class="fav-src">${esc(f.source||'')}</div></div><button class="fav-rm" onclick="favCards.splice(${i},1);save();renderFavPanel()">×</button></div>`
+    ).join('');
+  } else {
+    html+=`<div style="font-size:13px;color:var(--text3);text-align:center;padding:10px 0;">${s('noFav')}</div>`;
+  }
+
+  list.innerHTML=html;
+
+  // Flash kart oyna butonu
+  if(favCards.length){btn.classList.remove('hidden');}
+  else{btn.classList.add('hidden');}
+}
+// alias
+function renderFavList(){ renderFavPanel(); }
+function removeFavNote(nid){
+  favNotes=favNotes.filter(id=>id!==nid);
+  save();renderFavPanel();updateFavNoteBtn(nid);
 }
 
 // ── SEARCH ──

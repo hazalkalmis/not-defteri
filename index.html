@@ -2901,11 +2901,61 @@ function stopRec(doSave){
   mediaRecorder=null;
 }
 
+// ── AI RATE LIMIT ──
+const AI_DAILY_LIMIT = 20;
+function getAIUsage() {
+  const today = new Date().toISOString().split('T')[0];
+  const stored = JSON.parse(localStorage.getItem('nt_ai_usage') || '{}');
+  if (stored.date !== today) return { date: today, count: 0 };
+  return stored;
+}
+function incrementAIUsage() {
+  const usage = getAIUsage();
+  usage.count++;
+  localStorage.setItem('nt_ai_usage', JSON.stringify(usage));
+  updateAILimitUI();
+}
+function updateAILimitUI() {
+  const usage = getAIUsage();
+  const remaining = Math.max(0, AI_DAILY_LIMIT - usage.count);
+  const btns = document.querySelectorAll('.ai-btn');
+  btns.forEach(btn => {
+    btn.disabled = remaining === 0;
+    btn.title = remaining === 0
+      ? (currentLang === 'TR' ? 'Günlük AI limitine ulaştın (20/20)' : 'Daily AI limit reached (20/20)')
+      : '';
+  });
+  // limit göstergesi
+  let indicator = document.getElementById('AI_LIMIT_IND');
+  if (!indicator) {
+    indicator = document.createElement('span');
+    indicator.id = 'AI_LIMIT_IND';
+    indicator.style.cssText = 'font-size:10px;color:var(--text3);margin-left:2px;white-space:nowrap;';
+    const aiGroup = document.querySelector('.ai-group');
+    if (aiGroup) aiGroup.appendChild(indicator);
+  }
+  indicator.textContent = remaining === 0
+    ? (currentLang === 'TR' ? '0 hak kaldı' : '0 left')
+    : remaining <= 5
+      ? (currentLang === 'TR' ? `${remaining} hak kaldı` : `${remaining} left`)
+      : '';
+}
+
 // ── AI ──
 async function doAI(action){
   if(action==='translate'){openModal('TRANSLATE_MODAL');return;}
+  // rate limit kontrolü
+  const usage = getAIUsage();
+  if (usage.count >= AI_DAILY_LIMIT) {
+    const msg = currentLang === 'TR'
+      ? `Günlük AI limitine ulaştın (${AI_DAILY_LIMIT}/${AI_DAILY_LIMIT}). Yarın tekrar kullanabilirsin.`
+      : `Daily AI limit reached (${AI_DAILY_LIMIT}/${AI_DAILY_LIMIT}). Try again tomorrow.`;
+    alert(msg);
+    return;
+  }
   const n=getActive();const content=n?.type==='todo'?n.todoItems?.map(i=>i.text).join('\n'):document.getElementById('BODY_INPUT').value;
   if(!content?.trim()){alert(currentLang==='TR'?'Önce bir şeyler yaz!':'Write something first!');return;}
+  incrementAIUsage();
   callAI(action,content);
 }
 function doTranslate(){const lang=document.getElementById('TRANSLATE_LANG').value;closeModal('TRANSLATE_MODAL');callAI('translate',document.getElementById('BODY_INPUT').value,lang);}
@@ -3013,6 +3063,7 @@ async function init(){
   }
 
   updateDlList();
+  updateAILimitUI();
   document.addEventListener('click',hideCtx);
   document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){hideCtx();document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden'));}});
   const fa=document.getElementById('FLASH_AREA');

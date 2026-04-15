@@ -3472,16 +3472,17 @@ async function init(){
 
     // Mevcut session kontrolü
     const { data: { session } } = await sbClient.auth.getSession();
-    if (!session) {
-      if (!_oauthInProgress) {
-        // Normal durum: session yok, landing göster
-        notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
-        renderAllCards();
-        showLanding();
-      }
-      // OAuth dönüşünde onAuthStateChange halleder
+    if (session) {
+      // Session var — direkt giriş yap
+      currentUser = session.user;
+      await onSignedIn();
+    } else if (!_oauthInProgress) {
+      // Session yok, landing göster
+      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+      renderAllCards();
+      showLanding();
     }
-    // currentUser zaten onAuthStateChange'de set edildi
+    // OAuth dönüşünde onAuthStateChange halleder
   } else {
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('SYNC_DOT').style.display = 'none';

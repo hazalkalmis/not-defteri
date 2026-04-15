@@ -3385,11 +3385,17 @@ function endTour() {
 
 // ── INIT ──
 async function init(){
-  // Drive OAuth token'ı hash'ten al (temizlemeden önce)
+  // Hash'te OAuth token var mı kaydet (temizlemeden önce)
+  let _oauthInProgress = false;
   if (window.location.hash && window.location.hash.includes('access_token')) {
+    _oauthInProgress = true;
     const params = new URLSearchParams(window.location.hash.slice(1));
     const token = params.get('access_token');
-    if (token) driveAccessToken = token;
+    // Drive token mı Supabase token mı?
+    const tokenType = params.get('token_type');
+    const providerToken = params.get('provider_token');
+    // Drive OAuth ise driveAccessToken'a yaz
+    if (providerToken) driveAccessToken = providerToken;
   }
   // URL'deki # kalıntısını her zaman temizle
   if (window.location.hash) {
@@ -3428,9 +3434,13 @@ async function init(){
     // Mevcut session kontrolü
     const { data: { session } } = await sbClient.auth.getSession();
     if (!session) {
-      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
-      renderAllCards();
-      showLanding();
+      if (!_oauthInProgress) {
+        // Normal durum: session yok, landing göster
+        notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+        renderAllCards();
+        showLanding();
+      }
+      // OAuth dönüşünde onAuthStateChange halleder
     }
     // currentUser zaten onAuthStateChange'de set edildi
   } else {

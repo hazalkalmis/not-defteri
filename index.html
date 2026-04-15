@@ -927,7 +927,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 </div>
 
 <!-- ── AUTH SCREEN ── -->
-<div id="auth-screen">
+<div id="auth-screen" style="display:none;">
   <!-- SOL: Form -->
   <div class="auth-left">
     <div class="auth-form">
@@ -1498,7 +1498,6 @@ function switchAuthTab(mode) {
   authMode = mode;
   document.getElementById('tab-login').classList.toggle('on', mode === 'login');
   document.getElementById('tab-register').classList.toggle('on', mode === 'register');
-  document.getElementById('auth-err').style.display = 'none';
   document.getElementById('auth-ok').style.display = 'none';
   const passField = document.getElementById('auth-pass').closest('.auth-field');
   const forgotWrap = document.getElementById('forgot-wrap');
@@ -1566,8 +1565,8 @@ async function doAuth() {
       const session = result.data?.session;
       // Zaten kayıtlı: identities boş gelir
       if (user && (!user.identities || user.identities.length === 0)) {
-        showAuthErr('This email is already registered. Please sign in instead.');
         switchAuthTab('login');
+        showAuthErr('This email is already registered. Please sign in instead.');
       } else if (session) {
         currentUser = session.user;
         await onSignedIn();
@@ -1583,6 +1582,7 @@ async function doAuth() {
   } catch(e) {
     const msg = e.message || '';
     if (msg.includes('already registered') || msg.includes('User already registered')) {
+      switchAuthTab('login');
       showAuthErr('This email is already registered. Please sign in instead.');
     } else if (msg.includes('Email not confirmed')) {
       showAuthErr('Please confirm your email first.');
@@ -2400,10 +2400,10 @@ function openNote(id){
   if(n.type==='todo'){showTodoView(n);}else{showNormalView();}
   renderMedia(n);renderAllCards();
   updateFavNoteBtn(n.id);
+  updateAILimitUI();
   // mobil: drawer'ı kapat
   if(typeof isMobile==='function' && isMobile()) closeMobilePanel();
 }
-function getActive(){return notes.find(x=>x.id===activeId);}
 function onTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TITLE_INPUT'));}
 function onBodyChange(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{saveNote();processCalcInBody();},500);renderCalcLines();}
 function onTodoTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TODO_TITLE'));}
@@ -2434,7 +2434,9 @@ function saveNote(){
 function deleteNote(){
   if(!activeId||!confirm(currentLang==='TR'?'Bu notu silmek istiyor musun?':'Delete this note?'))return;
   deleteNoteFromCloud(activeId);
-  notes=notes.filter(x=>x.id!==activeId);activeId=null;save();
+  notes=notes.filter(x=>x.id!==activeId);
+  favNotes=favNotes.filter(id=>id!==activeId);
+  activeId=null;save();saveFavNotesToCloud();
   renderAllCards();hide('EDITOR_AREA');show('EMPTY_STATE');
 }
 function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
@@ -2689,6 +2691,7 @@ function toggleNoteFav() {
   if (idx >= 0) { favNotes.splice(idx, 1); }
   else { favNotes.push(n.id); }
   save();
+  saveFavNotesToCloud();
   updateFavNoteBtn(n.id);
   renderFavPanel();
 }
@@ -2836,6 +2839,9 @@ function renderCards(space){
   if(overflowContainer){
     if(overHtml){
       overflowContainer.innerHTML=overHtml;
+      overflowContainer.querySelectorAll('.ncard').forEach(el => {
+        initSwipe(el, el.dataset.nid);
+      });
       const isOpen=overflowContainer.classList.contains('open');
       if(showBtn){
         showBtn.style.display='block';
@@ -2993,8 +2999,9 @@ function deleteNoteById(nid){
   if(!confirm(currentLang==='TR'?'Bu notu silmek istiyor musun?':'Delete this note?'))return;
   deleteNoteFromCloud(nid);
   notes=notes.filter(x=>x.id!==nid);
+  favNotes=favNotes.filter(id=>id!==nid);
   if(activeId===nid){activeId=null;hide('EDITOR_AREA');show('EMPTY_STATE');}
-  save();renderAllCards();
+  save();saveFavNotesToCloud();renderAllCards();
 }
 function showCtx(x,y,items){
   const m=document.getElementById('CTX_MENU');
@@ -3062,7 +3069,7 @@ function renderFavPanel(){
   const favNoteList=favNotes.map(id=>notes.find(n=>n.id===id)).filter(Boolean);
   let html='';
 
-  html+=`<div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Favori Notlar</div>`;
+  html+=`<div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">${currentLang==='TR'?'Favori Notlar':'Favorite Notes'}</div>`;
   if(favNoteList.length){
     html+=favNoteList.map(n=>{
       const isTodo=n.type==='todo';
@@ -3086,7 +3093,7 @@ function renderFavPanel(){
   }
 
   // ── Flash Kart Favorileri ──
-  html+=`<div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-top:16px;margin-bottom:8px;">Flash Kart Favorileri</div>`;
+  html+=`<div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-top:16px;margin-bottom:8px;">${currentLang==='TR'?'Flash Kart Favorileri':'Flash Card Favorites'}</div>`;
   if(favCards.length){
     html+=favCards.map((f,i)=>
       `<div class="fav-card"><div style="flex:1"><div class="fav-word">${esc(f.front)}</div><div class="fav-meaning">${esc(f.back)}</div><div class="fav-src">${esc(f.source||'')}</div></div><button class="fav-rm" onclick="favCards.splice(${i},1);save();renderFavPanel()">×</button></div>`
@@ -3105,7 +3112,7 @@ function renderFavPanel(){
 function renderFavList(){ renderFavPanel(); }
 function removeFavNote(nid){
   favNotes=favNotes.filter(id=>id!==nid);
-  save();renderFavPanel();updateFavNoteBtn(nid);
+  save();saveFavNotesToCloud();renderFavPanel();updateFavNoteBtn(nid);
 }
 
 // ── SEARCH ──
@@ -3281,15 +3288,19 @@ function showLanding() {
   if (!currentUser) {
     lp.style.opacity = '1';
     lp.style.pointerEvents = 'all';
+    // Auth screen arkada görünmesin
+    const auth = document.getElementById('auth-screen');
+    if (auth) auth.style.display = 'none';
   }
 }
 function hideLanding(mode) {
   const lp = document.getElementById('landing-page');
-  if (lp) lp.style.display = 'none';
+  if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
   localStorage.setItem('nt_landing_seen', '1');
-  // Auth screen'i göster
   const auth = document.getElementById('auth-screen');
   if (auth) auth.style.display = 'flex';
+  const errEl = document.getElementById('auth-err');
+  if (errEl) errEl.style.display = 'none';
   if (mode) switchAuthTab(mode);
 }
 
@@ -3415,11 +3426,7 @@ async function init(){
   if (window.location.hash && window.location.hash.includes('access_token')) {
     _oauthInProgress = true;
     const params = new URLSearchParams(window.location.hash.slice(1));
-    const token = params.get('access_token');
-    // Drive token mı Supabase token mı?
-    const tokenType = params.get('token_type');
     const providerToken = params.get('provider_token');
-    // Drive OAuth ise driveAccessToken'a yaz
     if (providerToken) driveAccessToken = providerToken;
   }
   // URL'deki # kalıntısını her zaman temizle
@@ -3443,10 +3450,11 @@ async function init(){
       if (event === 'SIGNED_OUT') {
         currentUser = null;
         _signingIn = false;
-        // Landing'i tekrar göster
         notes = []; favNotes = []; favCards = [];
         renderAllCards();
         hide('EDITOR_AREA'); show('EMPTY_STATE');
+        // Auth pill'i gizle
+        document.getElementById('USER_PILL').style.display = 'none';
         showLanding();
         return;
       }

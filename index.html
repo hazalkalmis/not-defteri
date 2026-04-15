@@ -1795,6 +1795,15 @@ async function loadNotesFromCloud() {
     if (fdata?.fav_notes) favNotes = fdata.fav_notes;
     renderAllCards();
     setSyncState('ok');
+    // USER_PILL'i garantile
+    if (currentUser) {
+      const pill = document.getElementById('USER_PILL');
+      const avatar = document.getElementById('USER_AVATAR');
+      const emailShort = document.getElementById('USER_EMAIL_SHORT');
+      if (pill) pill.style.display = 'flex';
+      if (avatar) avatar.textContent = (currentUser.email || '?').charAt(0).toUpperCase();
+      if (emailShort) emailShort.textContent = (currentUser.email || '').split('@')[0];
+    }
     // İlk girişte welcome notu aç ve tur başlat
     if (!localStorage.getItem('nt_tour_done')) {
       setTimeout(openWelcomeNote, 800);
@@ -1805,6 +1814,11 @@ async function loadNotesFromCloud() {
     // Fallback: local storage
     notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
     renderAllCards();
+    // Hata olsa bile USER_PILL göster
+    if (currentUser) {
+      const pill = document.getElementById('USER_PILL');
+      if (pill) pill.style.display = 'flex';
+    }
   }
 }
 
@@ -3442,43 +3456,40 @@ async function init(){
   const sbReady = initSupabase();
 
   if (sbReady) {
-    // onAuthStateChange'i ÖNCE kur — Google OAuth callback'ini kaçırmamak için
+    // Önce mevcut session'ı kontrol et
+    try {
+      const { data: { session } } = await sbClient.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        await onSignedIn();
+      } else if (!_oauthInProgress) {
+        notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+        renderAllCards();
+        showLanding();
+      }
+    } catch(e) {
+      console.error('Session error:', e);
+      showLanding();
+    }
+
+    // Auth state değişikliklerini dinle
     sbClient.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         currentUser = null;
         notes = []; favNotes = []; favCards = [];
         renderAllCards();
         hide('EDITOR_AREA'); show('EMPTY_STATE');
-        // Auth pill'i gizle
         document.getElementById('USER_PILL').style.display = 'none';
         showLanding();
         return;
       }
       if (signingOut) return;
-      if (session && !currentUser && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
+      // Sadece henüz giriş yapılmamışsa ve yeni giriş geliyorsa
+      if (session && !currentUser && event === 'SIGNED_IN') {
         currentUser = session.user;
-        // Supabase auth sonrası URL hash'ini temizle
-        if (window.location.hash) {
-          history.replaceState(null, '', window.location.pathname);
-        }
-        checkDriveOAuthCallback();
         await onSignedIn();
       }
     });
-
-    // Mevcut session kontrolü
-    const { data: { session } } = await sbClient.auth.getSession();
-    if (session && !currentUser) {
-      // Session var — direkt giriş yap
-      currentUser = session.user;
-      await onSignedIn();
-    } else if (!session && !_oauthInProgress) {
-      // Session yok, landing göster
-      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
-      renderAllCards();
-      showLanding();
-    }
-    // OAuth dönüşünde onAuthStateChange halleder
   } else {
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('SYNC_DOT').style.display = 'none';

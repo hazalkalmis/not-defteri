@@ -1632,6 +1632,10 @@ async function onSignedIn() {
   const lp = document.getElementById('landing-page');
   if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
   localStorage.setItem('nt_landing_seen', '1');
+  // Hash kalıntısını temizle
+  if (window.location.hash) {
+    history.replaceState(null, '', window.location.pathname);
+  }
   const email = currentUser.email || '';
   const initials = email.charAt(0).toUpperCase();
   document.getElementById('USER_AVATAR').textContent = initials;
@@ -2216,10 +2220,17 @@ function initSwipe(el, nid) {
 
   // Mouse events (masaüstü)
   el.addEventListener('mousedown', e => {
-    // Sadece sol tık ve aksiyonlar üzerinde değilse
     if (e.button !== 0) return;
     if (e.target.closest('.ncard-actions')) return;
+    if (e.target.closest('.nc-drag')) return; // drag handle
     onStart(e.clientX, e.clientY);
+  });
+  // Drag başlayınca swipe'ı iptal et
+  el.addEventListener('dragstart', () => {
+    pointerDown = false;
+    swiping = false;
+    const inner = el.querySelector('.ncard-swipe-inner');
+    if (inner && !el.classList.contains('swiped')) inner.style.transform = '';
   });
   el.addEventListener('mousemove', e => {
     if (!pointerDown) return;

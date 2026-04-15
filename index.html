@@ -1502,7 +1502,6 @@ function switchAuthTab(mode) {
   document.getElementById('auth-ok').style.display = 'none';
   const passField = document.getElementById('auth-pass').closest('.auth-field');
   const forgotWrap = document.getElementById('forgot-wrap');
-  const orDiv = forgotWrap ? forgotWrap.nextElementSibling : null;
   const googleBtn = document.querySelector('[onclick="signInWithGoogle()"]');
   if (mode === 'forgot') {
     document.getElementById('auth-submit').textContent = 'Sıfırlama Maili Gönder';
@@ -1562,9 +1561,21 @@ async function doAuth() {
       result = await sbClient.auth.signUp({ email, password: pass });
     }
     if (result.error) throw result.error;
-    if (authMode === 'register' && !result.data?.session) {
-      okEl.textContent = 'Account created! Check your email to confirm.';
-      okEl.style.display = 'block';
+    if (authMode === 'register') {
+      const user = result.data?.user;
+      const session = result.data?.session;
+      // Zaten kayıtlı: identities boş gelir
+      if (user && (!user.identities || user.identities.length === 0)) {
+        showAuthErr('This email is already registered. Please sign in instead.');
+        switchAuthTab('login');
+      } else if (session) {
+        currentUser = session.user;
+        await onSignedIn();
+      } else if (user) {
+        okEl.textContent = 'Account created! You can now sign in.';
+        okEl.style.display = 'block';
+        switchAuthTab('login');
+      }
     } else {
       currentUser = result.data.user || result.data.session?.user;
       await onSignedIn();
@@ -1608,7 +1619,9 @@ async function resendConfirmation() {
   }
 }
 
+let _signingIn = false;
 async function onSignedIn() {
+  if (_signingIn) return; _signingIn = true;
   document.getElementById('auth-screen').style.display = 'none';
   const lp = document.getElementById('landing-page');
   if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
@@ -1732,6 +1745,9 @@ function hideMigrationBanner(count) {
 
 async function signOut() {
   if (!confirm('Çıkış yapmak istediğine emin misin?')) return;
+  signingOut = true;
+  try { if (sbClient) await sbClient.auth.signOut(); } catch(e) {}
+  currentUser = null;
   localStorage.removeItem('sb-irnnpsvkjectyoujyggq-auth-token');
   window.location.href = window.location.origin;
 }
@@ -1780,6 +1796,7 @@ async function loadNotesFromCloud() {
     if (fdata?.fav_notes) favNotes = fdata.fav_notes;
     renderAllCards();
     setSyncState('ok');
+    _signingIn = false;
     // İlk girişte welcome notu aç ve tur başlat
     if (!localStorage.getItem('nt_tour_done')) {
       setTimeout(openWelcomeNote, 800);
@@ -1787,6 +1804,7 @@ async function loadNotesFromCloud() {
   } catch(e) {
     console.error('Cloud load error:', e);
     setSyncState('error');
+    _signingIn = false;
     // Fallback: local storage
     notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
     renderAllCards();
@@ -2683,12 +2701,19 @@ function updateFavNoteBtn(nid) {
 }
 function saveFavNotesToCloud() {
   if (!sbClient || !currentUser) return;
-  try {
-    sbClient.from('user_favs').upsert(
-      { user_id: currentUser.id, fav_cards: favCards, fav_notes: favNotes },
-      { onConflict: 'user_id' }
-    );
-  } catch(e) { console.error('Fav notes cloud save error:', e); }
+  // fav_notes kolonunu güvenli şekilde upsert et
+  sbClient.from('user_favs').upsert(
+    { user_id: currentUser.id, fav_cards: favCards, fav_notes: favNotes },
+    { onConflict: 'user_id' }
+  ).then(({ error }) => {
+    if (error) {
+      // fav_notes kolonu yoksa sadece fav_cards kaydet
+      sbClient.from('user_favs').upsert(
+        { user_id: currentUser.id, fav_cards: favCards },
+        { onConflict: 'user_id' }
+      );
+    }
+  });
 }
 
 // ── RENDER CARDS ──
@@ -3417,6 +3442,12 @@ async function init(){
     sbClient.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         currentUser = null;
+        _signingIn = false;
+        // Landing'i tekrar göster
+        notes = []; favNotes = []; favCards = [];
+        renderAllCards();
+        hide('EDITOR_AREA'); show('EMPTY_STATE');
+        showLanding();
         return;
       }
       if (signingOut) return;

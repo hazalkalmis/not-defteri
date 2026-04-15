@@ -3495,11 +3495,13 @@ async function init(){
       // Sadece henüz giriş yapılmamışsa ve yeni giriş geliyorsa
       if (session && !currentUser && event === 'SIGNED_IN') {
         currentUser = session.user;
-        // Artık hash'i temizleyebiliriz
-        if (window.location.hash) {
-          history.replaceState(null, '', window.location.pathname);
-        }
         await onSignedIn();
+        // Session kaydedildikten sonra hash'i temizle
+        setTimeout(() => {
+          if (window.location.hash) {
+            history.replaceState(null, '', window.location.pathname);
+          }
+        }, 500);
       }
     });
   } else {

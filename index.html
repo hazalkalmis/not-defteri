@@ -3446,9 +3446,10 @@ async function init(){
     const params = new URLSearchParams(window.location.hash.slice(1));
     const providerToken = params.get('provider_token');
     if (providerToken) driveAccessToken = providerToken;
-  }
-  // URL'deki # kalıntısını her zaman temizle
-  if (window.location.hash) {
+    // Hash'i hemen temizleme — Supabase önce okusun
+    // Supabase detectSessionInUrl ile hash'i otomatik işleyecek
+  } else if (window.location.hash) {
+    // OAuth token yoksa # kalıntısını temizle
     history.replaceState(null, '', window.location.pathname);
   }
   const savedMode=localStorage.getItem('nt_darkmode');
@@ -3494,6 +3495,10 @@ async function init(){
       // Sadece henüz giriş yapılmamışsa ve yeni giriş geliyorsa
       if (session && !currentUser && event === 'SIGNED_IN') {
         currentUser = session.user;
+        // Artık hash'i temizleyebiliriz
+        if (window.location.hash) {
+          history.replaceState(null, '', window.location.pathname);
+        }
         await onSignedIn();
       }
     });

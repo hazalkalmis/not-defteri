@@ -3337,7 +3337,13 @@ const TOUR_STEPS = [
 let tourStep = 0;
 
 function openWelcomeNote() {
-  // İlk girişte format bar'ı göstermek için boş bir not oluştur ve aç
+  // Sadece hiç not yoksa welcome notu oluştur
+  if (notes.length > 0) {
+    // Not var — direkt turu başlat, not oluşturma
+    openNote(notes[0].id);
+    setTimeout(startTour, 500);
+    return;
+  }
   const welcome = {
     id: uid(),
     title: 'Welcome to not·that 👋',

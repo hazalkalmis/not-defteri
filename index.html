@@ -2177,6 +2177,39 @@ function getCurrentTypeLabel(){
 
 // ── SWIPE TO DELETE / SHARE ──
 let swipedCard = null;
+
+// ── INLINE TOUCH SWIPE ──
+let _touchStartX = 0, _touchStartY = 0, _touchSwiping = false, _touchEl = null;
+function initSwipeTouchStart(e, el, nid) {
+  _touchStartX = e.touches[0].clientX;
+  _touchStartY = e.touches[0].clientY;
+  _touchSwiping = false;
+  _touchEl = el;
+}
+function initSwipeTouchMove(e, el) {
+  const dx = e.touches[0].clientX - _touchStartX;
+  const dy = Math.abs(e.touches[0].clientY - _touchStartY);
+  if (Math.abs(dx) > dy && Math.abs(dx) > 8) {
+    _touchSwiping = true;
+    if (dx < 0) {
+      const inner = el.querySelector('.ncard-swipe-inner');
+      if (inner) inner.style.transform = `translateX(${Math.max(dx, -120)}px)`;
+    }
+  }
+}
+function initSwipeTouchEnd(e, el, nid) {
+  const dx = e.changedTouches[0].clientX - _touchStartX;
+  if (_touchSwiping && dx < -55) {
+    if (swipedCard && swipedCard !== el) closeSwipe(swipedCard);
+    el.classList.add('swiped');
+    swipedCard = el;
+  } else {
+    const inner = el.querySelector('.ncard-swipe-inner');
+    if (inner) inner.style.transform = '';
+  }
+  _touchSwiping = false;
+}
+
 function initSwipe(el, nid) {
   let startX = 0, startY = 0, dx = 0, swiping = false, pointerDown = false;
 
@@ -2218,33 +2251,7 @@ function initSwipe(el, nid) {
   }, { passive: true });
   el.addEventListener('touchend', onEnd);
 
-  // Mouse events (masaüstü)
-  el.addEventListener('mousedown', e => {
-    if (e.button !== 0) return;
-    if (e.target.closest('.ncard-actions')) return;
-    if (e.target.closest('.nc-drag')) return; // drag handle
-    onStart(e.clientX, e.clientY);
-  });
-  // Drag başlayınca swipe'ı iptal et
-  el.addEventListener('dragstart', () => {
-    pointerDown = false;
-    swiping = false;
-    const inner = el.querySelector('.ncard-swipe-inner');
-    if (inner && !el.classList.contains('swiped')) inner.style.transform = '';
-  });
-  el.addEventListener('mousemove', e => {
-    if (!pointerDown) return;
-    onMove(e.clientX, e.clientY);
-    if (swiping) e.preventDefault();
-  });
-  el.addEventListener('mouseup', onEnd);
-  el.addEventListener('mouseleave', () => {
-    if (pointerDown) { onEnd(); }
-    if (el !== swipedCard) {
-      const inner = el.querySelector('.ncard-swipe-inner');
-      if (inner && !el.classList.contains('swiped')) inner.style.transform = '';
-    }
-  });
+  // Mouse events kaldırıldı — masaüstünde sağ tık menüsü var
 }
 function closeSwipe(el) {
   if (!el) return;
@@ -2801,7 +2808,10 @@ function renderCards(space){
       draggable="true"
       ondragstart="dragNoteStart(event,'${n.id}')"
       ondragover="dragNoteOver(event,'${n.id}')"
-      ondrop="dragNoteDrop(event,'${n.id}',this)">
+      ondrop="dragNoteDrop(event,'${n.id}',this)"
+      ontouchstart="initSwipeTouchStart(event,this,'${n.id}')"
+      ontouchmove="initSwipeTouchMove(event,this)"
+      ontouchend="initSwipeTouchEnd(event,this,'${n.id}')">
       <div class="ncard-swipe-inner" onclick="openNote('${n.id}')">
         <div class="nc-drag">⋮⋮</div>
         <div class="nc-bar" style="background:${accentColor};"></div>
@@ -3486,6 +3496,8 @@ async function init(){
       const { data: { session } } = await sbClient.auth.getSession();
       if (session) {
         currentUser = session.user;
+        // Hash kalıntısını temizle
+        if (window.location.hash) history.replaceState(null, '', window.location.pathname);
         await onSignedIn();
       } else if (!_oauthInProgress) {
         notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');

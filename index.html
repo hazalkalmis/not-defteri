@@ -1870,19 +1870,9 @@ function startDriveOAuth() {
 }
 
 function checkDriveOAuthCallback() {
-  const hash = window.location.hash;
-  if (!hash.includes('access_token')) return;
-  const params = new URLSearchParams(hash.slice(1));
-  const token = params.get('access_token');
-  if (token) {
-    driveAccessToken = token;
-    // URL'yi temizle
-    history.replaceState(null, '', window.location.pathname);
-    // OAuth'dan döndükten sonra Drive modal'ı otomatik aç
-    setTimeout(() => {
-      openDriveModal();
-    }, 400);
-  }
+  // hash init'te temizlendi, ama token memory'de tutulabilir
+  // Bu fonksiyon artık hash'e bakmak yerine state'e bakıyor
+  // Drive token zaten onSignedIn'de session.provider_token'dan alınıyor
 }
 
 // ── DRIVE MODAL ──
@@ -3395,11 +3385,15 @@ function endTour() {
 
 // ── INIT ──
 async function init(){
+  // Drive OAuth token'ı hash'ten al (temizlemeden önce)
+  if (window.location.hash && window.location.hash.includes('access_token')) {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const token = params.get('access_token');
+    if (token) driveAccessToken = token;
+  }
   // URL'deki # kalıntısını her zaman temizle
   if (window.location.hash) {
-    if (!window.location.hash.includes('access_token')) {
-      history.replaceState(null, '', window.location.pathname);
-    }
+    history.replaceState(null, '', window.location.pathname);
   }
   const savedMode=localStorage.getItem('nt_darkmode');
   if(savedMode)document.body.setAttribute('data-theme',savedMode);

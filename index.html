@@ -1780,8 +1780,10 @@ async function loadNotesFromCloud() {
     if (fdata?.fav_notes) favNotes = fdata.fav_notes;
     renderAllCards();
     setSyncState('ok');
-    // İlk girişte tur başlat
-    setTimeout(startTourPhase1, 800);
+    // İlk girişte welcome notu aç ve tur başlat
+    if (!localStorage.getItem('nt_tour_done')) {
+      setTimeout(openWelcomeNote, 800);
+    }
   } catch(e) {
     console.error('Cloud load error:', e);
     setSyncState('error');
@@ -3277,33 +3279,50 @@ function hideLanding(mode) {
 }
 
 // ── ONBOARDING TOUR ──
-const TOUR_PHASE1 = [
-  { selector: '#LEFT', title: 'Your notes', text: 'Personal and Work notes live here in separate spaces.', pos: 'right' },
-  { selector: '.nbtn-note', title: 'New note', text: 'Quickly create a note or a To Do list.', pos: 'right' },
-  { selector: '#FAV_BTN', title: 'Favorites', text: 'Access your favorited notes and flash cards here.', pos: 'bottom' },
-  { selector: '#MERGE_TODO_PILL', title: 'Merge To Dos', text: 'Combine incomplete tasks from multiple To Do cards.', pos: 'bottom' },
-];
-const TOUR_PHASE2 = [
-  { selector: '.drive-btn', title: 'Export to Drive', text: 'Send this note directly to your Google Drive.', pos: 'top' },
-  { selector: '#FAV_NOTE_BTN', title: 'Favorite this note', text: 'Mark a note as favorite to find it quickly.', pos: 'top' },
-  { selector: '#FAV_NOTE_BTN', title: 'Calculator', text: 'Add a calculation line — start a line with = to compute instantly.', pos: 'top' },
+const TOUR_STEPS = [
+  { selector: '#LEFT',           title: 'Your notes',        text: 'Personal and Work notes live in separate spaces.', pos: 'right' },
+  { selector: '.nbtn-note',      title: 'New note',          text: 'Create a note or a To Do list instantly.', pos: 'right' },
+  { selector: '#MERGE_TODO_PILL',title: 'Merge To Dos',      text: 'Combine incomplete tasks from multiple To Do cards.', pos: 'bottom' },
+  { selector: '#FAV_BTN',        title: 'Favorites',         text: 'See your favorited notes and flash cards here.', pos: 'bottom' },
+  { selector: '.drive-btn',      title: 'Export to Drive',   text: 'Send this note directly to your Google Drive.', pos: 'top' },
+  { selector: '#FAV_NOTE_BTN',   title: 'Favorite note',     text: 'Mark this note as favorite for quick access.', pos: 'top' },
+  { selector: 'button[onclick="insertCalcLine()"]', title: 'Calculator', text: 'Start a line with = to calculate instantly.', pos: 'top' },
+  { selector: 'button[title="Flash Card"]', title: 'Flash cards', text: 'Write word: meaning in a note to create flash cards.', pos: 'bottom' },
 ];
 
-let tourPhase = 1, tourStep = 0, tourSteps = [];
+let tourStep = 0;
 
-function startTourPhase1() {
-  if (localStorage.getItem('nt_tour_p1_done')) return;
-  tourPhase = 1; tourStep = 0; tourSteps = TOUR_PHASE1;
+function openWelcomeNote() {
+  // İlk girişte format bar'ı göstermek için boş bir not oluştur ve aç
+  const welcome = {
+    id: uid(),
+    title: 'Welcome to not·that 👋',
+    content: 'This is your first note. Start writing anything here.',
+    space: 'personal',
+    type: 'normal',
+    todoItems: [], todoType: null,
+    createdAt: now(), updatedAt: now(),
+    images: [], audios: []
+  };
+  notes.unshift(welcome);
+  save();
+  saveNoteToCloud(welcome);
+  renderAllCards();
+  openNote(welcome.id);
+  setTimeout(startTour, 500);
+}
+
+function startTour() {
+  if (localStorage.getItem('nt_tour_done')) return;
+  tourStep = 0;
   renderTourStep();
 }
-function startTourPhase2() {
-  if (localStorage.getItem('nt_tour_p2_done')) return;
-  tourPhase = 2; tourStep = 0; tourSteps = TOUR_PHASE2;
-  renderTourStep();
-}
+// keep these for backward compat
+function startTourPhase1() { startTour(); }
+function startTourPhase2() { /* handled in startTour */ }
 
 function renderTourStep() {
-  const step = tourSteps[tourStep];
+  const step = TOUR_STEPS[tourStep];
   if (!step) { endTour(); return; }
   const el = document.querySelector(step.selector);
   if (!el) { tourStep++; renderTourStep(); return; }
@@ -3330,9 +3349,9 @@ function renderTourStep() {
 
   document.getElementById('TOUR_TITLE').textContent = step.title;
   document.getElementById('TOUR_TEXT').textContent = step.text;
-  document.getElementById('TOUR_COUNT').textContent = (tourStep + 1) + ' / ' + tourSteps.length;
+  document.getElementById('TOUR_COUNT').textContent = (tourStep + 1) + ' / ' + TOUR_STEPS.length;
 
-  const isLast = tourStep === tourSteps.length - 1;
+  const isLast = tourStep === TOUR_STEPS.length - 1;
   const nextBtn = document.getElementById('TOUR_NEXT_BTN');
   nextBtn.textContent = isLast ? 'Done' : 'Next →';
   nextBtn.onclick = function() { tourNext(); };
@@ -3360,7 +3379,7 @@ function renderTourStep() {
 
 function tourNext() {
   tourStep++;
-  if (tourStep >= tourSteps.length) { endTour(); return; }
+  if (tourStep >= TOUR_STEPS.length) { endTour(); return; }
   renderTourStep();
 }
 
@@ -3371,8 +3390,7 @@ function endTour() {
   if (overlay) overlay.classList.add('hidden');
   if (highlight) highlight.classList.add('hidden');
   if (tooltip) tooltip.classList.add('hidden');
-  if (tourPhase === 1) localStorage.setItem('nt_tour_p1_done', '1');
-  if (tourPhase === 2) localStorage.setItem('nt_tour_p2_done', '1');
+  localStorage.setItem('nt_tour_done', '1');
 }
 
 // ── INIT ──

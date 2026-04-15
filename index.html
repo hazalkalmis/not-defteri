@@ -1563,14 +1563,15 @@ async function doAuth() {
     if (authMode === 'register') {
       const user = result.data?.user;
       const session = result.data?.session;
-      // Zaten kayıtlı: identities boş gelir
-      if (user && (!user.identities || user.identities.length === 0)) {
+      // Zaten kayıtlı: identities boş gelir VEYA created_at eskidir
+      const isExisting = user && (!user.identities || user.identities.length === 0);
+      if (isExisting) {
         switchAuthTab('login');
         showAuthErr('This email is already registered. Please sign in instead.');
-      } else if (session) {
+      } else if (session && !isExisting) {
         currentUser = session.user;
         await onSignedIn();
-      } else if (user) {
+      } else if (user && !isExisting) {
         okEl.textContent = 'Account created! You can now sign in.';
         okEl.style.display = 'block';
         switchAuthTab('login');
@@ -1619,9 +1620,7 @@ async function resendConfirmation() {
   }
 }
 
-let _signingIn = false;
 async function onSignedIn() {
-  if (_signingIn) return; _signingIn = true;
   document.getElementById('auth-screen').style.display = 'none';
   const lp = document.getElementById('landing-page');
   if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
@@ -1796,7 +1795,6 @@ async function loadNotesFromCloud() {
     if (fdata?.fav_notes) favNotes = fdata.fav_notes;
     renderAllCards();
     setSyncState('ok');
-    _signingIn = false;
     // İlk girişte welcome notu aç ve tur başlat
     if (!localStorage.getItem('nt_tour_done')) {
       setTimeout(openWelcomeNote, 800);
@@ -1804,7 +1802,6 @@ async function loadNotesFromCloud() {
   } catch(e) {
     console.error('Cloud load error:', e);
     setSyncState('error');
-    _signingIn = false;
     // Fallback: local storage
     notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
     renderAllCards();
@@ -3449,7 +3446,6 @@ async function init(){
     sbClient.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         currentUser = null;
-        _signingIn = false;
         notes = []; favNotes = []; favCards = [];
         renderAllCards();
         hide('EDITOR_AREA'); show('EMPTY_STATE');
@@ -3472,11 +3468,11 @@ async function init(){
 
     // Mevcut session kontrolü
     const { data: { session } } = await sbClient.auth.getSession();
-    if (session) {
+    if (session && !currentUser) {
       // Session var — direkt giriş yap
       currentUser = session.user;
       await onSignedIn();
-    } else if (!_oauthInProgress) {
+    } else if (!session && !_oauthInProgress) {
       // Session yok, landing göster
       notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
       renderAllCards();

@@ -800,9 +800,106 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .tour-next:hover{background:#7a5a9a;}
 .tour-arrow{position:fixed;z-index:8002;width:0;height:0;}
 
+/* ── PDF FLASHCARD MODAL ── */
+.pdf-flash-modal {
+  background: var(--surface); border-radius: 16px; padding: 24px;
+  width: 500px; max-width: 96vw; max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0,0,0,.22); border: 1px solid var(--border);
+}
+.pdf-flash-modal h3 { font-family: 'Lora', serif; font-size: 17px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.pdf-flash-modal p { font-size: 12px; color: var(--text2); margin-bottom: 14px; line-height: 1.5; }
+.pdf-drop-area {
+  border: 2px dashed var(--border2); border-radius: 10px; padding: 28px 20px;
+  text-align: center; cursor: pointer; transition: .15s; margin-bottom: 12px;
+  background: var(--bg2);
+}
+.pdf-drop-area:hover, .pdf-drop-area.dragover { border-color: var(--accent); background: var(--accent2); }
+.pdf-drop-icon { font-size: 28px; margin-bottom: 6px; }
+.pdf-drop-text { font-size: 13px; color: var(--text2); }
+.pdf-drop-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.pdf-or { text-align: center; font-size: 11px; color: var(--text3); margin: 8px 0; }
+.pdf-textarea {
+  width: 100%; height: 100px; background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--text); outline: none; resize: vertical; transition: .15s;
+}
+.pdf-textarea:focus { border-color: var(--accent); }
+.pdf-options { display: flex; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+.pdf-opt-group { flex: 1; min-width: 140px; }
+.pdf-opt-label { font-size: 11px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
+.pdf-select {
+  width: 100%; height: 34px; background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 7px; padding: 0 10px; font-size: 12px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer;
+}
+.pdf-select:focus { border-color: var(--accent); }
+.pdf-status { font-size: 12px; color: var(--accent); margin: 8px 0; min-height: 18px; }
+.pdf-flash-count { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+
+/* ── PRO UPGRADE MODAL ── */
+.pro-modal-box {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 28px 26px 22px;
+  width: 360px;
+  max-width: 95vw;
+  box-shadow: 0 12px 40px rgba(0,0,0,.22);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.pro-modal-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: rgba(138,107,191,.15);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.pro-modal-title {
+  font-family: 'Lora', serif; font-size: 18px; font-weight: 500;
+  color: var(--text); margin-bottom: 8px;
+}
+.pro-modal-desc {
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+  margin-bottom: 20px;
+}
+.pro-modal-price {
+  font-size: 11px; color: var(--text3); margin-bottom: 16px;
+}
+.pro-modal-price strong { color: var(--text2); }
+.pro-modal-btn {
+  width: 100%; height: 40px; background: #6a4a8a; color: #fff;
+  border: none; border-radius: 10px; font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; transition: .15s;
+  margin-bottom: 8px;
+}
+.pro-modal-btn:hover { background: #7a5a9a; }
+.pro-modal-cancel {
+  width: 100%; height: 36px; background: none; color: var(--text3);
+  border: none; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; transition: .15s;
+}
+.pro-modal-cancel:hover { color: var(--text2); }
+
 </style>
 </head>
 <body>
+
+<!-- ── PRO UPGRADE MODAL ── -->
+<div id="PRO_MODAL" class="ov hidden">
+  <div class="pro-modal-box">
+    <div class="pro-modal-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    </div>
+    <div class="pro-modal-title">AI limitine ulaştın</div>
+    <div class="pro-modal-desc">Günlük AI hakkın doldu. not·that Pro ile sınırsız AI kullan, notlarından daha fazla üret.</div>
+    <div class="pro-modal-price">
+      <strong>İlk ay 29₺</strong>, sonra 49₺/ay · İstediğin zaman iptal et
+    </div>
+    <button class="pro-modal-btn" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank');document.getElementById('PRO_MODAL').classList.add('hidden');">
+      Pro'ya geç — 49₺/ay
+    </button>
+    <button class="pro-modal-cancel" onclick="document.getElementById('PRO_MODAL').classList.add('hidden');">Şimdi değil</button>
+  </div>
+</div>
 
 <!-- ── LANDING PAGE ── -->
 <div id="landing-page" style="opacity:0;pointer-events:none;">
@@ -1160,6 +1257,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <button class="ai-btn" id="AI_BTN_2" onclick="doAI('todo')">To Do</button>
           <button class="ai-btn" id="AI_BTN_3" onclick="doAI('grammar')">Yazım</button>
           <button class="ai-btn" id="AI_BTN_4" onclick="doAI('translate')">Çevir</button>
+          <div style="width:1px;height:14px;background:var(--border2);margin:0 2px;flex-shrink:0;"></div>
+          <button class="ai-btn" onclick="openModal('PDF_FLASH_MODAL')" style="background:var(--work2);color:var(--work-text);">📄 PDF→Kart</button>
         </div>
         <button class="del-btn" onclick="deleteNote()" title="Sil">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
@@ -1328,6 +1427,60 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <h3 style="margin-bottom:12px;">Klasör Seç</h3>
     <div id="CHANGE_FOLDER_LIST"></div>
     <div class="mact" style="margin-top:10px;"><button class="btn" onclick="closeModal('CHANGE_FOLDER_MODAL')">İptal</button></div>
+  </div>
+</div>
+
+<!-- PDF → FLASHCARD MODAL -->
+<div class="ov hidden" id="PDF_FLASH_MODAL">
+  <div class="pdf-flash-modal">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <div style="flex:1;">
+        <h3>📄 Metinden Flash Kart Üret</h3>
+        <p style="margin-bottom:0;">PDF yükle veya metin yapıştır — AI otomatik flash kart oluşturur. Maks. 100 kart.</p>
+      </div>
+      <button class="ic-btn" onclick="closeModal('PDF_FLASH_MODAL')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- PDF drop -->
+    <div class="pdf-drop-area" id="PDF_DROP" onclick="document.getElementById('PDF_FILE_INPUT').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handlePdfDrop(event)">
+      <div class="pdf-drop-icon">📎</div>
+      <div class="pdf-drop-text">PDF dosyasını buraya sürükle veya tıkla</div>
+      <div class="pdf-drop-sub" id="PDF_FILE_NAME">Seçili dosya yok</div>
+    </div>
+    <input type="file" id="PDF_FILE_INPUT" accept=".pdf,.txt" style="display:none" onchange="handlePdfFile(this.files[0])">
+
+    <div class="pdf-or">— veya —</div>
+
+    <textarea class="pdf-textarea" id="PDF_TEXT_INPUT" placeholder="Metni buraya yapıştır..."></textarea>
+
+    <div class="pdf-options">
+      <div class="pdf-opt-group">
+        <span class="pdf-opt-label">Seviye</span>
+        <select class="pdf-select" id="PDF_LEVEL">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate" selected>Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+      <div class="pdf-opt-group">
+        <span class="pdf-opt-label">Anlam dili</span>
+        <select class="pdf-select" id="PDF_LANG">
+          <option value="Türkçe">Türkçe</option>
+          <option value="İngilizce">İngilizce</option>
+          <option value="Almanca">Almanca</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pdf-status" id="PDF_STATUS"></div>
+    <div class="pdf-flash-count" id="PDF_FLASH_COUNT"></div>
+
+    <div class="mact">
+      <button class="btn" onclick="closeModal('PDF_FLASH_MODAL')">İptal</button>
+      <button class="btn-p" onclick="generatePdfFlashCards()">⚡ Flash Kart Üret</button>
+    </div>
   </div>
 </div>
 
@@ -3059,6 +3212,138 @@ function showCtx(x,y,items){
   m.style.top=Math.min(y,window.innerHeight-200)+'px';
 }
 function hideCtx(){document.getElementById('CTX_MENU').style.display='none';}
+function hideCtx(){document.getElementById('CTX_MENU').style.display='none';}
+
+// ── PDF → FLASHCARD ──
+let pdfExtractedText = '';
+
+function handlePdfDrop(e) {
+  e.preventDefault();
+  document.getElementById('PDF_DROP').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handlePdfFile(file);
+}
+
+function handlePdfFile(file) {
+  if (!file) return;
+  document.getElementById('PDF_FILE_NAME').textContent = file.name;
+  document.getElementById('PDF_STATUS').textContent = 'Dosya okunuyor...';
+
+  if (file.type === 'text/plain') {
+    const reader = new FileReader();
+    reader.onload = e => {
+      pdfExtractedText = e.target.result;
+      document.getElementById('PDF_TEXT_INPUT').value = pdfExtractedText.slice(0, 3000);
+      document.getElementById('PDF_STATUS').textContent = '✓ Metin yüklendi';
+    };
+    reader.readAsText(file);
+  } else if (file.type === 'application/pdf') {
+    // PDF.js ile oku
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try {
+        if (typeof pdfjsLib === 'undefined') {
+          // PDF.js yükle
+          await new Promise((res, rej) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload = res; s.onerror = rej;
+            document.head.appendChild(s);
+          });
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        const pdf = await pdfjsLib.getDocument({data: new Uint8Array(e.target.result)}).promise;
+        let text = '';
+        for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map(item => item.str).join(' ') + '\n';
+        }
+        pdfExtractedText = text;
+        document.getElementById('PDF_TEXT_INPUT').value = text.slice(0, 3000);
+        document.getElementById('PDF_STATUS').textContent = `✓ ${pdf.numPages} sayfa okundu`;
+      } catch(err) {
+        document.getElementById('PDF_STATUS').textContent = '⚠ PDF okunamadı, metni yapıştır';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+async function generatePdfFlashCards() {
+  const text = document.getElementById('PDF_TEXT_INPUT').value.trim() || pdfExtractedText.trim();
+  if (!text) { document.getElementById('PDF_STATUS').textContent = '⚠ Önce metin gir veya PDF yükle'; return; }
+
+  const level = document.getElementById('PDF_LEVEL').value;
+  const lang = document.getElementById('PDF_LANG').value;
+
+  document.getElementById('PDF_STATUS').textContent = '⏳ AI flash kartlar oluşturuyor...';
+  document.getElementById('PDF_FLASH_COUNT').textContent = '';
+
+  const levelDesc = {
+    beginner: 'temel/sık kullanılan kelimeler (A1-A2 seviyesi)',
+    intermediate: 'orta seviye kelimeler (B1-B2 seviyesi)',
+    advanced: 'ileri seviye/akademik kelimeler (C1-C2 seviyesi)'
+  }[level];
+
+  const prompt = `Aşağıdaki metni analiz et. Metinin dilini otomatik algıla. ${levelDesc} için flash kart üret.
+Her kartın formatı şu şekilde olmalı: kelime/ifade: ${lang} anlamı
+Sadece ${levelDesc} için uygun kelimeleri seç.
+Maksimum 100 kart üret.
+Başka hiçbir şey yazma, sadece "kelime: anlam" formatında listele:
+
+${text.slice(0, 4000)}`;
+
+  try {
+    const WORKER_URL = 'https://not-that-ai.hazalkalmis.workers.dev';
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({prompt})
+    });
+    const data = await res.json();
+    const raw = data.text || '';
+
+    // Parse kartları
+    const cards = raw.split('\n').reduce((a, ln) => {
+      const i = ln.indexOf(':');
+      if (i > 0) {
+        const f = ln.slice(0, i).trim().replace(/^[-•*\d.]+\s*/, '');
+        const b = ln.slice(i + 1).trim();
+        if (f && b && a.length < 100) a.push({front: f, back: b});
+      }
+      return a;
+    }, []);
+
+    if (!cards.length) {
+      document.getElementById('PDF_STATUS').textContent = '⚠ Kart üretilemedi, metni kontrol et';
+      return;
+    }
+
+    document.getElementById('PDF_STATUS').textContent = `✓ ${cards.length} kart oluşturuldu!`;
+    document.getElementById('PDF_FLASH_COUNT').textContent = `${cards.length} flash kart hazır`;
+
+    // Flash modal'a yükle ve aç
+    setTimeout(() => {
+      flashCards = cards;
+      flashIdx = 0;
+      flashFlipped = false;
+      document.getElementById('FLASH_TITLE').textContent = 'PDF Flash Kartlar';
+      renderFlashCard();
+      closeModal('PDF_FLASH_MODAL');
+      openModal('FLASH_MODAL');
+      // Input'ları temizle
+      document.getElementById('PDF_TEXT_INPUT').value = '';
+      document.getElementById('PDF_FILE_NAME').textContent = 'Seçili dosya yok';
+      document.getElementById('PDF_STATUS').textContent = '';
+      pdfExtractedText = '';
+    }, 800);
+
+  } catch(err) {
+    document.getElementById('PDF_STATUS').textContent = '⚠ Hata: ' + err.message;
+  }
+}
+
 function openFlash(nid){
   const n=notes.find(x=>x.id===nid);if(!n)return;
   flashCards=n.content.split('\n').reduce((a,ln)=>{const i=ln.indexOf(':');if(i>0){const f=ln.slice(0,i).trim(),b=ln.slice(i+1).trim();if(f&&b)a.push({front:f,back:b});}return a;},[]);
@@ -3253,10 +3538,7 @@ async function doAI(action){
   // rate limit kontrolü
   const usage = getAIUsage();
   if (usage.count >= AI_DAILY_LIMIT) {
-    const msg = currentLang === 'TR'
-      ? `Günlük AI limitine ulaştın (${AI_DAILY_LIMIT}/${AI_DAILY_LIMIT}). Yarın tekrar kullanabilirsin.`
-      : `Daily AI limit reached (${AI_DAILY_LIMIT}/${AI_DAILY_LIMIT}). Try again tomorrow.`;
-    alert(msg);
+    document.getElementById('PRO_MODAL').classList.remove('hidden');
     return;
   }
   const n=getActive();const content=n?.type==='todo'?n.todoItems?.map(i=>i.text).join('\n'):document.getElementById('BODY_INPUT').value;

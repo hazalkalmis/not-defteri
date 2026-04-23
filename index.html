@@ -355,7 +355,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   }
 
   /* Merge pill (İsim Birleştir kaldırıldı), lang-seg'i gizle */
-  .merge-pill:not(.merge-pill-todo), .lang-seg, .tdots, .vsep {
+  .merge-pill:not(.merge-pill-todo):not(.merge-pill-pdf), .lang-seg, .tdots, .vsep {
     display: none !important;
   }
 
@@ -1122,6 +1122,11 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <button class="ic-btn mob-search-btn" id="MOB_SEARCH_BTN" onclick="toggleMobileSearch()" title="Ara">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     </button>
+    <button class="merge-pill merge-pill-pdf" onclick="openModal('PDF_FLASH_MODAL')" 
+      style="background:var(--work2);color:var(--work-text);border-color:rgba(196,119,59,.2);"
+      title="Metinden Flash Kart Üret">
+      📄 <span>PDF→Kart</span>
+    </button>
     <button class="merge-pill merge-pill-todo" id="MERGE_TODO_PILL"
       onclick="openMergeTodoModal()"
       title="To Do kartlarında yapılmamış To Do'ları birleştirir">
@@ -1257,8 +1262,6 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <button class="ai-btn" id="AI_BTN_2" onclick="doAI('todo')">To Do</button>
           <button class="ai-btn" id="AI_BTN_3" onclick="doAI('grammar')">Yazım</button>
           <button class="ai-btn" id="AI_BTN_4" onclick="doAI('translate')">Çevir</button>
-          <div style="width:1px;height:14px;background:var(--border2);margin:0 2px;flex-shrink:0;"></div>
-          <button class="ai-btn" onclick="openModal('PDF_FLASH_MODAL')" style="background:var(--work2);color:var(--work-text);">📄 PDF→Kart</button>
         </div>
         <button class="del-btn" onclick="deleteNote()" title="Sil">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
@@ -1435,8 +1438,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   <div class="pdf-flash-modal">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
       <div style="flex:1;">
-        <h3>📄 Metinden Flash Kart Üret</h3>
-        <p style="margin-bottom:0;">PDF yükle veya metin yapıştır — AI otomatik flash kart oluşturur. Maks. 100 kart.</p>
+        <h3 id="PDF_MODAL_TITLE">📄 Metinden Flash Kart Üret</h3>
+        <p style="margin-bottom:0;" id="PDF_MODAL_DESC">PDF yükle veya metin yapıştır — AI otomatik flash kart oluşturur. Maks. 100 kart.</p>
       </div>
       <button class="ic-btn" onclick="closeModal('PDF_FLASH_MODAL')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1457,7 +1460,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
     <div class="pdf-options">
       <div class="pdf-opt-group">
-        <span class="pdf-opt-label">Seviye</span>
+        <span class="pdf-opt-label" id="PDF_LBL_LEVEL">Seviyeniz</span>
         <select class="pdf-select" id="PDF_LEVEL">
           <option value="beginner">Beginner</option>
           <option value="intermediate" selected>Intermediate</option>
@@ -1465,7 +1468,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         </select>
       </div>
       <div class="pdf-opt-group">
-        <span class="pdf-opt-label">Anlam dili</span>
+        <span class="pdf-opt-label" id="PDF_LBL_LANG">Açıklama Dili</span>
         <select class="pdf-select" id="PDF_LANG">
           <option value="Türkçe">Türkçe</option>
           <option value="İngilizce">İngilizce</option>
@@ -2234,7 +2237,10 @@ function now(){return new Date().toISOString();}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function erx(t){return t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
-function openModal(id){document.getElementById(id).classList.remove('hidden');}
+function openModal(id){
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='PDF_FLASH_MODAL') applyLangLabels();
+}
 function hide(id){document.getElementById(id).classList.add('hidden');}
 function show(id){document.getElementById(id).classList.remove('hidden');}
 
@@ -2327,6 +2333,17 @@ function applyLangLabels(){
   document.getElementById('LBL_MERGE_TODO_SUB').textContent=currentLang==='TR'
     ?'Birleştirmek istediğin To Do kartlarını seç. Sadece tamamlanmamış maddeler yeni karta gelir.'
     :'Select To Do cards to merge. Only incomplete items will be included.';
+  // PDF Flash Modal dil
+  const pdfTitle = document.getElementById('PDF_MODAL_TITLE');
+  const pdfDesc = document.getElementById('PDF_MODAL_DESC');
+  const pdfLblLevel = document.getElementById('PDF_LBL_LEVEL');
+  const pdfLblLang = document.getElementById('PDF_LBL_LANG');
+  if (pdfTitle) pdfTitle.textContent = currentLang==='TR' ? '📄 Metinden Flash Kart Üret' : '📄 Generate Flash Cards from Text';
+  if (pdfDesc) pdfDesc.textContent = currentLang==='TR'
+    ? 'PDF yükle veya metin yapıştır — AI otomatik flash kart oluşturur. Maks. 100 kart.'
+    : 'Upload a PDF or paste text — AI generates flash cards automatically. Max. 100 cards.';
+  if (pdfLblLevel) pdfLblLevel.textContent = currentLang==='TR' ? 'Seviyeniz' : 'Your Level';
+  if (pdfLblLang) pdfLblLang.textContent = currentLang==='TR' ? 'Açıklama Dili' : 'Explanation Language';
 }
 function getCurrentTypeLabel(){
   const n=getActive();

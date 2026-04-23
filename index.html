@@ -1125,7 +1125,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <button class="merge-pill merge-pill-pdf" onclick="openModal('PDF_FLASH_MODAL')" 
       style="background:var(--work2);color:var(--work-text);border-color:rgba(196,119,59,.2);"
       title="Metinden Flash Kart Üret">
-      📄 <span>PDF→Kart</span>
+      📄 <span id="LBL_PDF_FLASH_BTN">Metin→Flashcard</span>
     </button>
     <button class="merge-pill merge-pill-todo" id="MERGE_TODO_PILL"
       onclick="openMergeTodoModal()"
@@ -1449,12 +1449,12 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <!-- PDF drop -->
     <div class="pdf-drop-area" id="PDF_DROP" onclick="document.getElementById('PDF_FILE_INPUT').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handlePdfDrop(event)">
       <div class="pdf-drop-icon">📎</div>
-      <div class="pdf-drop-text">PDF dosyasını buraya sürükle veya tıkla</div>
+      <div class="pdf-drop-text" id="PDF_DROP_TEXT">PDF dosyasını buraya sürükle veya tıkla</div>
       <div class="pdf-drop-sub" id="PDF_FILE_NAME">Seçili dosya yok</div>
     </div>
     <input type="file" id="PDF_FILE_INPUT" accept=".pdf,.txt" style="display:none" onchange="handlePdfFile(this.files[0])">
 
-    <div class="pdf-or">— veya —</div>
+    <div class="pdf-or" id="PDF_OR">— veya —</div>
 
     <textarea class="pdf-textarea" id="PDF_TEXT_INPUT" placeholder="Metni buraya yapıştır..."></textarea>
 
@@ -1481,8 +1481,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <div class="pdf-flash-count" id="PDF_FLASH_COUNT"></div>
 
     <div class="mact">
-      <button class="btn" onclick="closeModal('PDF_FLASH_MODAL')">İptal</button>
-      <button class="btn-p" onclick="generatePdfFlashCards()">⚡ Flash Kart Üret</button>
+      <button class="btn" id="PDF_CANCEL_BTN" onclick="closeModal('PDF_FLASH_MODAL')">İptal</button>
+      <button class="btn-p" id="PDF_GENERATE_BTN" onclick="generatePdfFlashCards()">⚡ Flash Kart Üret</button>
     </div>
   </div>
 </div>
@@ -1509,6 +1509,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         <button class="flash-nav-btn" onclick="prevCard()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
         <button class="flash-nav-btn" onclick="nextCard()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
       </div>
+      <button id="FLASH_SAVE_BTN" class="hidden" onclick="saveFlashCardsAsNote()" style="height:28px;padding:0 12px;border:1px solid var(--border2);background:none;border-radius:7px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:.12s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent-text)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+        💾 Nota Kaydet
+      </button>
       <button class="flash-fav" id="FLASH_FAV_BTN" onclick="toggleFlashFav()">☆</button>
     </div>
   </div>
@@ -2344,6 +2347,20 @@ function applyLangLabels(){
     : 'Upload a PDF or paste text — AI generates flash cards automatically. Max. 100 cards.';
   if (pdfLblLevel) pdfLblLevel.textContent = currentLang==='TR' ? 'Seviyeniz' : 'Your Level';
   if (pdfLblLang) pdfLblLang.textContent = currentLang==='TR' ? 'Açıklama Dili' : 'Explanation Language';
+  const pdfDropText = document.getElementById('PDF_DROP_TEXT');
+  const pdfFileNameEl = document.getElementById('PDF_FILE_NAME');
+  const pdfOr = document.getElementById('PDF_OR');
+  const pdfTextInput = document.getElementById('PDF_TEXT_INPUT');
+  const pdfCancelBtn = document.getElementById('PDF_CANCEL_BTN');
+  const pdfGenerateBtn = document.getElementById('PDF_GENERATE_BTN');
+  const pdfFlashBtn = document.getElementById('LBL_PDF_FLASH_BTN');
+  if (pdfDropText) pdfDropText.textContent = currentLang==='TR' ? 'PDF dosyasını buraya sürükle veya tıkla' : 'Drag & drop a PDF here or click to browse';
+  if (pdfFileNameEl && pdfFileNameEl.textContent === 'Seçili dosya yok' || pdfFileNameEl && pdfFileNameEl.textContent === 'No file selected') pdfFileNameEl.textContent = currentLang==='TR' ? 'Seçili dosya yok' : 'No file selected';
+  if (pdfOr) pdfOr.textContent = currentLang==='TR' ? '— veya —' : '— or —';
+  if (pdfTextInput) pdfTextInput.placeholder = currentLang==='TR' ? 'Metni buraya yapıştır...' : 'Paste your text here...';
+  if (pdfCancelBtn) pdfCancelBtn.textContent = currentLang==='TR' ? 'İptal' : 'Cancel';
+  if (pdfGenerateBtn) pdfGenerateBtn.textContent = currentLang==='TR' ? '⚡ Flash Kart Üret' : '⚡ Generate Flash Cards';
+  if (pdfFlashBtn) pdfFlashBtn.textContent = currentLang==='TR' ? 'Metin→Flashcard' : 'Text→Flashcard';
 }
 function getCurrentTypeLabel(){
   const n=getActive();
@@ -2588,6 +2605,24 @@ function toggleSpace(id){
 
 // ── NOTES ──
 function getActive(){return notes.find(x=>x.id===activeId);}
+function saveFlashCardsAsNote() {
+  if (!flashCards || !flashCards.length) return;
+  const date = new Date().toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US', {day:'numeric',month:'long',year:'numeric'});
+  const title = currentLang==='TR' ? `Flash Kartlar — ${date}` : `Flash Cards — ${date}`;
+  const content = flashCards.map(c => `${c.front}: ${c.back}`).join('\n');
+  const n = {
+    id: uid(), title, content, space: 'personal', type: 'normal',
+    todoItems: [], todoType: null, createdAt: now(), updatedAt: now(), images: [], audios: []
+  };
+  notes.unshift(n);
+  save();
+  saveNoteToCloud(n);
+  renderAllCards();
+  closeModal('FLASH_MODAL');
+  openNote(n.id);
+  showFlash(currentLang==='TR' ? '✓ Nota kaydedildi' : '✓ Saved as note');
+}
+
 function newNote(space,type){
   const n={id:uid(),title:'',content:'',space:space||'personal',type:type||'normal',
     todoItems:[],todoType:null,createdAt:now(),updatedAt:now(),images:[],audios:[]};
@@ -2654,7 +2689,7 @@ function deleteNote(){
 function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
 function updateDateLine(n){
   const d=new Date(n.updatedAt);
-  const str=d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const str=d.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
   document.getElementById('DATE_LINE').textContent=str;
 }
 function updateFolderPill(n){document.getElementById('FOLDER_PILL').textContent='📁 '+s(n.space==='work'?'work':'personal');}
@@ -2681,7 +2716,7 @@ function showTodoView(n){
   const done=(n.todoItems||[]).filter(i=>i.done).length;
   const total=(n.todoItems||[]).length;
   document.getElementById('TODO_DATE').innerHTML=`
-    <span style="font-size:11px;color:var(--text3);">${d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</span>
+    <span style="font-size:11px;color:var(--text3);">${d.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long',year:'numeric'})}</span>
     ${total>0?`<span style="font-size:10px;background:#e8f4e8;color:#2d6a2d;padding:1px 6px;border-radius:4px;">${done}/${total} ✓</span>`:''}
   `;
   renderTodoItems(n);
@@ -2703,7 +2738,7 @@ function openTodoTypeModal(space){
   const now2=new Date();
   const weekStart=new Date(now2);weekStart.setDate(now2.getDate()-now2.getDay()+1);
   const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
-  const wStr=weekStart.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})+' – '+weekEnd.toLocaleDateString('tr-TR',{day:'numeric',month:'long'});
+  const wStr=weekStart.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long'})+' – '+weekEnd.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long'});
   document.getElementById('LBL_SUGGESTED_TITLE').textContent=
     currentLang==='TR'?`Öneri: "${wStr} Haftası" başlığı oluşturulacak`:`Suggested: "${wStr} Week" will be created`;
   openModal('TODO_TYPE_MODAL');
@@ -2712,13 +2747,13 @@ function selectTodoType(type){
   closeModal('TODO_TYPE_MODAL');
   const now2=new Date();
   let suggestedTitle='';
-  if(type==='daily')suggestedTitle=now2.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  if(type==='daily')suggestedTitle=now2.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long',year:'numeric'});
   else if(type==='weekly'){
     const ws=new Date(now2);ws.setDate(now2.getDate()-now2.getDay()+1);
     const we=new Date(ws);we.setDate(ws.getDate()+6);
-    suggestedTitle=ws.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})+' – '+we.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})+' '+(currentLang==='TR'?'Haftası':'Week');
+    suggestedTitle=ws.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long'})+' – '+we.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long'})+' '+(currentLang==='TR'?'Haftası':'Week');
   }
-  else if(type==='monthly')suggestedTitle=now2.toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
+  else if(type==='monthly')suggestedTitle=now2.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{month:'long',year:'numeric'});
   const n={id:uid(),title:suggestedTitle,content:'',space:pendingTodoSpace||'work',type:'todo',
     todoType:type,todoItems:[],createdAt:now(),updatedAt:now(),images:[],audios:[]};
   notes.unshift(n);save();saveNoteToCloud(n);renderAllCards();openNote(n.id);
@@ -2813,7 +2848,7 @@ function closeMerge(doIt){
   if(doIt){
     const ex=notes.find(n=>n.id===pendingMerge.eid);
     if(ex){
-      const ds=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+      const ds=new Date().toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long',year:'numeric'});
       ex.content+=(ex.content.trim()?'\n\n':'')+`--- ${ds} ---\n`;
       ex.updatedAt=now();notes=notes.filter(n=>n.id!==pendingMerge.nid);
       save();renderAllCards();openNote(ex.id);
@@ -2940,7 +2975,7 @@ function relDate(iso){
   if(d<6e4)return s('justNow');
   if(d<36e5)return Math.floor(d/6e4)+'dk';
   if(d<864e5)return Math.floor(d/36e5)+'sa';
-  return new Date(iso).toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
+  return new Date(iso).toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'short'});
 }
 const CARDS_VISIBLE = 4;
 function renderCards(space){
@@ -2966,7 +3001,7 @@ function renderCards(space){
     if(d.toDateString()===td)lb=s('today');
     else if(d.toDateString()===yd)lb=s('yesterday');
     else if(d>=wa)lb=s('thisWeek');
-    else lb=d.toLocaleDateString('tr-TR',{month:'long',year:'numeric'});
+    else lb=d.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{month:'long',year:'numeric'});
     (groups[lb]=groups[lb]||[]).push(n);
   });
 
@@ -3017,60 +3052,20 @@ function renderCards(space){
     </div>`;
   }
 
-  // Build flat ordered list with day labels
-  const allItems=[];
+  // Build flat ordered list with day labels — tümünü göster, scroll ile ilerle
+  let mainHtml='';
   for(const[lb,ns]of Object.entries(groups)){
-    allItems.push({type:'label',lb});
-    ns.forEach(n=>allItems.push({type:'card',n}));
+    mainHtml+=`<div class="day-lbl">${lb}</div>`;
+    ns.forEach(n=>{ mainHtml+=makeCardHtml(n); });
   }
 
-  // First CARDS_VISIBLE cards go into main container
-  // Rest go into overflow
-  let cardCount=0;
-  let mainHtml='', overHtml='';
-  let overflowStarted=false;
-  allItems.forEach(item=>{
-    if(item.type==='label'){
-      // add label to whichever section is active
-      if(!overflowStarted)mainHtml+=`<div class="day-lbl">${item.lb}</div>`;
-      else overHtml+=`<div class="day-lbl">${item.lb}</div>`;
-    } else {
-      if(cardCount<CARDS_VISIBLE){
-        mainHtml+=makeCardHtml(item.n);
-      } else {
-        overflowStarted=true;
-        overHtml+=makeCardHtml(item.n);
-      }
-      cardCount++;
-    }
-  });
-
   container.innerHTML=mainHtml;
-  // swipe init
   container.querySelectorAll('.ncard').forEach(el => {
     initSwipe(el, el.dataset.nid);
   });
 
-  if(overflowContainer){
-    if(overHtml){
-      overflowContainer.innerHTML=overHtml;
-      overflowContainer.querySelectorAll('.ncard').forEach(el => {
-        initSwipe(el, el.dataset.nid);
-      });
-      const isOpen=overflowContainer.classList.contains('open');
-      if(showBtn){
-        showBtn.style.display='block';
-        const remaining=cardCount-CARDS_VISIBLE;
-        showBtn.textContent=isOpen
-          ?(currentLang==='TR'?'Daha az gör ↑':'Show less ↑')
-          :(currentLang==='TR'?`${remaining} not daha — tümünü gör ↓`:`${remaining} more — show all ↓`);
-      }
-    } else {
-      overflowContainer.innerHTML='';
-      overflowContainer.classList.remove('open');
-      if(showBtn)showBtn.style.display='none';
-    }
-  }
+  if(overflowContainer){ overflowContainer.innerHTML=''; overflowContainer.classList.remove('open'); }
+  if(showBtn) showBtn.style.display='none';
 }
 
 // ── SHOW ALL / LESS ──
@@ -3303,10 +3298,20 @@ async function generatePdfFlashCards() {
     advanced: 'ileri seviye/akademik kelimeler (C1-C2 seviyesi)'
   }[level];
 
-  const prompt = `Aşağıdaki metni analiz et. Metinin dilini otomatik algıla. ${levelDesc} için flash kart üret.
-Her kartın formatı şu şekilde olmalı: kelime/ifade: ${lang} anlamı
-Sadece ${levelDesc} için uygun kelimeleri seç.
-Maksimum 100 kart üret.
+  const levelLimit = {
+    beginner: 30,
+    intermediate: 20,
+    advanced: 12
+  }[level];
+
+  const prompt = `Aşağıdaki metni analiz et. Metnin dilini otomatik algıla.
+Görev: ${levelDesc} için flash kart üret.
+- Beginner: en yaygın, basit kelimeler — maksimum 30 kart
+- Intermediate: orta zorlukta kelimeler — maksimum 20 kart  
+- Advanced: nadir, akademik, teknik kelimeler — maksimum 12 kart
+Sen şu an ${level} seviyesi için çalışıyorsun: maksimum ${levelLimit} kart üret.
+Her kartın formatı: kelime veya ifade: ${lang} anlamı
+Sadece ${levelDesc} için uygun kelimeleri seç. Az ama doğru seç.
 Başka hiçbir şey yazma, sadece "kelime: anlam" formatında listele:
 
 ${text.slice(0, 4000)}`;
@@ -3345,7 +3350,8 @@ ${text.slice(0, 4000)}`;
       flashCards = cards;
       flashIdx = 0;
       flashFlipped = false;
-      document.getElementById('FLASH_TITLE').textContent = 'PDF Flash Kartlar';
+      document.getElementById('FLASH_TITLE').textContent = currentLang==='TR' ? 'PDF Flash Kartlar' : 'PDF Flash Cards';
+      document.getElementById('FLASH_SAVE_BTN').classList.remove('hidden');
       renderFlashCard();
       closeModal('PDF_FLASH_MODAL');
       openModal('FLASH_MODAL');
@@ -3366,6 +3372,7 @@ function openFlash(nid){
   flashCards=n.content.split('\n').reduce((a,ln)=>{const i=ln.indexOf(':');if(i>0){const f=ln.slice(0,i).trim(),b=ln.slice(i+1).trim();if(f&&b)a.push({front:f,back:b});}return a;},[]);
   if(!flashCards.length){alert(currentLang==='TR'?'Bu notta "kelime: anlam" formatında kart bulunamadı.':'No "word: meaning" cards found.');return;}
   flashIdx=0;flashFlipped=false;
+  document.getElementById('FLASH_SAVE_BTN').classList.add('hidden');
   document.getElementById('FLASH_TITLE').textContent=n.title||s('flashCards');
   renderFlashCard();openModal('FLASH_MODAL');
 }
@@ -3596,7 +3603,7 @@ function getDlNotes(){const f=document.getElementById('DL_FROM').value,t=documen
 function updateDlList(){
   const ns=getDlNotes();
   document.getElementById('DL_LIST').innerHTML=`<label class="dl-sel-all"><input type="checkbox" id="DL_SEL_ALL" checked onchange="toggleSelAll(this.checked)"> Tümünü seç</label>`+
-    ns.map(n=>`<label class="dl-item"><input type="checkbox" class="dl-chk" value="${n.id}" checked><span class="dl-item-title">${esc(n.title||s('untitled'))}</span><span class="dl-item-date">${new Date(n.updatedAt).toLocaleDateString('tr-TR')}</span></label>`).join('');
+    ns.map(n=>`<label class="dl-item"><input type="checkbox" class="dl-chk" value="${n.id}" checked><span class="dl-item-title">${esc(n.title||s('untitled'))}</span><span class="dl-item-date">${new Date(n.updatedAt).toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US')}</span></label>`).join('');
   updateDlCount();
   document.querySelectorAll('.dl-chk').forEach(cb=>cb.addEventListener('change',updateDlCount));
 }
@@ -3606,15 +3613,15 @@ function doDownload(){
   var ids=[...document.querySelectorAll('.dl-chk:checked')].map(function(cb){return cb.value;});
   if(!ids.length)return;
   var ns=ids.map(function(id){return notes.find(function(n){return n.id===id;});}).filter(Boolean).sort(function(a,b){return new Date(a.updatedAt)-new Date(b.updatedAt);});
-  var today=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  var today=new Date().toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long',year:'numeric'});
   var h='<html><head><meta charset="utf-8"><title>not-that</title></head><body><h1>not-that</h1><div>'+today+'</div><hr>';
   var ll='';
   ns.forEach(function(n){
     var d=new Date(n.updatedAt);
-    var lb=d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+    var lb=d.toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long',year:'numeric'});
     if(lb!==ll){h+='<h2>'+lb+'</h2>';ll=lb;}
     h+='<h1>'+esc(n.title||s('untitled'))+'</h1>';
-    h+='<div>'+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})+'</div>';
+    h+='<div>'+d.toLocaleTimeString(currentLang==='TR'?'tr-TR':'en-US',{hour:'2-digit',minute:'2-digit'})+'</div>';
     h+='<div>'+esc(n.content)+'</div><hr>';
   });
   h+='</body></html>';

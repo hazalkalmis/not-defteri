@@ -355,7 +355,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   }
 
   /* Merge pill (İsim Birleştir kaldırıldı), lang-seg'i gizle */
-  .merge-pill:not(.merge-pill-todo):not(.merge-pill-pdf), .lang-seg, .tdots, .vsep {
+  .merge-pill:not(.merge-pill-todo):not(.merge-pill-pdf):not(.merge-pill-ai-merge), .lang-seg, .tdots, .vsep {
     display: none !important;
   }
 
@@ -800,6 +800,19 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .tour-next:hover{background:#7a5a9a;}
 .tour-arrow{position:fixed;z-index:8002;width:0;height:0;}
 
+.merge-pill-ai-merge{background:var(--accent2);color:var(--accent-text);border-color:rgba(74,122,181,.2);}
+.merge-pill-ai-merge:hover{filter:brightness(.95);}
+.merge-pill-ai-merge.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.merge-pill-ai-merge.ready{background:#6a4a8a;color:#fff;border-color:#6a4a8a;}
+
+/* merge select mode checkboxes */
+.ncard-merge-cb{
+  display:none;width:16px;height:16px;flex-shrink:0;
+  accent-color:var(--accent);cursor:pointer;margin:0 4px 0 6px;
+}
+.merge-select-mode .ncard-merge-cb{display:block;}
+.ncard.merge-selected{background:var(--accent2);border-color:rgba(74,122,181,.2);}
+
 /* ── PDF FLASHCARD MODAL ── */
 .pdf-flash-modal {
   background: var(--surface); border-radius: 16px; padding: 24px;
@@ -1121,6 +1134,11 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <!-- Mobil: arama ikonu -->
     <button class="ic-btn mob-search-btn" id="MOB_SEARCH_BTN" onclick="toggleMobileSearch()" title="Ara">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+    <button id="AI_MERGE_BTN" class="merge-pill merge-pill-ai-merge" onclick="toggleMergeMode()" 
+      title="Notları AI ile birleştir">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      <span id="LBL_AI_MERGE_BTN">AI ile Birleştir</span>
     </button>
     <button class="merge-pill merge-pill-pdf" onclick="openModal('PDF_FLASH_MODAL')" 
       style="background:var(--work2);color:var(--work-text);border-color:rgba(196,119,59,.2);"
@@ -2278,10 +2296,6 @@ function toggleDarkMode(){
 
 // ── MERGE MODE TOGGLE ──
 let mergeEnabled=true;
-function toggleMergeMode(){
-  mergeEnabled=!mergeEnabled;
-  document.getElementById('MERGE_TOGGLE').checked=mergeEnabled;
-}
 
 // ── LANGUAGE ──
 function setLang(lang){
@@ -2361,6 +2375,7 @@ function applyLangLabels(){
   if (pdfCancelBtn) pdfCancelBtn.textContent = currentLang==='TR' ? 'İptal' : 'Cancel';
   if (pdfGenerateBtn) pdfGenerateBtn.textContent = currentLang==='TR' ? '⚡ Flash Kart Üret' : '⚡ Generate Flash Cards';
   if (pdfFlashBtn) pdfFlashBtn.textContent = currentLang==='TR' ? 'Metin→Flashcard' : 'Text→Flashcard';
+  updateMergeBtn();
 }
 function getCurrentTypeLabel(){
   const n=getActive();
@@ -3023,7 +3038,8 @@ function renderCards(space){
       ontouchstart="initSwipeTouchStart(event,this,'${n.id}')"
       ontouchmove="initSwipeTouchMove(event,this)"
       ontouchend="initSwipeTouchEnd(event,this,'${n.id}')">
-      <div class="ncard-swipe-inner" onclick="openNote('${n.id}')">
+      <div class="ncard-swipe-inner" onclick="handleCardClick(event,'${n.id}')">
+        <input type="checkbox" class="ncard-merge-cb" data-nid="${n.id}" onclick="event.stopPropagation();toggleMergeSelect('${n.id}',this.checked)">
         <div class="nc-drag">⋮⋮</div>
         <div class="nc-bar" style="background:${accentColor};"></div>
         <div class="nc-body">
@@ -3193,8 +3209,10 @@ function showNoteCtx(ev,nid){
     ?(currentLang==='TR'?'💼 İş\'e Taşı':'💼 Move to Work')
     :(currentLang==='TR'?'🏠 Özel\'e Taşı':'🏠 Move to Personal');
   const moveTarget=n.space==='personal'?'work':'personal';
+  const mergeLabel=currentLang==='TR'?'🔀 Birleştirmeye Ekle':'🔀 Add to Merge';
   showCtx(ev.clientX,ev.clientY,[
     {label:currentLang==='TR'?'⚡ Flash Kartlar':'⚡ Flash Cards',fn:`openFlash('${nid}');hideCtx()`},
+    {label:mergeLabel,fn:`addToMergeFromCtx('${nid}');hideCtx()`},
     {label:moveLabel,fn:`moveNoteToSpace('${nid}','${moveTarget}');hideCtx()`},
     'sep',
     {label:currentLang==='TR'?'Notu Sil':'Delete Note',danger:true,fn:`deleteNoteById('${nid}');hideCtx()`}
@@ -3224,7 +3242,148 @@ function showCtx(x,y,items){
   m.style.top=Math.min(y,window.innerHeight-200)+'px';
 }
 function hideCtx(){document.getElementById('CTX_MENU').style.display='none';}
-function hideCtx(){document.getElementById('CTX_MENU').style.display='none';}
+
+// ── AI MERGE MODE ──
+let mergeSelectMode = false;
+let mergeSelectedIds = new Set();
+
+function toggleMergeMode() {
+  if (mergeSelectMode && mergeSelectedIds.size >= 2) {
+    doAIMerge();
+  } else if (mergeSelectMode) {
+    exitMergeMode();
+  } else {
+    enterMergeMode();
+  }
+}
+
+function enterMergeMode() {
+  mergeSelectMode = true;
+  mergeSelectedIds.clear();
+  document.getElementById('LEFT').classList.add('merge-select-mode');
+  updateMergeBtn();
+}
+
+function exitMergeMode() {
+  mergeSelectMode = false;
+  mergeSelectedIds.clear();
+  document.getElementById('LEFT').classList.remove('merge-select-mode');
+  document.querySelectorAll('.ncard-merge-cb').forEach(cb => { cb.checked = false; });
+  document.querySelectorAll('.ncard').forEach(el => { el.classList.remove('merge-selected'); });
+  updateMergeBtn();
+}
+
+function toggleMergeSelect(nid, checked) {
+  if (checked) mergeSelectedIds.add(nid);
+  else mergeSelectedIds.delete(nid);
+  const card = document.querySelector(`.ncard[data-nid="${nid}"]`);
+  if (card) card.classList.toggle('merge-selected', checked);
+  updateMergeBtn();
+}
+
+function updateMergeBtn() {
+  const btn = document.getElementById('AI_MERGE_BTN');
+  const lbl = document.getElementById('LBL_AI_MERGE_BTN');
+  if (!btn || !lbl) return;
+  if (!mergeSelectMode) {
+    btn.classList.remove('active','ready');
+    btn.disabled = false;
+    lbl.textContent = currentLang==='TR' ? 'AI ile Birleştir' : 'AI Merge';
+    return;
+  }
+  const count = mergeSelectedIds.size;
+  btn.classList.add('active');
+  if (count >= 2) {
+    btn.classList.add('ready');
+    btn.disabled = false;
+    lbl.textContent = currentLang==='TR' ? `Seçilileri Birleştir (${count})` : `Merge Selected (${count})`;
+  } else {
+    btn.classList.remove('ready');
+    btn.disabled = true;
+    lbl.textContent = currentLang==='TR' ? 'AI ile Birleştir' : 'AI Merge';
+  }
+}
+
+function addToMergeFromCtx(nid) {
+  if (!mergeSelectMode) enterMergeMode();
+  const cb = document.querySelector(`.ncard-merge-cb[data-nid="${nid}"]`);
+  if (cb) cb.checked = true;
+  mergeSelectedIds.add(nid);
+  const card = document.querySelector(`.ncard[data-nid="${nid}"]`);
+  if (card) card.classList.add('merge-selected');
+  updateMergeBtn();
+}
+
+function handleCardClick(ev, nid) {
+  if (mergeSelectMode) {
+    const cb = document.querySelector(`.ncard-merge-cb[data-nid="${nid}"]`);
+    if (cb && !ev.target.classList.contains('ncard-merge-cb')) {
+      cb.checked = !cb.checked;
+      toggleMergeSelect(nid, cb.checked);
+    }
+    return;
+  }
+  openNote(nid);
+}
+
+async function doAIMerge() {
+  if (mergeSelectedIds.size < 2) return;
+  const selectedNotes = [...mergeSelectedIds].map(id => notes.find(n => n.id === id)).filter(Boolean);
+  const btn = document.getElementById('AI_MERGE_BTN');
+  const lbl = document.getElementById('LBL_AI_MERGE_BTN');
+  lbl.textContent = currentLang==='TR' ? '⏳ Birleştiriliyor...' : '⏳ Merging...';
+  btn.disabled = true;
+
+  let combinedText = selectedNotes.map(n => {
+    if (n.type === 'todo') {
+      const items = (n.todoItems||[]).map(i => `- ${i.text}${i.done?' (tamamlandı)':''}`).join('\n');
+      return `### ${n.title||'To Do'}\n${items}`;
+    }
+    return `### ${n.title||'Başlıksız'}\n${n.content}`;
+  }).join('\n\n---\n\n');
+
+  const prompt = `Aşağıdaki notları birleştir ve düzenle. Metnin dilini algıla ve aynı dilde yaz.
+Kurallar:
+- Tekrar eden bilgileri tek seferlik yaz
+- Ana başlıklara böl (## başlık formatı)
+- Bilgileri mantıklı kategorilere ayır
+- Yorum veya analiz ekleme, sadece içeriği düzenle
+- Todo maddeleri varsa en sona "## Yapılacaklar" başlığıyla koy
+- İlk satıra şunu yaz: BAŞLIK: [ana fikri özetleyen başlık]
+
+Notlar:
+${combinedText.slice(0, 6000)}`;
+
+  try {
+    const res = await fetch('https://not-that-ai.hazalkalmis.workers.dev', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt})
+    });
+    const data = await res.json();
+    const raw = data.text || '';
+    const lines = raw.trim().split('\n');
+    let title = currentLang==='TR' ? 'Birleştirilmiş Not' : 'Merged Note';
+    let content = raw.trim();
+    if (lines[0].startsWith('BAŞLIK:') || lines[0].startsWith('TITLE:')) {
+      title = lines[0].replace(/^(BAŞLIK:|TITLE:)\s*/,'').trim();
+      content = lines.slice(1).join('\n').trim();
+    }
+    const merged = {
+      id:uid(), title, content,
+      space: selectedNotes[0].space||'personal',
+      type:'normal', todoItems:[], todoType:null,
+      createdAt:now(), updatedAt:now(), images:[], audios:[]
+    };
+    notes.unshift(merged);
+    save(); saveNoteToCloud(merged); renderAllCards(); openNote(merged.id);
+    exitMergeMode();
+    showFlash(currentLang==='TR' ? `✓ ${selectedNotes.length} not birleştirildi` : `✓ ${selectedNotes.length} notes merged`);
+  } catch(err) {
+    lbl.textContent = currentLang==='TR' ? 'Hata! Tekrar dene' : 'Error! Try again';
+    btn.disabled = false;
+    setTimeout(()=>updateMergeBtn(), 2000);
+  }
+}
 
 // ── PDF → FLASHCARD ──
 let pdfExtractedText = '';
@@ -3856,7 +4015,7 @@ async function init(){
   updateDlList();
   updateAILimitUI();
   document.addEventListener('click',hideCtx);
-  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){hideCtx();document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden'));}});
+  document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){hideCtx();document.querySelectorAll('.ov').forEach(o=>o.classList.add('hidden'));if(mergeSelectMode)exitMergeMode();}});
   const fa=document.getElementById('FLASH_AREA');
   fa.addEventListener('touchstart',ev=>{touchStartX=ev.touches[0].clientX;},{passive:true});
   fa.addEventListener('touchend',ev=>{const dx=ev.changedTouches[0].clientX-touchStartX;if(Math.abs(dx)>40)dx<0?nextCard():prevCard();});

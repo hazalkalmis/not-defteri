@@ -1308,6 +1308,11 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <div class="tdot" id="DOT_plum" style="background:#3d1a4a;" onclick="setTheme('plum')" title="Plum"></div>
     </div>
     <div class="vsep"></div>
+    <button id="PRO_TOPBAR_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')"
+      style="height:24px;padding:0 12px;background:#6a4a8a;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:.15s;"
+      onmouseover="this.style.background='#7a5a9a'" onmouseout="this.style.background='#6a4a8a'">
+      <span id="LBL_PRO_TOPBAR">Pro'ya geç ✦</span>
+    </button>
     <button class="ic-btn" id="FAV_BTN" onclick="showFavPanel()" title="Favoriler">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
     </button>
@@ -1670,13 +1675,13 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <!-- 1. Önce dil seç -->
     <div class="transcript-lang-row" style="margin-bottom:14px;">
       <span class="transcript-lang-label" id="TR_LANG_LABEL">Çeviri dili:</span>
-      <select class="pdf-select" id="TR_TARGET_LANG" style="width:160px;">
-        <option value="İngilizce" selected>İngilizce / English</option>
-        <option value="Türkçe">Türkçe</option>
-        <option value="Almanca">Almanca / Deutsch</option>
-        <option value="Fransızca">Fransızca / French</option>
-        <option value="İspanyolca">İspanyolca / Spanish</option>
-        <option value="">Çevirme / No translate</option>
+      <select class="pdf-select" id="TR_TARGET_LANG" style="width:140px;">
+        <option value="İngilizce" id="TR_OPT_EN" selected>English</option>
+        <option value="Türkçe" id="TR_OPT_TR">Türkçe</option>
+        <option value="Almanca" id="TR_OPT_DE">Deutsch</option>
+        <option value="Fransızca" id="TR_OPT_FR">Français</option>
+        <option value="İspanyolca" id="TR_OPT_ES">Español</option>
+        <option value="" id="TR_OPT_NONE">No translate</option>
       </select>
     </div>
 
@@ -2605,6 +2610,22 @@ function applyLangLabels(){
   if(trCancelBtn) trCancelBtn.textContent=currentLang==='TR'?'İptal':'Cancel';
   if(trRecLabel && !transcriptRecording) trRecLabel.textContent=currentLang==='TR'?'Kayıt Başlat':'Start Recording';
   if(trLblBtn) trLblBtn.textContent=currentLang==='TR'?'Ses Transkript':'Transcript';
+  // Transcript dropdown options
+  const isTR = currentLang==='TR';
+  const trOptEn=document.getElementById('TR_OPT_EN');
+  const trOptTr=document.getElementById('TR_OPT_TR');
+  const trOptDe=document.getElementById('TR_OPT_DE');
+  const trOptFr=document.getElementById('TR_OPT_FR');
+  const trOptEs=document.getElementById('TR_OPT_ES');
+  const trOptNone=document.getElementById('TR_OPT_NONE');
+  if(trOptEn) trOptEn.textContent=isTR?'İngilizce':'English';
+  if(trOptTr) trOptTr.textContent=isTR?'Türkçe':'Turkish';
+  if(trOptDe) trOptDe.textContent=isTR?'Almanca':'German';
+  if(trOptFr) trOptFr.textContent=isTR?'Fransızca':'French';
+  if(trOptEs) trOptEs.textContent=isTR?'İspanyolca':'Spanish';
+  if(trOptNone) trOptNone.textContent=isTR?'Çevirme':'No translate';
+  const proTopbar=document.getElementById('LBL_PRO_TOPBAR');
+  if(proTopbar) proTopbar.textContent=isTR?'Pro\'ya geç ✦':'Go Pro ✦';
   // Mobil CSS için transcript pill
 }
 function getCurrentTypeLabel(){
@@ -4200,7 +4221,8 @@ async function sendTranscriptToAI(base64, mimeType) {
       .replace(/^TRANSKRIPT:/gm, '<strong>Transkript:</strong>')
       .replace(/^ÇEVİRİ:/gm, '<strong>Çeviri:</strong>')
       .replace(/^TRANSCRIPT:/gm, '<strong>Transcript:</strong>')
-      .replace(/^TRANSLATION:/gm, '<strong>Translation:</strong>');
+      .replace(/^TRANSLATION:/gm, '<strong>Translation:</strong>')
+      .replace(/\n/g, '<br>');
     resultDiv.innerHTML = formatted;
     resultDiv.style.display = 'block';
 

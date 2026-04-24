@@ -779,6 +779,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .lp-logo{font-family:'Lora',serif;font-size:20px;font-weight:500;color:#e8e0f0;letter-spacing:-.3px;}
 .lp-logo span{color:#8b6bbf;}
 .lp-nav-btns{display:flex;gap:12px;align-items:center;}
+.lp-signin-btn{font-size:13px;color:#e8e0f0;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;font-family:'DM Sans',sans-serif;padding:9px 18px;font-weight:500;transition:.15s;}
+.lp-signin-btn:hover{background:rgba(255,255,255,.13);}
 .lp-signin{font-size:13px;color:#9090b0;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
 .lp-signin:hover{color:#e8e0f0;}
 .lp-cta-btn{background:#6a4a8a;color:#fff;font-size:13px;padding:9px 20px;border-radius:8px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-weight:500;transition:.15s;}
@@ -818,13 +820,14 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .lp-pricing-title{font-family:'Lora',serif;font-size:28px;color:#f0eaf8;margin:0 0 8px;}
 .lp-pricing-sub{font-size:14px;color:#5a4a7a;margin:0 0 32px;}
 .lp-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto;}
-.lp-plan{background:#150d27;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;text-align:left;}
+.lp-plan{background:#150d27;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;text-align:left;display:flex;flex-direction:column;}
 .lp-plan-pro{border-color:rgba(138,107,191,.4);background:linear-gradient(135deg,#1a0d35,#150d27);}
 .lp-plan-badge{display:inline-block;background:rgba(138,107,191,.2);color:#c4a0e8;font-size:10px;padding:3px 10px;border-radius:99px;margin-bottom:12px;font-weight:600;letter-spacing:.04em;}
 .lp-plan-name{font-family:'Lora',serif;font-size:18px;color:#f0eaf8;margin-bottom:6px;}
 .lp-plan-price{font-size:32px;font-weight:700;color:#f0eaf8;margin-bottom:20px;font-family:'DM Sans',sans-serif;}
 .lp-plan-price span{font-size:13px;font-weight:400;color:#5a4a7a;}
-.lp-plan-features{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;}
+.lp-plan-features{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.lp-plan-btn-wrap{margin-top:auto;}
 .lp-plan-features li{font-size:13px;color:#9090b0;line-height:1.4;}
 .lp-plan-features li span{color:#c4a0e8;}
 .lp-plan-btn{width:100%;height:40px;border-radius:9px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:.15s;}
@@ -1019,8 +1022,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         <button id="LP_TR" class="lp-lang-btn" onclick="setLpLang('TR')">TR</button>
         <button id="LP_EN" class="lp-lang-btn active" onclick="setLpLang('EN')">EN</button>
       </div>
-      <button class="lp-signin" id="LP_SIGNIN" onclick="hideLanding('login')">Sign in</button>
-      <button class="lp-cta-btn" id="LP_CTA_NAV" onclick="hideLanding('register')">Get started — free</button>
+      <button class="lp-signin-btn" id="LP_SIGNIN" onclick="hideLanding('login')">Sign in</button>
+      <button class="lp-cta-btn" id="LP_CTA_NAV" onclick="hideLanding('register')">Sign up - free</button>
     </div>
   </nav>
 
@@ -1136,29 +1139,31 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <li>✓ <span id="LP_FREE_F4">AI Merge — 3x / month</span></li>
           <li>✓ <span id="LP_FREE_F5">To Do Merge — 5x / month</span></li>
         </ul>
-        <button class="lp-plan-btn lp-plan-btn-free" id="LP_FREE_BTN" onclick="hideLanding('register')">Start for free</button>
+        <div class="lp-plan-btn-wrap">
+          <button class="lp-plan-btn lp-plan-btn-free" id="LP_FREE_BTN" onclick="hideLanding('register')">Start for free</button>
+        </div>
       </div>
       <!-- Pro -->
-      <div class="lp-plan lp-plan-pro">
-        <div class="lp-plan-badge" id="LP_PRO_BADGE">⭐ Early Access</div>
+      <div class="lp-plan lp-plan-pro" style="position:relative;">
+        <div class="lp-plan-badge" id="LP_PRO_BADGE" style="position:absolute;top:16px;right:16px;">⭐ Early Access</div>
         <div class="lp-plan-name" id="LP_PRO_NAME">Pro</div>
         <div class="lp-plan-price">₺49<span id="LP_PRO_PERIOD">/month</span></div>
         <ul class="lp-plan-features">
-          <li>✓ <span id="LP_PRO_F1">Everything in Free</span></li>
           <li>✓ <span id="LP_PRO_F2">Unlimited AI requests</span></li>
           <li>✓ <span id="LP_PRO_F3">Unlimited Flashcards</span></li>
           <li>✓ <span id="LP_PRO_F4">Unlimited AI Merge</span></li>
           <li>✓ <span id="LP_PRO_F5">Unlimited To Do Merge</span></li>
           <li>✓ <span id="LP_PRO_F6">Founding Member badge</span></li>
         </ul>
-        <button class="lp-plan-btn lp-plan-btn-pro" id="LP_PRO_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')">Get Pro — ₺49/mo</button>
+        <div class="lp-plan-btn-wrap">
+          <button class="lp-plan-btn lp-plan-btn-pro" id="LP_PRO_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')">Get Pro - ₺49/mo</button>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="lp-footer">
     <h2 id="LP_FOOTER_TITLE">Try it now, for free.</h2>
-    <p id="LP_FOOTER_SUB">No credit card required.</p>
     <button class="lp-btn-primary" id="LP_FOOTER_BTN" onclick="hideLanding('register')">Create account</button>
   </div>
 </div>
@@ -4453,7 +4458,7 @@ function showLanding() {
 let lpLang = 'EN';
 const lpStrings = {
   EN: {
-    badge:'Early Access', signin:'Sign in', ctaNav:'Get started — free',
+    badge:'Early Access', signin:'Sign in', ctaNav:'Sign up - free',
     h1:'note that, easily.<br><span>lose nothing, finally.</span>',
     sub:'Take notes. Let AI do the rest.',
     btnStart:'Start for free', btnFeat:'See features',
@@ -4466,18 +4471,18 @@ const lpStrings = {
     pricingTitle:'Simple pricing', pricingSub:'Start free. Upgrade when you need more.',
     freeName:'Free', freePeriod:'/forever',
     freeF1:'Unlimited notes', freeF2:'10 AI requests / day',
-    freeF3:'3 Flashcard sets / week', freeF4:'AI Merge — 3x / month',
-    freeF5:'To Do Merge — 5x / month', freeBtn:'Start for free',
+    freeF3:'3 Flashcard sets / week', freeF4:'AI Merge - 3x / month',
+    freeF5:'To Do Merge - 5x / month', freeBtn:'Start for free',
     proBadge:'⭐ Early Access', proName:'Pro', proPeriod:'/month',
-    proF1:'Everything in Free', proF2:'Unlimited AI requests',
+    proF2:'Unlimited AI requests',
     proF3:'Unlimited Flashcards', proF4:'Unlimited AI Merge',
     proF5:'Unlimited To Do Merge', proF6:'Founding Member badge',
-    proBtn:'Get Pro — ₺49/mo',
+    proBtn:'Get Pro - ₺49/mo',
     footerTitle:'Try it now, for free.',
-    footerSub:'No credit card required.', footerBtn:'Create account'
+    footerBtn:'Create account'
   },
   TR: {
-    badge:'Erken Erişim', signin:'Giriş yap', ctaNav:'Ücretsiz başla',
+    badge:'Erken Erişim', signin:'Giriş yap', ctaNav:'Ücretsiz kaydol',
     h1:'not al, kolayca.<br><span>hiçbir şey kaybolmasın, sonunda.</span>',
     sub:'Not al. Gerisini AI halleder.',
     btnStart:'Ücretsiz başla', btnFeat:'Özellikleri gör',
@@ -4490,15 +4495,15 @@ const lpStrings = {
     pricingTitle:'Basit fiyatlandırma', pricingSub:'Ücretsiz başla. İhtiyaç duyduğunda geçiş yap.',
     freeName:'Ücretsiz', freePeriod:'/sonsuza dek',
     freeF1:'Sınırsız not', freeF2:'Günlük 10 AI isteği',
-    freeF3:'Haftada 3 flashcard seti', freeF4:'AI Birleştir — ayda 3x',
-    freeF5:'To Do Birleştir — ayda 5x', freeBtn:'Ücretsiz başla',
+    freeF3:'Haftada 3 flashcard seti', freeF4:'AI Birleştir - ayda 3x',
+    freeF5:'To Do Birleştir - ayda 5x', freeBtn:'Ücretsiz başla',
     proBadge:'⭐ Erken Erişim', proName:'Pro', proPeriod:'/ay',
-    proF1:'Ücretsiz plandaki her şey', proF2:'Sınırsız AI isteği',
+    proF2:'Sınırsız AI isteği',
     proF3:'Sınırsız Flashcard', proF4:'Sınırsız AI Birleştir',
     proF5:'Sınırsız To Do Birleştir', proF6:'Kurucu Üye rozeti',
-    proBtn:'Pro\'ya geç — ₺49/ay',
+    proBtn:'Pro\'ya geç - ₺49/ay',
     footerTitle:'Şimdi dene, ücretsiz.',
-    footerSub:'Kredi kartı gerekmez.', footerBtn:'Hesap oluştur'
+    footerBtn:'Hesap oluştur'
   }
 };
 
@@ -4539,7 +4544,7 @@ function setLpLang(lang) {
   document.getElementById('LP_PRO_BADGE').textContent = s.proBadge;
   document.getElementById('LP_PRO_NAME').textContent = s.proName;
   document.getElementById('LP_PRO_PERIOD').textContent = s.proPeriod;
-  document.getElementById('LP_PRO_F1').textContent = s.proF1;
+  if(document.getElementById('LP_PRO_F1')) document.getElementById('LP_PRO_F1').textContent = s.proF2||'';
   document.getElementById('LP_PRO_F2').textContent = s.proF2;
   document.getElementById('LP_PRO_F3').textContent = s.proF3;
   document.getElementById('LP_PRO_F4').textContent = s.proF4;
@@ -4547,7 +4552,7 @@ function setLpLang(lang) {
   document.getElementById('LP_PRO_F6').textContent = s.proF6;
   document.getElementById('LP_PRO_BTN').textContent = s.proBtn;
   document.getElementById('LP_FOOTER_TITLE').textContent = s.footerTitle;
-  document.getElementById('LP_FOOTER_SUB').textContent = s.footerSub;
+  if(document.getElementById('LP_FOOTER_SUB')) document.getElementById('LP_FOOTER_SUB').style.display='none';
   document.getElementById('LP_FOOTER_BTN').textContent = s.footerBtn;
 }
 

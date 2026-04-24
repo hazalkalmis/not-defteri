@@ -152,6 +152,32 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .body-input.style-heading{font-size:20px;font-weight:600;line-height:1.4;}
 .body-input.style-body{font-size:14px;font-weight:400;line-height:1.8;}
 
+/* Preview layer */
+.body-preview{
+  position:absolute;inset:0;
+  font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.8;
+  color:var(--text);background:none;
+  padding:0;cursor:text;
+  overflow-y:auto;
+}
+.body-preview.hidden{display:none;}
+.body-preview h1{font-family:'Lora',serif;font-size:26px;font-weight:700;line-height:1.3;margin:16px 0 8px;color:var(--text);}
+.body-preview h2{font-size:19px;font-weight:600;line-height:1.4;margin:14px 0 6px;color:var(--text);}
+.body-preview h3{font-size:16px;font-weight:600;margin:12px 0 4px;color:var(--text);}
+.body-preview strong{font-weight:700;}
+.body-preview em{font-style:italic;}
+.body-preview ul{padding-left:18px;margin:4px 0;}
+.body-preview li{margin:3px 0;}
+.body-preview hr{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.body-preview p{margin:4px 0;}
+
+/* Collapsible headings */
+.body-preview .collapsible-h{cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none;}
+.body-preview .collapsible-h::before{content:'▾';font-size:11px;color:var(--text3);transition:transform .15s;flex-shrink:0;}
+.body-preview .collapsible-h.collapsed::before{transform:rotate(-90deg);}
+.body-preview .collapsible-body{overflow:hidden;transition:max-height .2s ease;}
+.body-preview .collapsible-body.collapsed{max-height:0!important;}
+
 /* editor content */
 .ed-scroll{flex:1;overflow-y:auto;padding:22px 28px 40px;display:flex;flex-direction:column;}
 .ed-scroll::-webkit-scrollbar{width:5px;}
@@ -1313,9 +1339,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <option value="monospace">Mono</option>
         </select>
         <select class="fsel" id="STYLE_SEL" onchange="applyTextStyle(this.value)" style="width:82px;">
-          <option value="body" selected>Body</option>
-          <option value="heading">Heading</option>
-          <option value="title">Title</option>
+          <option value="body" id="OPT_BODY">Body</option>
+          <option value="heading" id="OPT_HEADING">Heading</option>
+          <option value="title" id="OPT_TITLE">Title</option>
         </select>
         <div class="fb-sep"></div>
         <button class="drive-btn" onclick="openDriveModal()">
@@ -1333,9 +1359,13 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           onblur="checkMerge()"
           onkeydown="titleKeyDown(event)"></textarea>
         <div class="date-line" id="DATE_LINE"></div>
-        <textarea class="body-input" id="BODY_INPUT"
-          oninput="onBodyChange()"
-          onkeydown="bodyKeyDown(event)"></textarea>
+        <div style="position:relative;flex:1;display:flex;flex-direction:column;">
+          <textarea class="body-input" id="BODY_INPUT"
+            oninput="onBodyChange()"
+            onblur="showPreview()"
+            onkeydown="bodyKeyDown(event)"></textarea>
+          <div id="BODY_PREVIEW" class="body-preview hidden" onclick="hidePreview()"></div>
+        </div>
         <div id="CALC_OVERLAY" style="padding:0;"></div>
         <div class="media-area" id="MEDIA_AREA"></div>
         <input type="file" id="IMG_INPUT" accept="image/*" class="hidden" onchange="handleImgFile(this)">
@@ -2390,6 +2420,12 @@ function applyLangLabels(){
   if (pdfGenerateBtn) pdfGenerateBtn.textContent = currentLang==='TR' ? '⚡ Flash Kart Üret' : '⚡ Generate Flash Cards';
   if (pdfFlashBtn) pdfFlashBtn.textContent = currentLang==='TR' ? 'Metin→Flashcard' : 'Text→Flashcard';
   updateMergeBtn();
+  const optBody=document.getElementById('OPT_BODY');
+  const optHeading=document.getElementById('OPT_HEADING');
+  const optTitle=document.getElementById('OPT_TITLE');
+  if(optBody) optBody.textContent=currentLang==='TR'?'Normal':'Body';
+  if(optHeading) optHeading.textContent=currentLang==='TR'?'Başlık':'Heading';
+  if(optTitle) optTitle.textContent=currentLang==='TR'?'Ana Başlık':'Title';
 }
 function getCurrentTypeLabel(){
   const n=getActive();
@@ -2667,8 +2703,10 @@ function openNote(id){
   document.getElementById('BODY_INPUT').value=n.content;
   const ta = document.getElementById('BODY_INPUT');
   ta.style.fontFamily=n.fontFamily||"'DM Sans',sans-serif";
-  ta.classList.remove('style-title','style-heading','style-body');
+  ta.classList.remove('style-title','style-heading','style-body','hidden');
   ta.classList.add('style-'+(n.textStyle||'body'));
+  const preview=document.getElementById('BODY_PREVIEW');
+  if(preview)preview.classList.add('hidden');
   const fs=document.getElementById('FONT_SEL'); const styleSel=document.getElementById('STYLE_SEL');
   if(fs)fs.value=n.fontFamily||"'DM Sans',sans-serif";
   if(styleSel)styleSel.value=n.textStyle||'body';
@@ -2969,23 +3007,140 @@ function applyTextStyle(style){
   if(n){n.textStyle=style;save();saveNoteToCloud(n);}
 }
 
-// Markdown → düz metin dönüştürücü (AI çıktıları için)
-function renderMarkdown(text){
+function markdownToHtml(text){
   if(!text)return'';
+  const lines=text.split('\n');
+  let html='';
+  let inList=false;
+
+  for(let i=0;i<lines.length;i++){
+    let line=lines[i];
+
+    // Headings
+    if(line.startsWith('### ')){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<h3 class="collapsible-h">${esc2(line.slice(4))}</h3><div class="collapsible-body">`;
+      // collect until next heading or end
+      continue;
+    }
+    if(line.startsWith('## ')){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<h2 class="collapsible-h">${esc2(line.slice(3))}</h2><div class="collapsible-body">`;
+      continue;
+    }
+    if(line.startsWith('# ')){
+      if(inList){html+='</ul>';inList=false;}
+      html+=`<h1 class="collapsible-h">${esc2(line.slice(2))}</h1><div class="collapsible-body">`;
+      continue;
+    }
+
+    // HR
+    if(/^---+$/.test(line.trim())){
+      if(inList){html+='</ul>';inList=false;}
+      html+='<hr>';continue;
+    }
+
+    // Lists
+    if(line.match(/^[\*\-] /)){
+      if(!inList){html+='<ul>';inList=true;}
+      html+=`<li>${inlineMarkdown(line.slice(2))}</li>`;
+      continue;
+    }
+    // Numbered list
+    if(line.match(/^\d+\. /)){
+      if(!inList){html+='<ul>';inList=true;}
+      html+=`<li>${inlineMarkdown(line.replace(/^\d+\. /,''))}</li>`;
+      continue;
+    }
+
+    if(inList){html+='</ul>';inList=false;}
+
+    // Empty line
+    if(line.trim()===''){html+='<p style="margin:4px 0;height:1em;"></p>';continue;}
+
+    // Normal paragraph
+    html+=`<p>${inlineMarkdown(line)}</p>`;
+  }
+  if(inList)html+='</ul>';
+
+  // Close any open collapsible divs — count opens vs closes
+  const opens=(html.match(/class="collapsible-body"/g)||[]).length;
+  const closes=(html.match(/<\/div>/g)||[]).length;
+  for(let i=0;i<opens-closes;i++)html+='</div>';
+
+  return html;
+}
+
+function inlineMarkdown(text){
   return text
-    // ## Başlık → büyük bold
-    .replace(/^### (.+)$/gm,'**$1**')
-    .replace(/^## (.+)$/gm,'\n━━ $1 ━━\n')
-    .replace(/^# (.+)$/gm,'\n◆ $1\n')
-    // **bold** → koru (textarea zaten gösteriyor)
-    // * liste → •
-    .replace(/^\* (.+)$/gm,'• $1')
-    .replace(/^- (.+)$/gm,'• $1')
-    // --- ayırıcı → boş satır
-    .replace(/^---+$/gm,'\n')
-    // BAŞLIK: satırını kaldır (zaten title'a yazıldı)
-    .replace(/^BAŞLIK:.*$/gm,'')
-    .replace(/^TITLE:.*$/gm,'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`(.+?)`/g,'<code>$1</code>');
+}
+
+function esc2(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function showPreview(){
+  const ta=document.getElementById('BODY_INPUT');
+  const preview=document.getElementById('BODY_PREVIEW');
+  if(!ta||!preview)return;
+  const text=ta.value.trim();
+  if(!text){preview.classList.add('hidden');return;}
+
+  // Eğer markdown içerik yoksa preview gösterme
+  const hasMarkdown=/(\*\*|\*|^#{1,3} |^[-\*] |\n#{1,3} )/m.test(text);
+  if(!hasMarkdown){preview.classList.add('hidden');return;}
+
+  preview.innerHTML=markdownToHtml(text);
+  // Font/style senkronize et
+  const ta2=document.getElementById('BODY_INPUT');
+  preview.style.fontFamily=ta2.style.fontFamily||"'DM Sans',sans-serif";
+
+  preview.classList.remove('hidden');
+  ta.classList.add('hidden');
+
+  // Collapsible heading click handlers
+  preview.querySelectorAll('.collapsible-h').forEach(h=>{
+    h.addEventListener('click',function(e){
+      e.stopPropagation();
+      const body=this.nextElementSibling;
+      if(body&&body.classList.contains('collapsible-body')){
+        const isCollapsed=body.classList.contains('collapsed');
+        if(isCollapsed){
+          body.style.maxHeight=body.scrollHeight+'px';
+          body.classList.remove('collapsed');
+          this.classList.remove('collapsed');
+        } else {
+          body.style.maxHeight=body.scrollHeight+'px';
+          requestAnimationFrame(()=>{body.style.maxHeight='0';});
+          body.classList.add('collapsed');
+          this.classList.add('collapsed');
+        }
+      }
+    });
+    // init max-height
+    const body=h.nextElementSibling;
+    if(body&&body.classList.contains('collapsible-body')){
+      body.style.maxHeight=body.scrollHeight+'px';
+    }
+  });
+}
+
+function hidePreview(){
+  const ta=document.getElementById('BODY_INPUT');
+  const preview=document.getElementById('BODY_PREVIEW');
+  if(!ta||!preview)return;
+  preview.classList.add('hidden');
+  ta.classList.remove('hidden');
+  ta.focus();
+}
+
+// Markdown → düz metin (AI çıktıları için kaydetmeden önce)
+function renderMarkdown(text){
+  if(!text)return text;
+  return text
+    .replace(/^BAŞLIK:.*$/gm,'').replace(/^TITLE:.*$/gm,'')
     .trim();
 }
 

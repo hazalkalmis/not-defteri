@@ -1660,13 +1660,27 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
       <div style="flex:1;">
         <h3 id="TR_MODAL_TITLE">🎙️ Ses Transkripti</h3>
-        <p style="margin-bottom:0;" id="TR_MODAL_DESC">Ses kaydet veya dosya yükle — AI metne çevirir ve istersen başka dile tercüme eder.</p>
+        <p style="margin-bottom:0;" id="TR_MODAL_DESC">Ses kaydet veya dosya yükle — AI metne çevirir.</p>
       </div>
       <button class="ic-btn" onclick="stopTranscriptRecording();closeModal('TRANSCRIPT_MODAL')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
+    <!-- 1. Önce dil seç -->
+    <div class="transcript-lang-row" style="margin-bottom:14px;">
+      <span class="transcript-lang-label" id="TR_LANG_LABEL">Çeviri dili:</span>
+      <select class="pdf-select" id="TR_TARGET_LANG" style="width:160px;">
+        <option value="İngilizce" selected>İngilizce / English</option>
+        <option value="Türkçe">Türkçe</option>
+        <option value="Almanca">Almanca / Deutsch</option>
+        <option value="Fransızca">Fransızca / French</option>
+        <option value="İspanyolca">İspanyolca / Spanish</option>
+        <option value="">Çevirme / No translate</option>
+      </select>
+    </div>
+
+    <!-- 2. Kayıt -->
     <button class="transcript-rec-btn" id="TR_REC_BTN" onclick="toggleTranscriptRecording()">
       🎙️ <span id="TR_REC_LABEL">Kayıt Başlat</span>
     </button>
@@ -1679,20 +1693,10 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     </div>
     <input type="file" id="TR_FILE_INPUT" accept="audio/*" style="display:none" onchange="handleTranscriptFile(this.files[0])">
 
-    <div class="transcript-lang-row">
-      <span class="transcript-lang-label" id="TR_LANG_LABEL">Çeviri dili:</span>
-      <select class="pdf-select" id="TR_TARGET_LANG" style="width:130px;">
-        <option value="">Çevirme</option>
-        <option value="Türkçe">Türkçe</option>
-        <option value="İngilizce">İngilizce</option>
-        <option value="Almanca">Almanca</option>
-        <option value="Fransızca">Fransızca</option>
-        <option value="İspanyolca">İspanyolca</option>
-      </select>
-    </div>
-
     <div class="transcript-status" id="TR_STATUS"></div>
-    <textarea class="transcript-result" id="TR_RESULT" readonly></textarea>
+    <!-- Sonuç div olarak — bold başlıklar için -->
+    <div id="TR_RESULT_DIV" style="display:none;width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);line-height:1.7;margin-bottom:10px;white-space:pre-wrap;word-break:break-word;"></div>
+    <textarea class="transcript-result" id="TR_RESULT" style="display:none;"></textarea>
 
     <div class="mact">
       <button class="btn" id="TR_CANCEL_BTN" onclick="stopTranscriptRecording();closeModal('TRANSCRIPT_MODAL')">İptal</button>
@@ -1700,8 +1704,6 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     </div>
   </div>
 </div>
-
-<!-- MERGE CONFIRM MODAL -->
 <div class="ov hidden" id="MERGE_CONFIRM_MODAL">
   <div style="background:var(--surface);border-radius:16px;padding:24px;width:380px;max-width:95vw;box-shadow:0 12px 40px rgba(0,0,0,.22);border:1px solid var(--border);">
     <h3 style="font-family:'Lora',serif;font-size:17px;font-weight:500;color:var(--text);margin-bottom:8px;" id="MERGE_CONFIRM_TITLE">Orijinal notlar kalsın mı?</h3>
@@ -4170,7 +4172,6 @@ async function processTranscriptBlob(blob, mimeType) {
 }
 
 async function sendTranscriptToAI(base64, mimeType) {
-  // AI limit kontrolü
   const usage = getAIUsage();
   if(usage.count >= AI_DAILY_LIMIT) { showProModal('ai'); closeModal('TRANSCRIPT_MODAL'); return; }
 
@@ -4187,9 +4188,22 @@ async function sendTranscriptToAI(base64, mimeType) {
     const data = await res.json();
     incrementAIUsage();
 
-    const result = document.getElementById('TR_RESULT');
-    result.value = data.text || '';
-    result.classList.add('visible');
+    const rawText = data.text || '';
+
+    // TR_RESULT gizli textarea'ya ham metin yaz (nota kaydetmek için)
+    const resultTA = document.getElementById('TR_RESULT');
+    resultTA.value = rawText;
+
+    // TR_RESULT_DIV'e bold başlıklarla göster
+    const resultDiv = document.getElementById('TR_RESULT_DIV');
+    const formatted = rawText
+      .replace(/^TRANSKRIPT:/gm, '<strong>Transkript:</strong>')
+      .replace(/^ÇEVİRİ:/gm, '<strong>Çeviri:</strong>')
+      .replace(/^TRANSCRIPT:/gm, '<strong>Transcript:</strong>')
+      .replace(/^TRANSLATION:/gm, '<strong>Translation:</strong>');
+    resultDiv.innerHTML = formatted;
+    resultDiv.style.display = 'block';
+
     document.getElementById('TR_SAVE_BTN').style.display = 'block';
     document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? '✓ Tamamlandı' : '✓ Done';
   } catch(err) {
@@ -4200,11 +4214,12 @@ async function sendTranscriptToAI(base64, mimeType) {
 function saveTranscriptToNote() {
   const text = document.getElementById('TR_RESULT').value.trim();
   if(!text) return;
-  const n = getActive();
-  if(n && n.type !== 'todo') {
+
+  const activeNote = getActive();
+  if(activeNote && activeNote.type !== 'todo') {
     // Mevcut nota ekle
     const ta = document.getElementById('BODY_INPUT');
-    const sep = ta.value ? '\n\n---\n' : '';
+    const sep = ta.value.trim() ? '\n\n---\n' : '';
     ta.value += sep + text;
     onBodyChange();
     closeModal('TRANSCRIPT_MODAL');
@@ -4213,17 +4228,27 @@ function saveTranscriptToNote() {
     // Yeni not oluştur
     const date = new Date().toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long'});
     const newNote = {
-      id:uid(), title: currentLang==='TR'?`Ses Transkripti — ${date}`:`Voice Transcript — ${date}`,
-      content:text, space:'personal', type:'normal',
-      todoItems:[], todoType:null, createdAt:now(), updatedAt:now(), images:[], audios:[]
+      id:uid(),
+      title: currentLang==='TR' ? `Ses Transkripti — ${date}` : `Voice Transcript — ${date}`,
+      content: text,
+      space: 'personal', type: 'normal',
+      todoItems:[], todoType:null,
+      createdAt:now(), updatedAt:now(),
+      images:[], audios:[]
     };
-    notes.unshift(newNote); save(); saveNoteToCloud(newNote); renderAllCards(); openNote(newNote.id);
+    notes.unshift(newNote);
+    save();
+    saveNoteToCloud(newNote);
+    renderAllCards();
     closeModal('TRANSCRIPT_MODAL');
+    openNote(newNote.id);
     showFlash(currentLang==='TR' ? '✓ Yeni nota kaydedildi' : '✓ Saved as new note');
   }
-  // Reset modal
+
+  // Reset
   document.getElementById('TR_RESULT').value = '';
-  document.getElementById('TR_RESULT').classList.remove('visible');
+  document.getElementById('TR_RESULT_DIV').style.display = 'none';
+  document.getElementById('TR_RESULT_DIV').innerHTML = '';
   document.getElementById('TR_SAVE_BTN').style.display = 'none';
   document.getElementById('TR_STATUS').textContent = '';
   document.getElementById('TR_DROP_TEXT').textContent = currentLang==='TR'?'🎵 Ses dosyası sürükle veya tıkla':'🎵 Drop audio file or click';
@@ -4359,6 +4384,8 @@ function showProModal(feature){
   const msg=messages[feature]||messages.ai;
   document.getElementById('PRO_MODAL_TITLE').textContent=msg.title;
   document.getElementById('PRO_MODAL_DESC').textContent=msg.desc;
+  const cancelBtn=document.getElementById('PRO_MODAL_CANCEL');
+  if(cancelBtn) cancelBtn.textContent=currentLang==='TR'?'Şimdi değil':'Not now';
   document.getElementById('PRO_MODAL').classList.remove('hidden');
 }
 
@@ -4381,7 +4408,13 @@ async function doAI(action){
   incrementAIUsage();
   callAI(action,content);
 }
-function doTranslate(){const lang=document.getElementById('TRANSLATE_LANG').value;closeModal('TRANSLATE_MODAL');callAI('translate',document.getElementById('BODY_INPUT').value,lang);}
+function doTranslate(){
+  const usage=getAIUsage();
+  if(usage.count>=AI_DAILY_LIMIT){showProModal('ai');closeModal('TRANSLATE_MODAL');return;}
+  const lang=document.getElementById('TRANSLATE_LANG').value;
+  closeModal('TRANSLATE_MODAL');
+  callAI('translate',document.getElementById('BODY_INPUT').value,lang);
+}
 async function callAI(action,content,extra=''){
   const panel=document.getElementById('AI_RESULT'),titleEl=document.getElementById('AI_RESULT_TITLE'),bodyEl=document.getElementById('AI_RESULT_BODY');
   const labels={summary:s('summarize'),todo:s('todo'),grammar:s('grammar'),translate:s('translate')};

@@ -386,7 +386,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   }
 
   /* Merge pill (İsim Birleştir kaldırıldı), lang-seg'i gizle */
-  .merge-pill:not(.merge-pill-todo):not(.merge-pill-pdf):not(.merge-pill-ai-merge), .lang-seg, .tdots, .vsep {
+  .merge-pill:not(.merge-pill-todo):not(.merge-pill-pdf):not(.merge-pill-ai-merge):not(.merge-pill-transcript), .lang-seg, .tdots, .vsep {
     display: none !important;
   }
 
@@ -807,6 +807,36 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .lp-footer{text-align:center;padding:40px;border-top:1px solid rgba(255,255,255,.06);}
 .lp-footer h2{font-family:'Lora',serif;font-size:26px;color:#f0eaf8;margin:0 0 10px;}
 .lp-footer p{font-size:13px;color:#5a4a7a;margin:0 0 24px;}
+
+/* Lang toggle */
+.lp-lang-toggle{display:flex;background:rgba(255,255,255,.06);border-radius:7px;padding:2px;gap:2px;}
+.lp-lang-btn{background:none;border:none;color:#9090b0;font-size:11px;font-family:'DM Sans',sans-serif;padding:4px 10px;border-radius:5px;cursor:pointer;font-weight:500;transition:.15s;}
+.lp-lang-btn.active{background:rgba(255,255,255,.1);color:#e8e0f0;}
+
+/* Pricing */
+.lp-pricing{padding:0 48px 64px;text-align:center;}
+.lp-pricing-title{font-family:'Lora',serif;font-size:28px;color:#f0eaf8;margin:0 0 8px;}
+.lp-pricing-sub{font-size:14px;color:#5a4a7a;margin:0 0 32px;}
+.lp-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto;}
+.lp-plan{background:#150d27;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;text-align:left;}
+.lp-plan-pro{border-color:rgba(138,107,191,.4);background:linear-gradient(135deg,#1a0d35,#150d27);}
+.lp-plan-badge{display:inline-block;background:rgba(138,107,191,.2);color:#c4a0e8;font-size:10px;padding:3px 10px;border-radius:99px;margin-bottom:12px;font-weight:600;letter-spacing:.04em;}
+.lp-plan-name{font-family:'Lora',serif;font-size:18px;color:#f0eaf8;margin-bottom:6px;}
+.lp-plan-price{font-size:32px;font-weight:700;color:#f0eaf8;margin-bottom:20px;font-family:'DM Sans',sans-serif;}
+.lp-plan-price span{font-size:13px;font-weight:400;color:#5a4a7a;}
+.lp-plan-features{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;}
+.lp-plan-features li{font-size:13px;color:#9090b0;line-height:1.4;}
+.lp-plan-features li span{color:#c4a0e8;}
+.lp-plan-btn{width:100%;height:40px;border-radius:9px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:.15s;}
+.lp-plan-btn-free{background:rgba(255,255,255,.08);color:#e8e0f0;}
+.lp-plan-btn-free:hover{background:rgba(255,255,255,.13);}
+.lp-plan-btn-pro{background:#6a4a8a;color:#fff;}
+.lp-plan-btn-pro:hover{background:#7a5a9a;}
+
+@media(max-width:600px){
+  .lp-plans{grid-template-columns:1fr;}
+  .lp-pricing{padding:0 20px 40px;}
+}
 @media(max-width:768px){
   .lp-nav{padding:16px 20px;}
   .lp-h1{font-size:32px;}
@@ -831,7 +861,42 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .tour-next:hover{background:#7a5a9a;}
 .tour-arrow{position:fixed;z-index:8002;width:0;height:0;}
 
-.merge-pill-ai-merge{background:var(--accent2);color:var(--accent-text);border-color:rgba(74,122,181,.2);}
+.merge-pill-transcript{background:rgba(180,50,50,.1);color:#c0392b;border-color:rgba(180,50,50,.2);}
+.merge-pill-transcript:hover{filter:brightness(.95);}
+.merge-pill-transcript.recording{background:#c0392b;color:#fff;border-color:#c0392b;animation:pulse-rec .8s ease-in-out infinite;}
+@keyframes pulse-rec{0%,100%{opacity:1;}50%{opacity:.6;}}
+
+/* ── TRANSCRIPT MODAL ── */
+.transcript-modal-box{
+  background:var(--surface);border-radius:16px;padding:24px;
+  width:460px;max-width:96vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.22);border:1px solid var(--border);
+}
+.transcript-modal-box h3{font-family:'Lora',serif;font-size:17px;font-weight:500;color:var(--text);margin-bottom:6px;}
+.transcript-modal-box p{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5;}
+.transcript-rec-btn{
+  width:100%;height:44px;border-radius:10px;border:none;cursor:pointer;
+  font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;
+  transition:.15s;margin-bottom:10px;
+  background:#c0392b;color:#fff;
+}
+.transcript-rec-btn:hover{background:#a93226;}
+.transcript-rec-btn.recording{background:#e74c3c;animation:pulse-rec .8s ease-in-out infinite;}
+.transcript-drop{
+  border:2px dashed var(--border2);border-radius:10px;padding:20px;
+  text-align:center;cursor:pointer;background:var(--bg2);margin-bottom:10px;
+  font-size:13px;color:var(--text2);transition:.15s;
+}
+.transcript-drop:hover{border-color:var(--accent);}
+.transcript-lang-row{display:flex;gap:10px;margin-bottom:12px;align-items:center;}
+.transcript-lang-label{font-size:11px;color:var(--text2);white-space:nowrap;font-weight:500;}
+.transcript-status{font-size:12px;color:var(--accent);min-height:18px;margin-bottom:8px;}
+.transcript-result{
+  width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--border2);
+  border-radius:8px;padding:10px 12px;font-size:13px;font-family:'DM Sans',sans-serif;
+  color:var(--text);outline:none;resize:vertical;display:none;margin-bottom:10px;
+}
+.transcript-result.visible{display:block;}
 .merge-pill-ai-merge:hover{filter:brightness(.95);}
 .merge-pill-ai-merge.active{background:var(--accent);color:#fff;border-color:var(--accent);}
 .merge-pill-ai-merge.ready{background:#6a4a8a;color:#fff;border-color:#6a4a8a;}
@@ -933,15 +998,15 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <div class="pro-modal-icon">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     </div>
-    <div class="pro-modal-title">AI limitine ulaştın</div>
-    <div class="pro-modal-desc">Günlük AI hakkın doldu. not·that Pro ile sınırsız AI kullan, notlarından daha fazla üret.</div>
+    <div class="pro-modal-title" id="PRO_MODAL_TITLE">AI limitine ulaştın</div>
+    <div class="pro-modal-desc" id="PRO_MODAL_DESC">Günlük AI hakkın doldu. not·that Pro ile sınırsız AI kullan, notlarından daha fazla üret.</div>
     <div class="pro-modal-price">
-      <strong>İlk ay 29₺</strong>, sonra 49₺/ay · İstediğin zaman iptal et
+      <strong>49₺/ay</strong> · İstediğin zaman iptal et
     </div>
     <button class="pro-modal-btn" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank');document.getElementById('PRO_MODAL').classList.add('hidden');">
       Pro'ya geç — 49₺/ay
     </button>
-    <button class="pro-modal-cancel" onclick="document.getElementById('PRO_MODAL').classList.add('hidden');">Şimdi değil</button>
+    <button class="pro-modal-cancel" onclick="document.getElementById('PRO_MODAL').classList.add('hidden');" id="PRO_MODAL_CANCEL">Şimdi değil</button>
   </div>
 </div>
 
@@ -950,18 +1015,22 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   <nav class="lp-nav">
     <span class="lp-logo">not<span>·</span>that</span>
     <div class="lp-nav-btns">
-      <button class="lp-signin" onclick="hideLanding('login')">Sign in</button>
-      <button class="lp-cta-btn" onclick="hideLanding('register')">Get started - free</button>
+      <div class="lp-lang-toggle">
+        <button id="LP_TR" class="lp-lang-btn" onclick="setLpLang('TR')">TR</button>
+        <button id="LP_EN" class="lp-lang-btn active" onclick="setLpLang('EN')">EN</button>
+      </div>
+      <button class="lp-signin" id="LP_SIGNIN" onclick="hideLanding('login')">Sign in</button>
+      <button class="lp-cta-btn" id="LP_CTA_NAV" onclick="hideLanding('register')">Get started — free</button>
     </div>
   </nav>
 
   <div class="lp-hero">
-    <div class="lp-badge">All Access</div>
-    <h1 class="lp-h1">Keep your notes<br>in one place. <span>Simply.</span></h1>
-    <p class="lp-sub">Personal notes, work lists, flash cards and AI — all in one place. No clutter.</p>
+    <div class="lp-badge" id="LP_BADGE">Early Access</div>
+    <h1 class="lp-h1" id="LP_H1">note that, easily.<br><span>lose nothing, finally.</span></h1>
+    <p class="lp-sub" id="LP_SUB">Take notes. Let AI do the rest.</p>
     <div class="lp-hero-btns">
-      <button class="lp-btn-primary" onclick="hideLanding('register')">Start for free</button>
-      <button class="lp-btn-secondary" onclick="document.querySelector('.lp-features').scrollIntoView({behavior:'smooth'})">See features</button>
+      <button class="lp-btn-primary" id="LP_BTN_START" onclick="hideLanding('register')">Start for free</button>
+      <button class="lp-btn-secondary" id="LP_BTN_FEAT" onclick="document.getElementById('lp-features-section').scrollIntoView({behavior:'smooth'})">See features</button>
     </div>
   </div>
 
@@ -971,7 +1040,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <div class="lp-dot" style="background:#f39c12;"></div>
       <div class="lp-dot" style="background:#2ecc71;"></div>
     </div>
-      <div class="lp-preview-inner">
+    <div class="lp-preview-inner">
       <div class="lp-preview-left">
         <div style="font-size:10px;color:#c4a0e8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Personal</div>
         <div style="background:#2a1f3d;border-radius:6px;padding:8px 10px;margin-bottom:6px;border-left:3px solid #8b6bbf;">
@@ -995,65 +1064,102 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           Atomic Habits — James Clear<br><br>
           Small changes lead to remarkable results. The key is building systems, not setting goals...
         </div>
-        <div style="display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);">
+        <div style="display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);flex-wrap:wrap;">
           <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Summarize</span>
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">To Do</span>
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Translate</span>
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Drive</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Flashcard</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Transcript</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">AI Merge</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="lp-features">
+  <!-- Features -->
+  <div class="lp-features" id="lp-features-section">
     <div class="lp-feat">
       <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
       </div>
-      <h3>Personal &amp; Work</h3>
-      <p>Keep your personal and work notes in separate spaces. No clutter.</p>
-    </div>
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(196,119,59,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4773b" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
-      </div>
-      <h3>To Do lists</h3>
-      <p>Create daily, weekly and monthly task lists. Merge them when needed.</p>
+      <h3 id="LP_F1_TITLE">Text → Flashcard</h3>
+      <p id="LP_F1_DESC">Paste any text or PDF. Get flashcards instantly.</p>
     </div>
     <div class="lp-feat">
       <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
       </div>
-      <h3>AI tools</h3>
-      <p>Summarize, fix, translate — 20 free AI requests per day.</p>
+      <h3 id="LP_F2_TITLE">AI Summarize</h3>
+      <p id="LP_F2_DESC">Too long to re-read? Get the key points in seconds.</p>
     </div>
     <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
+      <div class="lp-feat-icon" style="background:rgba(74,122,181,.2);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a7ab5" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
       </div>
-      <h3>Google Drive</h3>
-      <p>Export any note directly to your Google Drive as a text file.</p>
+      <h3 id="LP_F3_TITLE">AI Merge</h3>
+      <p id="LP_F3_DESC">Scattered notes on the same topic? Merge them into one clean note.</p>
+    </div>
+    <div class="lp-feat">
+      <div class="lp-feat-icon" style="background:rgba(192,57,43,.15);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </div>
+      <h3 id="LP_F4_TITLE">Voice Transcript</h3>
+      <p id="LP_F4_DESC">Record or upload audio. Get instant text.</p>
     </div>
     <div class="lp-feat">
       <div class="lp-feat-icon" style="background:rgba(196,119,59,.2);">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4773b" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
       </div>
-      <h3>Flash cards</h3>
-      <p>Write "word: meaning" in any note and instantly turn it into flash cards.</p>
+      <h3 id="LP_F5_TITLE">Flash Cards</h3>
+      <p id="LP_F5_DESC">Write "word: meaning". Study mode ready.</p>
     </div>
     <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/><line x1="5" y1="12" x2="12" y2="12"/></svg>
+      <div class="lp-feat-icon" style="background:rgba(196,119,59,.2);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4773b" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
       </div>
-      <h3>Merge To Dos</h3>
-      <p>Combine incomplete tasks from multiple To Do cards into one clean list.</p>
+      <h3 id="LP_F6_TITLE">Merge To Dos</h3>
+      <p id="LP_F6_DESC">Multiple to-do lists piling up? Merge them into one clean action list.</p>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="lp-pricing">
+    <h2 class="lp-pricing-title" id="LP_PRICING_TITLE">Simple pricing</h2>
+    <p class="lp-pricing-sub" id="LP_PRICING_SUB">Start free. Upgrade when you need more.</p>
+    <div class="lp-plans">
+      <!-- Free -->
+      <div class="lp-plan">
+        <div class="lp-plan-name" id="LP_FREE_NAME">Free</div>
+        <div class="lp-plan-price">₺0<span id="LP_FREE_PERIOD">/forever</span></div>
+        <ul class="lp-plan-features">
+          <li>✓ <span id="LP_FREE_F1">Unlimited notes</span></li>
+          <li>✓ <span id="LP_FREE_F2">10 AI requests / day</span></li>
+          <li>✓ <span id="LP_FREE_F3">3 Flashcard sets / week</span></li>
+          <li>✓ <span id="LP_FREE_F4">AI Merge — 3x / month</span></li>
+          <li>✓ <span id="LP_FREE_F5">To Do Merge — 5x / month</span></li>
+        </ul>
+        <button class="lp-plan-btn lp-plan-btn-free" id="LP_FREE_BTN" onclick="hideLanding('register')">Start for free</button>
+      </div>
+      <!-- Pro -->
+      <div class="lp-plan lp-plan-pro">
+        <div class="lp-plan-badge" id="LP_PRO_BADGE">⭐ Early Access</div>
+        <div class="lp-plan-name" id="LP_PRO_NAME">Pro</div>
+        <div class="lp-plan-price">₺49<span id="LP_PRO_PERIOD">/month</span></div>
+        <ul class="lp-plan-features">
+          <li>✓ <span id="LP_PRO_F1">Everything in Free</span></li>
+          <li>✓ <span id="LP_PRO_F2">Unlimited AI requests</span></li>
+          <li>✓ <span id="LP_PRO_F3">Unlimited Flashcards</span></li>
+          <li>✓ <span id="LP_PRO_F4">Unlimited AI Merge</span></li>
+          <li>✓ <span id="LP_PRO_F5">Unlimited To Do Merge</span></li>
+          <li>✓ <span id="LP_PRO_F6">Founding Member badge</span></li>
+        </ul>
+        <button class="lp-plan-btn lp-plan-btn-pro" id="LP_PRO_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')">Get Pro — ₺49/mo</button>
+      </div>
     </div>
   </div>
 
   <div class="lp-footer">
-    <h2>Try it now, for free.</h2>
-    <p>No credit card required.</p>
-    <button class="lp-btn-primary" onclick="hideLanding('register')">Create account</button>
+    <h2 id="LP_FOOTER_TITLE">Try it now, for free.</h2>
+    <p id="LP_FOOTER_SUB">No credit card required.</p>
+    <button class="lp-btn-primary" id="LP_FOOTER_BTN" onclick="hideLanding('register')">Create account</button>
   </div>
 </div>
 
@@ -1181,6 +1287,10 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       title="To Do kartlarında yapılmamış To Do'ları birleştirir">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
       <span id="LBL_MERGE_TODO_BTN">To Do Birleştir</span>
+    </button>
+    <button class="merge-pill merge-pill-transcript" id="TRANSCRIPT_BTN" onclick="openModal('TRANSCRIPT_MODAL')"
+      title="Ses kaydını metne çevir">
+      🎙️ <span id="LBL_TRANSCRIPT_BTN">Ses Transkript</span>
     </button>
     <div class="vsep"></div>
     <div class="lang-seg">
@@ -1535,6 +1645,53 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <div class="mact">
       <button class="btn" id="PDF_CANCEL_BTN" onclick="closeModal('PDF_FLASH_MODAL')">İptal</button>
       <button class="btn-p" id="PDF_GENERATE_BTN" onclick="generatePdfFlashCards()">⚡ Flash Kart Üret</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSCRIPT MODAL -->
+<div class="ov hidden" id="TRANSCRIPT_MODAL">
+  <div class="transcript-modal-box">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <div style="flex:1;">
+        <h3 id="TR_MODAL_TITLE">🎙️ Ses Transkripti</h3>
+        <p style="margin-bottom:0;" id="TR_MODAL_DESC">Ses kaydet veya dosya yükle — AI metne çevirir ve istersen başka dile tercüme eder.</p>
+      </div>
+      <button class="ic-btn" onclick="stopTranscriptRecording();closeModal('TRANSCRIPT_MODAL')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <button class="transcript-rec-btn" id="TR_REC_BTN" onclick="toggleTranscriptRecording()">
+      🎙️ <span id="TR_REC_LABEL">Kayıt Başlat</span>
+    </button>
+
+    <div class="transcript-drop" onclick="document.getElementById('TR_FILE_INPUT').click()"
+      ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+      ondragleave="this.style.borderColor=''"
+      ondrop="handleTranscriptFileDrop(event)">
+      <span id="TR_DROP_TEXT">🎵 Ses dosyası sürükle veya tıkla (mp3, wav, webm, ogg)</span>
+    </div>
+    <input type="file" id="TR_FILE_INPUT" accept="audio/*" style="display:none" onchange="handleTranscriptFile(this.files[0])">
+
+    <div class="transcript-lang-row">
+      <span class="transcript-lang-label" id="TR_LANG_LABEL">Çeviri dili:</span>
+      <select class="pdf-select" id="TR_TARGET_LANG" style="width:130px;">
+        <option value="">Çevirme</option>
+        <option value="Türkçe">Türkçe</option>
+        <option value="İngilizce">İngilizce</option>
+        <option value="Almanca">Almanca</option>
+        <option value="Fransızca">Fransızca</option>
+        <option value="İspanyolca">İspanyolca</option>
+      </select>
+    </div>
+
+    <div class="transcript-status" id="TR_STATUS"></div>
+    <textarea class="transcript-result" id="TR_RESULT" readonly></textarea>
+
+    <div class="mact">
+      <button class="btn" id="TR_CANCEL_BTN" onclick="stopTranscriptRecording();closeModal('TRANSCRIPT_MODAL')">İptal</button>
+      <button class="btn-p" id="TR_SAVE_BTN" onclick="saveTranscriptToNote()" style="display:none;">📝 Nota Ekle</button>
     </div>
   </div>
 </div>
@@ -2426,6 +2583,22 @@ function applyLangLabels(){
   if(optBody) optBody.textContent=currentLang==='TR'?'Normal':'Body';
   if(optHeading) optHeading.textContent=currentLang==='TR'?'Başlık':'Heading';
   if(optTitle) optTitle.textContent=currentLang==='TR'?'Ana Başlık':'Title';
+  // Transcript modal labels
+  const trTitle=document.getElementById('TR_MODAL_TITLE');
+  const trDesc=document.getElementById('TR_MODAL_DESC');
+  const trLangLabel=document.getElementById('TR_LANG_LABEL');
+  const trDropText=document.getElementById('TR_DROP_TEXT');
+  const trCancelBtn=document.getElementById('TR_CANCEL_BTN');
+  const trRecLabel=document.getElementById('TR_REC_LABEL');
+  const trLblBtn=document.getElementById('LBL_TRANSCRIPT_BTN');
+  if(trTitle) trTitle.textContent=currentLang==='TR'?'🎙️ Ses Transkripti':'🎙️ Voice Transcript';
+  if(trDesc) trDesc.textContent=currentLang==='TR'?'Ses kaydet veya dosya yükle — AI metne çevirir.':'Record or upload audio — AI transcribes it instantly.';
+  if(trLangLabel) trLangLabel.textContent=currentLang==='TR'?'Çeviri dili:':'Translate to:';
+  if(trDropText && !transcriptRecording) trDropText.textContent=currentLang==='TR'?'🎵 Ses dosyası sürükle veya tıkla':'🎵 Drop audio file or click';
+  if(trCancelBtn) trCancelBtn.textContent=currentLang==='TR'?'İptal':'Cancel';
+  if(trRecLabel && !transcriptRecording) trRecLabel.textContent=currentLang==='TR'?'Kayıt Başlat':'Start Recording';
+  if(trLblBtn) trLblBtn.textContent=currentLang==='TR'?'Ses Transkript':'Transcript';
+  // Mobil CSS için transcript pill
 }
 function getCurrentTypeLabel(){
   const n=getActive();
@@ -3012,62 +3185,49 @@ function markdownToHtml(text){
   const lines=text.split('\n');
   let html='';
   let inList=false;
+  let openCollapsibles=0;
+
+  function closeList(){if(inList){html+='</ul>';inList=false;}}
+  function headingLevel(line){
+    if(line.startsWith('### '))return 3;
+    if(line.startsWith('## '))return 2;
+    if(line.startsWith('# '))return 1;
+    return 0;
+  }
 
   for(let i=0;i<lines.length;i++){
     let line=lines[i];
+    const lvl=headingLevel(line);
 
-    // Headings
-    if(line.startsWith('### ')){
-      if(inList){html+='</ul>';inList=false;}
-      html+=`<h3 class="collapsible-h">${esc2(line.slice(4))}</h3><div class="collapsible-body">`;
-      // collect until next heading or end
-      continue;
-    }
-    if(line.startsWith('## ')){
-      if(inList){html+='</ul>';inList=false;}
-      html+=`<h2 class="collapsible-h">${esc2(line.slice(3))}</h2><div class="collapsible-body">`;
-      continue;
-    }
-    if(line.startsWith('# ')){
-      if(inList){html+='</ul>';inList=false;}
-      html+=`<h1 class="collapsible-h">${esc2(line.slice(2))}</h1><div class="collapsible-body">`;
+    if(lvl>0){
+      closeList();
+      // Bir sonraki aynı seviye veya üst seviye başlığa kadar olan içeriği bul
+      // Önce açık collapsible'ı kapat
+      if(openCollapsibles>0){html+='</div>';openCollapsibles--;}
+      const tag='h'+lvl;
+      const content=esc2(line.slice(lvl+1));
+      html+=`<${tag} class="collapsible-h" data-lvl="${lvl}">${content}</${tag}><div class="collapsible-body">`;
+      openCollapsibles++;
       continue;
     }
 
-    // HR
-    if(/^---+$/.test(line.trim())){
-      if(inList){html+='</ul>';inList=false;}
-      html+='<hr>';continue;
-    }
+    if(/^---+$/.test(line.trim())){closeList();html+='<hr>';continue;}
 
-    // Lists
     if(line.match(/^[\*\-] /)){
       if(!inList){html+='<ul>';inList=true;}
-      html+=`<li>${inlineMarkdown(line.slice(2))}</li>`;
-      continue;
+      html+=`<li>${inlineMarkdown(line.slice(2))}</li>`;continue;
     }
-    // Numbered list
     if(line.match(/^\d+\. /)){
       if(!inList){html+='<ul>';inList=true;}
-      html+=`<li>${inlineMarkdown(line.replace(/^\d+\. /,''))}</li>`;
-      continue;
+      html+=`<li>${inlineMarkdown(line.replace(/^\d+\. /,''))}</li>`;continue;
     }
 
-    if(inList){html+='</ul>';inList=false;}
-
-    // Empty line
+    closeList();
     if(line.trim()===''){html+='<p style="margin:4px 0;height:1em;"></p>';continue;}
-
-    // Normal paragraph
     html+=`<p>${inlineMarkdown(line)}</p>`;
   }
-  if(inList)html+='</ul>';
-
-  // Close any open collapsible divs — count opens vs closes
-  const opens=(html.match(/class="collapsible-body"/g)||[]).length;
-  const closes=(html.match(/<\/div>/g)||[]).length;
-  for(let i=0;i<opens-closes;i++)html+='</div>';
-
+  closeList();
+  while(openCollapsibles>0){html+='</div>';openCollapsibles--;}
   return html;
 }
 
@@ -3377,6 +3537,7 @@ function doMergeTodos(){
     alert(currentLang==='TR'?'En az 2 kart seçmelisin.':'Select at least 2 cards.');
     return;
   }
+  if(!checkTodoMergeLimit()) return;
   const selectedNotes=checked.map(id=>notes.find(n=>n.id===id)).filter(Boolean);
   const combinedTitle=selectedNotes.map(n=>n.title||s('untitled')).join(' & ');
   const combinedItems=[];
@@ -3395,7 +3556,7 @@ function doMergeTodos(){
     type:'todo',todoType:'free',todoItems:combinedItems,
     createdAt:now(),updatedAt:now(),images:[],audios:[]};
   closeModal('MERGE_TODO_MODAL');
-
+  incrementTodoMergeUsage();
   // Orijinaller kalsın mı? sor
   _pendingMerge = {originalNotes: selectedNotes, title: combinedTitle, content: '', mergedObj: merged};
   const isTR = currentLang === 'TR';
@@ -3579,6 +3740,7 @@ function finalizeMerge(keepOriginals) {
 
 async function doAIMerge() {
   if (mergeSelectedIds.size < 2) return;
+  if(!checkAIMergeLimit()) return;
   const selectedNotes = [...mergeSelectedIds].map(id => notes.find(n => n.id === id)).filter(Boolean);
   const btn = document.getElementById('AI_MERGE_BTN');
   const lbl = document.getElementById('LBL_AI_MERGE_BTN');
@@ -3620,7 +3782,7 @@ ${combinedText.slice(0, 6000)}`;
       content = lines.slice(1).join('\n').trim();
     }
     content = renderMarkdown(content);
-    
+    incrementAIMergeUsage();
     // Orijinaller kalsın mı? sor
     showMergeConfirm(selectedNotes, title, content);
   } catch(err) {
@@ -3688,7 +3850,10 @@ function handlePdfFile(file) {
 
 async function generatePdfFlashCards() {
   const text = document.getElementById('PDF_TEXT_INPUT').value.trim() || pdfExtractedText.trim();
-  if (!text) { document.getElementById('PDF_STATUS').textContent = '⚠ Önce metin gir veya PDF yükle'; return; }
+  if (!text) { document.getElementById('PDF_STATUS').textContent = currentLang==='TR'?'⚠ Önce metin gir veya PDF yükle':'⚠ Enter text or upload a PDF first'; return; }
+
+  // Limit kontrolü
+  if(!checkFlashcardLimit()) return;
 
   const level = document.getElementById('PDF_LEVEL').value;
   const lang = document.getElementById('PDF_LANG').value;
@@ -3748,6 +3913,7 @@ ${text.slice(0, 4000)}`;
 
     document.getElementById('PDF_STATUS').textContent = `✓ ${cards.length} kart oluşturuldu!`;
     document.getElementById('PDF_FLASH_COUNT').textContent = `${cards.length} flash kart hazır`;
+    incrementFlashcardUsage();
 
     // Flash modal'a yükle ve aç
     setTimeout(() => {
@@ -3920,54 +4086,290 @@ function stopRec(doSave){
   mediaRecorder=null;
 }
 
-// ── AI RATE LIMIT ──
-const AI_DAILY_LIMIT = 20;
-function getAIUsage() {
-  const today = new Date().toISOString().split('T')[0];
-  const stored = JSON.parse(localStorage.getItem('nt_ai_usage') || '{}');
-  if (stored.date !== today) return { date: today, count: 0 };
+// ── VOICE TRANSCRIPT ──
+let transcriptMediaRecorder = null;
+let transcriptChunks = [];
+let transcriptRecording = false;
+
+function toggleTranscriptRecording() {
+  if (transcriptRecording) {
+    stopTranscriptRecording();
+  } else {
+    startTranscriptRecording();
+  }
+}
+
+async function startTranscriptRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    transcriptChunks = [];
+    transcriptMediaRecorder = new MediaRecorder(stream);
+    transcriptMediaRecorder.ondataavailable = e => { if(e.data.size>0) transcriptChunks.push(e.data); };
+    transcriptMediaRecorder.onstop = () => {
+      const blob = new Blob(transcriptChunks, {type:'audio/webm'});
+      processTranscriptBlob(blob, 'audio/webm');
+    };
+    transcriptMediaRecorder.start();
+    transcriptRecording = true;
+    document.getElementById('TR_REC_BTN').classList.add('recording');
+    document.getElementById('TR_REC_LABEL').textContent = currentLang==='TR' ? 'Kaydı Durdur ⏹' : 'Stop Recording ⏹';
+    document.getElementById('TRANSCRIPT_BTN').classList.add('recording');
+    document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? '🔴 Kaydediliyor...' : '🔴 Recording...';
+  } catch(err) {
+    document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? '⚠ Mikrofon erişimi reddedildi' : '⚠ Microphone access denied';
+  }
+}
+
+function stopTranscriptRecording() {
+  if (transcriptMediaRecorder && transcriptRecording) {
+    transcriptMediaRecorder.stop();
+    transcriptMediaRecorder.stream.getTracks().forEach(t=>t.stop());
+    transcriptMediaRecorder = null;
+  }
+  transcriptRecording = false;
+  const btn = document.getElementById('TR_REC_BTN');
+  const tbtn = document.getElementById('TRANSCRIPT_BTN');
+  if(btn) { btn.classList.remove('recording'); }
+  if(tbtn) tbtn.classList.remove('recording');
+  const lbl = document.getElementById('TR_REC_LABEL');
+  if(lbl) lbl.textContent = currentLang==='TR' ? 'Kayıt Başlat' : 'Start Recording';
+}
+
+function handleTranscriptFileDrop(e) {
+  e.preventDefault();
+  e.currentTarget.style.borderColor = '';
+  const file = e.dataTransfer.files[0];
+  if(file) handleTranscriptFile(file);
+}
+
+function handleTranscriptFile(file) {
+  if(!file) return;
+  document.getElementById('TR_DROP_TEXT').textContent = `📎 ${file.name}`;
+  document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? 'Dosya okunuyor...' : 'Reading file...';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result.split(',')[1];
+    sendTranscriptToAI(base64, file.type || 'audio/mpeg');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function processTranscriptBlob(blob, mimeType) {
+  document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? '⏳ Transkript oluşturuluyor...' : '⏳ Transcribing...';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result.split(',')[1];
+    sendTranscriptToAI(base64, mimeType);
+  };
+  reader.readAsDataURL(blob);
+}
+
+async function sendTranscriptToAI(base64, mimeType) {
+  // AI limit kontrolü
+  const usage = getAIUsage();
+  if(usage.count >= AI_DAILY_LIMIT) { showProModal('ai'); closeModal('TRANSCRIPT_MODAL'); return; }
+
+  document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? '⏳ AI işliyor...' : '⏳ AI processing...';
+  const targetLang = document.getElementById('TR_TARGET_LANG').value;
+
+  try {
+    const WORKER_URL = 'https://not-that-ai.hazalkalmis.workers.dev';
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({type:'transcribe', audio: base64, mimeType, targetLang})
+    });
+    const data = await res.json();
+    incrementAIUsage();
+
+    const result = document.getElementById('TR_RESULT');
+    result.value = data.text || '';
+    result.classList.add('visible');
+    document.getElementById('TR_SAVE_BTN').style.display = 'block';
+    document.getElementById('TR_STATUS').textContent = currentLang==='TR' ? '✓ Tamamlandı' : '✓ Done';
+  } catch(err) {
+    document.getElementById('TR_STATUS').textContent = '⚠ ' + err.message;
+  }
+}
+
+function saveTranscriptToNote() {
+  const text = document.getElementById('TR_RESULT').value.trim();
+  if(!text) return;
+  const n = getActive();
+  if(n && n.type !== 'todo') {
+    // Mevcut nota ekle
+    const ta = document.getElementById('BODY_INPUT');
+    const sep = ta.value ? '\n\n---\n' : '';
+    ta.value += sep + text;
+    onBodyChange();
+    closeModal('TRANSCRIPT_MODAL');
+    showFlash(currentLang==='TR' ? '✓ Transkript nota eklendi' : '✓ Transcript added to note');
+  } else {
+    // Yeni not oluştur
+    const date = new Date().toLocaleDateString(currentLang==='TR'?'tr-TR':'en-US',{day:'numeric',month:'long'});
+    const newNote = {
+      id:uid(), title: currentLang==='TR'?`Ses Transkripti — ${date}`:`Voice Transcript — ${date}`,
+      content:text, space:'personal', type:'normal',
+      todoItems:[], todoType:null, createdAt:now(), updatedAt:now(), images:[], audios:[]
+    };
+    notes.unshift(newNote); save(); saveNoteToCloud(newNote); renderAllCards(); openNote(newNote.id);
+    closeModal('TRANSCRIPT_MODAL');
+    showFlash(currentLang==='TR' ? '✓ Yeni nota kaydedildi' : '✓ Saved as new note');
+  }
+  // Reset modal
+  document.getElementById('TR_RESULT').value = '';
+  document.getElementById('TR_RESULT').classList.remove('visible');
+  document.getElementById('TR_SAVE_BTN').style.display = 'none';
+  document.getElementById('TR_STATUS').textContent = '';
+  document.getElementById('TR_DROP_TEXT').textContent = currentLang==='TR'?'🎵 Ses dosyası sürükle veya tıkla':'🎵 Drop audio file or click';
+}
+
+
+const AI_DAILY_LIMIT = 10;
+const FLASHCARD_WEEKLY_LIMIT = 3;
+const AI_MERGE_MONTHLY_LIMIT = 3;
+const TODO_MERGE_MONTHLY_LIMIT = 5;
+
+function getToday(){ return new Date().toISOString().split('T')[0]; }
+function getWeek(){
+  const d=new Date(); const jan1=new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);
+}
+function getMonth(){ const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}`; }
+
+// AI daily
+function getAIUsage(){
+  const stored=JSON.parse(localStorage.getItem('nt_ai_usage')||'{}');
+  if(stored.date!==getToday())return{date:getToday(),count:0};
   return stored;
 }
-function incrementAIUsage() {
-  const usage = getAIUsage();
-  usage.count++;
-  localStorage.setItem('nt_ai_usage', JSON.stringify(usage));
+function incrementAIUsage(){
+  const usage=getAIUsage(); usage.count++;
+  localStorage.setItem('nt_ai_usage',JSON.stringify(usage));
   updateAILimitUI();
 }
-function updateAILimitUI() {
-  const usage = getAIUsage();
-  const remaining = Math.max(0, AI_DAILY_LIMIT - usage.count);
-  const btns = document.querySelectorAll('.ai-btn');
-  btns.forEach(btn => {
-    btn.disabled = remaining === 0;
-    btn.title = remaining === 0
-      ? (currentLang === 'TR' ? 'Günlük AI limitine ulaştın (20/20)' : 'Daily AI limit reached (20/20)')
-      : '';
-  });
-  // limit göstergesi
-  let indicator = document.getElementById('AI_LIMIT_IND');
-  if (!indicator) {
-    indicator = document.createElement('span');
-    indicator.id = 'AI_LIMIT_IND';
-    indicator.style.cssText = 'font-size:10px;color:var(--text3);margin-left:2px;white-space:nowrap;';
-    const aiGroup = document.querySelector('.ai-group');
-    if (aiGroup) aiGroup.appendChild(indicator);
-  }
-  indicator.textContent = remaining === 0
-    ? (currentLang === 'TR' ? '0 hak kaldı' : '0 left')
-    : remaining <= 5
-      ? (currentLang === 'TR' ? `${remaining} hak kaldı` : `${remaining} left`)
-      : '';
+
+// Flashcard weekly
+function getFlashcardUsage(){
+  const stored=JSON.parse(localStorage.getItem('nt_flash_usage')||'{}');
+  const wk=`${new Date().getFullYear()}-w${getWeek()}`;
+  if(stored.week!==wk)return{week:wk,count:0};
+  return stored;
 }
+function incrementFlashcardUsage(){
+  const usage=getFlashcardUsage(); usage.count++;
+  localStorage.setItem('nt_flash_usage',JSON.stringify(usage));
+}
+function checkFlashcardLimit(){
+  const usage=getFlashcardUsage();
+  if(usage.count>=FLASHCARD_WEEKLY_LIMIT){showProModal('flashcard');return false;}
+  return true;
+}
+
+// AI Merge monthly
+function getAIMergeUsage(){
+  const stored=JSON.parse(localStorage.getItem('nt_aimerge_usage')||'{}');
+  if(stored.month!==getMonth())return{month:getMonth(),count:0};
+  return stored;
+}
+function incrementAIMergeUsage(){
+  const usage=getAIMergeUsage(); usage.count++;
+  localStorage.setItem('nt_aimerge_usage',JSON.stringify(usage));
+}
+function checkAIMergeLimit(){
+  const usage=getAIMergeUsage();
+  if(usage.count>=AI_MERGE_MONTHLY_LIMIT){showProModal('aimerge');return false;}
+  return true;
+}
+
+// To Do Merge monthly
+function getTodoMergeUsage(){
+  const stored=JSON.parse(localStorage.getItem('nt_todomerge_usage')||'{}');
+  if(stored.month!==getMonth())return{month:getMonth(),count:0};
+  return stored;
+}
+function incrementTodoMergeUsage(){
+  const usage=getTodoMergeUsage(); usage.count++;
+  localStorage.setItem('nt_todomerge_usage',JSON.stringify(usage));
+}
+function checkTodoMergeLimit(){
+  const usage=getTodoMergeUsage();
+  if(usage.count>=TODO_MERGE_MONTHLY_LIMIT){showProModal('todomerge');return false;}
+  return true;
+}
+
+function updateAILimitUI(){
+  const usage=getAIUsage();
+  const remaining=Math.max(0,AI_DAILY_LIMIT-usage.count);
+  const btns=document.querySelectorAll('.ai-btn');
+  btns.forEach(btn=>{
+    btn.disabled=remaining===0;
+    btn.title=remaining===0?(currentLang==='TR'?'Günlük AI limitine ulaştın':'Daily AI limit reached'):'';
+  });
+  let indicator=document.getElementById('AI_LIMIT_IND');
+  if(!indicator){
+    indicator=document.createElement('span');
+    indicator.id='AI_LIMIT_IND';
+    indicator.style.cssText='font-size:10px;color:var(--text3);margin-left:2px;white-space:nowrap;';
+    const aiGroup=document.querySelector('.ai-group');
+    if(aiGroup)aiGroup.appendChild(indicator);
+  }
+  // %80 uyarısı
+  const pct=usage.count/AI_DAILY_LIMIT;
+  if(remaining===0){
+    indicator.textContent=currentLang==='TR'?'0 hak kaldı':'0 left';
+    indicator.style.color='#c0392b';
+  } else if(pct>=0.8){
+    indicator.textContent=currentLang==='TR'?`${remaining} hak kaldı ⚠`:`${remaining} left ⚠`;
+    indicator.style.color='#e67e22';
+  } else if(remaining<=3){
+    indicator.textContent=currentLang==='TR'?`${remaining} hak kaldı`:`${remaining} left`;
+    indicator.style.color='var(--text3)';
+  } else {
+    indicator.textContent='';
+  }
+}
+
+// Pro modal — farklı özellikler için farklı mesaj
+function showProModal(feature){
+  const isTR=currentLang==='TR';
+  const messages={
+    ai:{
+      title: isTR?'Günlük AI limitine ulaştın':'Daily AI limit reached',
+      desc: isTR?'Ücretsiz planda günlük 10 AI isteğin var. Pro\'ya geçerek sınırsız kullan.':'Free plan includes 10 AI requests/day. Go Pro for unlimited access.'
+    },
+    flashcard:{
+      title: isTR?'Haftalık flashcard limitine ulaştın':'Weekly flashcard limit reached',
+      desc: isTR?'Ücretsiz planda haftada 3 flashcard üretebilirsin. Pro\'ya geçerek sınırsız kullan.':'Free plan includes 3 flashcard sets/week. Go Pro for unlimited.'
+    },
+    aimerge:{
+      title: isTR?'Aylık AI Merge limitine ulaştın':'Monthly AI Merge limit reached',
+      desc: isTR?'Ücretsiz planda ayda 3 kez AI Merge yapabilirsin. Pro\'ya geçerek sınırsız kullan.':'Free plan includes 3 AI Merges/month. Go Pro for unlimited.'
+    },
+    todomerge:{
+      title: isTR?'Aylık To Do Merge limitine ulaştın':'Monthly To Do Merge limit reached',
+      desc: isTR?'Ücretsiz planda ayda 5 kez To Do Merge yapabilirsin. Pro\'ya geçerek sınırsız kullan.':'Free plan includes 5 To Do Merges/month. Go Pro for unlimited.'
+    }
+  };
+  const msg=messages[feature]||messages.ai;
+  document.getElementById('PRO_MODAL_TITLE').textContent=msg.title;
+  document.getElementById('PRO_MODAL_DESC').textContent=msg.desc;
+  document.getElementById('PRO_MODAL').classList.remove('hidden');
+}
+
 
 // ── AI ──
 async function doAI(action){
   if(action==='translate'){openModal('TRANSLATE_MODAL');return;}
-  // rate limit kontrolü
-  const usage = getAIUsage();
-  if (usage.count >= AI_DAILY_LIMIT) {
-    document.getElementById('PRO_MODAL').classList.remove('hidden');
-    return;
+  const usage=getAIUsage();
+  if(usage.count>=AI_DAILY_LIMIT){showProModal('ai');return;}
+  // %80 uyarısı
+  if(usage.count>=AI_DAILY_LIMIT*0.8){
+    const remaining=AI_DAILY_LIMIT-usage.count;
+    const msg=currentLang==='TR'
+      ?`${remaining} AI hakkın kaldı. Pro'ya geçerek sınırsız kullanabilirsin.`
+      :`${remaining} AI requests left today. Go Pro for unlimited.`;
+    showFlash(msg);
   }
   const n=getActive();const content=n?.type==='todo'?n.todoItems?.map(i=>i.text).join('\n'):document.getElementById('BODY_INPUT').value;
   if(!content?.trim()){alert(currentLang==='TR'?'Önce bir şeyler yaz!':'Write something first!');return;}
@@ -4048,6 +4450,107 @@ function showLanding() {
     if (auth) auth.style.display = 'none';
   }
 }
+let lpLang = 'EN';
+const lpStrings = {
+  EN: {
+    badge:'Early Access', signin:'Sign in', ctaNav:'Get started — free',
+    h1:'note that, easily.<br><span>lose nothing, finally.</span>',
+    sub:'Take notes. Let AI do the rest.',
+    btnStart:'Start for free', btnFeat:'See features',
+    f1t:'Text → Flashcard', f1d:'Paste any text or PDF. Get flashcards instantly.',
+    f2t:'AI Summarize', f2d:'Too long to re-read? Get the key points in seconds.',
+    f3t:'AI Merge', f3d:'Scattered notes on the same topic? Merge them into one clean note.',
+    f4t:'Voice Transcript', f4d:'Record or upload audio. Get instant text.',
+    f5t:'Flash Cards', f5d:'Write "word: meaning". Study mode ready.',
+    f6t:'Merge To Dos', f6d:'Multiple to-do lists piling up? Merge them into one clean action list.',
+    pricingTitle:'Simple pricing', pricingSub:'Start free. Upgrade when you need more.',
+    freeName:'Free', freePeriod:'/forever',
+    freeF1:'Unlimited notes', freeF2:'10 AI requests / day',
+    freeF3:'3 Flashcard sets / week', freeF4:'AI Merge — 3x / month',
+    freeF5:'To Do Merge — 5x / month', freeBtn:'Start for free',
+    proBadge:'⭐ Early Access', proName:'Pro', proPeriod:'/month',
+    proF1:'Everything in Free', proF2:'Unlimited AI requests',
+    proF3:'Unlimited Flashcards', proF4:'Unlimited AI Merge',
+    proF5:'Unlimited To Do Merge', proF6:'Founding Member badge',
+    proBtn:'Get Pro — ₺49/mo',
+    footerTitle:'Try it now, for free.',
+    footerSub:'No credit card required.', footerBtn:'Create account'
+  },
+  TR: {
+    badge:'Erken Erişim', signin:'Giriş yap', ctaNav:'Ücretsiz başla',
+    h1:'not al, kolayca.<br><span>hiçbir şey kaybolmasın, sonunda.</span>',
+    sub:'Not al. Gerisini AI halleder.',
+    btnStart:'Ücretsiz başla', btnFeat:'Özellikleri gör',
+    f1t:'Metin → Flashcard', f1d:'Herhangi bir metin veya PDF yapıştır. Anında flashcard üretilir.',
+    f2t:'AI Özet', f2d:'Tekrar okumak çok mu uzun? Saniyeler içinde ana noktaları al.',
+    f3t:'AI Birleştir', f3d:'Aynı konuda dağınık notlar mı var? Hepsini tek temiz nota birleştir.',
+    f4t:'Ses Transkripti', f4d:'Ses kaydet veya dosya yükle. Anında metne çevir.',
+    f5t:'Flash Kartlar', f5d:'"kelime: anlam" yaz. Çalışma modu hazır.',
+    f6t:'To Do Birleştir', f6d:'Birden fazla liste mi var? Hepsini tek temiz listeye birleştir.',
+    pricingTitle:'Basit fiyatlandırma', pricingSub:'Ücretsiz başla. İhtiyaç duyduğunda geçiş yap.',
+    freeName:'Ücretsiz', freePeriod:'/sonsuza dek',
+    freeF1:'Sınırsız not', freeF2:'Günlük 10 AI isteği',
+    freeF3:'Haftada 3 flashcard seti', freeF4:'AI Birleştir — ayda 3x',
+    freeF5:'To Do Birleştir — ayda 5x', freeBtn:'Ücretsiz başla',
+    proBadge:'⭐ Erken Erişim', proName:'Pro', proPeriod:'/ay',
+    proF1:'Ücretsiz plandaki her şey', proF2:'Sınırsız AI isteği',
+    proF3:'Sınırsız Flashcard', proF4:'Sınırsız AI Birleştir',
+    proF5:'Sınırsız To Do Birleştir', proF6:'Kurucu Üye rozeti',
+    proBtn:'Pro\'ya geç — ₺49/ay',
+    footerTitle:'Şimdi dene, ücretsiz.',
+    footerSub:'Kredi kartı gerekmez.', footerBtn:'Hesap oluştur'
+  }
+};
+
+function setLpLang(lang) {
+  lpLang = lang;
+  document.getElementById('LP_TR').classList.toggle('active', lang==='TR');
+  document.getElementById('LP_EN').classList.toggle('active', lang==='EN');
+  const s = lpStrings[lang];
+  document.getElementById('LP_BADGE').textContent = s.badge;
+  document.getElementById('LP_SIGNIN').textContent = s.signin;
+  document.getElementById('LP_CTA_NAV').textContent = s.ctaNav;
+  document.getElementById('LP_H1').innerHTML = s.h1;
+  document.getElementById('LP_SUB').textContent = s.sub;
+  document.getElementById('LP_BTN_START').textContent = s.btnStart;
+  document.getElementById('LP_BTN_FEAT').textContent = s.btnFeat;
+  document.getElementById('LP_F1_TITLE').textContent = s.f1t;
+  document.getElementById('LP_F1_DESC').textContent = s.f1d;
+  document.getElementById('LP_F2_TITLE').textContent = s.f2t;
+  document.getElementById('LP_F2_DESC').textContent = s.f2d;
+  document.getElementById('LP_F3_TITLE').textContent = s.f3t;
+  document.getElementById('LP_F3_DESC').textContent = s.f3d;
+  document.getElementById('LP_F4_TITLE').textContent = s.f4t;
+  document.getElementById('LP_F4_DESC').textContent = s.f4d;
+  document.getElementById('LP_F5_TITLE').textContent = s.f5t;
+  document.getElementById('LP_F5_DESC').textContent = s.f5d;
+  document.getElementById('LP_F6_TITLE').textContent = s.f6t;
+  document.getElementById('LP_F6_DESC').textContent = s.f6d;
+  document.getElementById('LP_PRICING_TITLE').textContent = s.pricingTitle;
+  document.getElementById('LP_PRICING_SUB').textContent = s.pricingSub;
+  document.getElementById('LP_FREE_NAME').textContent = s.freeName;
+  document.getElementById('LP_FREE_PERIOD').textContent = s.freePeriod;
+  document.getElementById('LP_FREE_F1').textContent = s.freeF1;
+  document.getElementById('LP_FREE_F2').textContent = s.freeF2;
+  document.getElementById('LP_FREE_F3').textContent = s.freeF3;
+  document.getElementById('LP_FREE_F4').textContent = s.freeF4;
+  document.getElementById('LP_FREE_F5').textContent = s.freeF5;
+  document.getElementById('LP_FREE_BTN').textContent = s.freeBtn;
+  document.getElementById('LP_PRO_BADGE').textContent = s.proBadge;
+  document.getElementById('LP_PRO_NAME').textContent = s.proName;
+  document.getElementById('LP_PRO_PERIOD').textContent = s.proPeriod;
+  document.getElementById('LP_PRO_F1').textContent = s.proF1;
+  document.getElementById('LP_PRO_F2').textContent = s.proF2;
+  document.getElementById('LP_PRO_F3').textContent = s.proF3;
+  document.getElementById('LP_PRO_F4').textContent = s.proF4;
+  document.getElementById('LP_PRO_F5').textContent = s.proF5;
+  document.getElementById('LP_PRO_F6').textContent = s.proF6;
+  document.getElementById('LP_PRO_BTN').textContent = s.proBtn;
+  document.getElementById('LP_FOOTER_TITLE').textContent = s.footerTitle;
+  document.getElementById('LP_FOOTER_SUB').textContent = s.footerSub;
+  document.getElementById('LP_FOOTER_BTN').textContent = s.footerBtn;
+}
+
 function hideLanding(mode) {
   const lp = document.getElementById('landing-page');
   if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
@@ -4060,16 +4563,31 @@ function hideLanding(mode) {
 }
 
 // ── ONBOARDING TOUR ──
-const TOUR_STEPS = [
-  { selector: '#LEFT',           title: 'Your notes',        text: 'Personal and Work notes live in separate spaces.', pos: 'right' },
-  { selector: '.nbtn-note',      title: 'New note',          text: 'Create a note or a To Do list instantly.', pos: 'right' },
-  { selector: '#MERGE_TODO_PILL',title: 'Merge To Dos',      text: 'Combine incomplete tasks from multiple To Do cards.', pos: 'bottom' },
-  { selector: '#FAV_BTN',        title: 'Favorites',         text: 'See your favorited notes and flash cards here.', pos: 'bottom' },
-  { selector: '.drive-btn',      title: 'Export to Drive',   text: 'Send this note directly to your Google Drive.', pos: 'top' },
-  { selector: '#FAV_NOTE_BTN',   title: 'Favorite note',     text: 'Mark this note as favorite for quick access.', pos: 'top' },
-  { selector: 'button[onclick="insertCalcLine()"]', title: 'Calculator', text: 'Start a line with = to calculate instantly.', pos: 'top' },
-  { selector: 'button[title="Flash Card"]', title: 'Flash cards', text: 'Write word: meaning in a note to create flash cards.', pos: 'bottom' },
+const TOUR_STEPS_EN = [
+  { selector: '#LEFT',              title: 'Your notes',          text: 'Personal and Work notes live in separate spaces. No clutter.', pos: 'right' },
+  { selector: '.nbtn-note',         title: 'New note',            text: 'Create a note or a To Do list instantly.', pos: 'right' },
+  { selector: '#AI_MERGE_BTN',      title: 'AI Merge',            text: 'Select multiple notes and merge them into one clean note with AI.', pos: 'bottom' },
+  { selector: '#TRANSCRIPT_BTN',    title: 'Voice Transcript',    text: 'Record or upload audio — AI transcribes it instantly.', pos: 'bottom' },
+  { selector: '.merge-pill-pdf',    title: 'Text → Flashcard',    text: 'Paste any text or PDF. Get flashcards instantly.', pos: 'bottom' },
+  { selector: '#MERGE_TODO_PILL',   title: 'Merge To Dos',        text: 'Combine incomplete tasks from multiple To Do cards into one list.', pos: 'bottom' },
+  { selector: '#FAV_NOTE_BTN',      title: 'Favorite note',       text: 'Mark this note as favorite for quick access.', pos: 'top' },
+  { selector: 'button[title="Flash Card"]', title: 'Flash cards', text: 'Write "word: meaning" in a note to study with flash cards.', pos: 'bottom' },
 ];
+
+const TOUR_STEPS_TR = [
+  { selector: '#LEFT',              title: 'Notların',            text: 'Kişisel ve İş notların ayrı alanlarda tutulur. Karmaşa yok.', pos: 'right' },
+  { selector: '.nbtn-note',         title: 'Yeni not',            text: 'Anında bir not veya To Do listesi oluştur.', pos: 'right' },
+  { selector: '#AI_MERGE_BTN',      title: 'AI Birleştir',        text: 'Birden fazla not seç ve AI ile tek temiz nota birleştir.', pos: 'bottom' },
+  { selector: '#TRANSCRIPT_BTN',    title: 'Ses Transkripti',     text: 'Ses kaydet veya dosya yükle — AI anında metne çevirir.', pos: 'bottom' },
+  { selector: '.merge-pill-pdf',    title: 'Metin → Flashcard',   text: 'Herhangi bir metin veya PDF yapıştır. Anında flashcard üretilir.', pos: 'bottom' },
+  { selector: '#MERGE_TODO_PILL',   title: 'To Do Birleştir',     text: 'Birden fazla To Do kartını tek temiz listeye birleştir.', pos: 'bottom' },
+  { selector: '#FAV_NOTE_BTN',      title: 'Notu Favori Ekle',    text: 'Hızlı erişim için notu favorilere ekle.', pos: 'top' },
+  { selector: 'button[title="Flash Card"]', title: 'Flash Kartlar', text: 'Nota "kelime: anlam" yaz ve flash kartlarla çalış.', pos: 'bottom' },
+];
+
+function getTourSteps() {
+  return currentLang === 'TR' ? TOUR_STEPS_TR : TOUR_STEPS_EN;
+}
 
 let tourStep = 0;
 
@@ -4083,8 +4601,10 @@ function openWelcomeNote() {
   }
   const welcome = {
     id: uid(),
-    title: 'Welcome to not·that 👋',
-    content: 'This is your first note. Start writing anything here.',
+    title: currentLang==='TR' ? 'not·that\'a hoş geldin 👋' : 'Welcome to not·that 👋',
+    content: currentLang==='TR'
+      ? 'Bu senin ilk notun. Buraya istediğin her şeyi yazabilirsin.'
+      : 'This is your first note. Start writing anything here.',
     space: 'personal',
     type: 'normal',
     todoItems: [], todoType: null,
@@ -4109,7 +4629,7 @@ function startTourPhase1() { startTour(); }
 function startTourPhase2() { /* handled in startTour */ }
 
 function renderTourStep() {
-  const step = TOUR_STEPS[tourStep];
+  const step = getTourSteps()[tourStep];
   if (!step) { endTour(); return; }
   const el = document.querySelector(step.selector);
   if (!el) { tourStep++; renderTourStep(); return; }
@@ -4136,9 +4656,9 @@ function renderTourStep() {
 
   document.getElementById('TOUR_TITLE').textContent = step.title;
   document.getElementById('TOUR_TEXT').textContent = step.text;
-  document.getElementById('TOUR_COUNT').textContent = (tourStep + 1) + ' / ' + TOUR_STEPS.length;
+  document.getElementById('TOUR_COUNT').textContent = (tourStep + 1) + ' / ' + getTourSteps().length;
 
-  const isLast = tourStep === TOUR_STEPS.length - 1;
+  const isLast = tourStep === getTourSteps().length - 1;
   const nextBtn = document.getElementById('TOUR_NEXT_BTN');
   nextBtn.textContent = isLast ? 'Done' : 'Next →';
   nextBtn.onclick = function() { tourNext(); };
@@ -4166,7 +4686,7 @@ function renderTourStep() {
 
 function tourNext() {
   tourStep++;
-  if (tourStep >= TOUR_STEPS.length) { endTour(); return; }
+  if (tourStep >= getTourSteps().length) { endTour(); return; }
   renderTourStep();
 }
 

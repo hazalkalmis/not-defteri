@@ -850,6 +850,77 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   .lp-preview-left{display:none;}
 }
 
+/* ── 3 COLOR THEMES ── */
+[data-color=plum]{
+  --bg:#f7f5ff;--bg2:#ede9f8;--bg3:#ddd6f0;
+  --surface:#fff;--surface2:#faf8ff;
+  --border:rgba(106,74,138,.08);--border2:rgba(106,74,138,.15);
+  --text:#1a1228;--text2:#6a5a7a;--text3:#b0a0c0;
+  --accent:#6a4a8a;--accent2:#ede9f8;--accent-text:#3d1f5a;
+  --work:#c4773b;--work2:#f0e4d4;--work-text:#7a4520;
+}
+[data-color=plum][data-theme=dark]{
+  --bg:#0f0a1f;--bg2:#180f2e;--bg3:#22153d;
+  --surface:#130b25;--surface2:#1a1030;
+  --border:rgba(138,107,191,.08);--border2:rgba(138,107,191,.15);
+  --text:#e0d8f0;--text2:#8070a0;--text3:#4a3a6a;
+  --accent:#9a6abf;--accent2:#1e1035;--accent-text:#c4a0e8;
+}
+[data-color=sage]{
+  --bg:#f0f5ef;--bg2:#e0ede0;--bg3:#c8ddc8;
+  --surface:#fff;--surface2:#f5faf5;
+  --border:rgba(45,106,79,.08);--border2:rgba(45,106,79,.15);
+  --text:#0f1f14;--text2:#3d6a4a;--text3:#90b8a0;
+  --accent:#2d6a4f;--accent2:#e0ede0;--accent-text:#0a3320;
+  --work:#c4773b;--work2:#f0e4d4;--work-text:#7a4520;
+}
+[data-color=sage][data-theme=dark]{
+  --bg:#080f0a;--bg2:#0f1a10;--bg3:#162318;
+  --surface:#0a1209;--surface2:#111a11;
+  --border:rgba(45,106,79,.1);--border2:rgba(45,106,79,.18);
+  --text:#c8e8d0;--text2:#507060;--text3:#2a4030;
+  --accent:#3d8a60;--accent2:#0e2015;--accent-text:#70c090;
+}
+
+/* ── FLOATING AI TOOLBAR ── */
+.float-ai-bar{
+  position:sticky;bottom:16px;
+  display:flex;align-items:center;gap:2px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:24px;
+  padding:5px 10px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  width:fit-content;
+  margin:12px auto 8px;
+  z-index:10;
+}
+[data-theme=dark] .float-ai-bar{box-shadow:0 2px 16px rgba(0,0,0,.4);}
+.float-ai-note-label{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.04em;padding:0 6px;white-space:nowrap;}
+.float-ai-sep{width:1px;height:14px;background:var(--border2);margin:0 4px;}
+.float-ai-btn{
+  display:flex;align-items:center;gap:5px;
+  height:28px;padding:0 10px;
+  background:none;border:none;border-radius:16px;
+  font-size:12px;color:var(--text2);
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:.12s;white-space:nowrap;
+}
+.float-ai-btn:hover{background:var(--bg2);color:var(--text);}
+.float-ai-btn svg{flex-shrink:0;opacity:.7;}
+
+/* ── ED ICON BUTTONS ── */
+.ed-topbar-left{display:flex;align-items:center;gap:2px;flex:1;}
+.ed-icon-btn{
+  width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  background:none;border:none;border-radius:6px;
+  color:var(--text3);cursor:pointer;transition:.12s;
+}
+.ed-icon-btn:hover{background:var(--bg2);color:var(--text2);}
+.ed-del-btn{color:var(--text3);margin-left:4px;}
+.ed-del-btn:hover{background:rgba(192,57,43,.08);color:#c0392b;}
+
 /* ── ONBOARDING TOUR ── */
 .tour-overlay{position:fixed;inset:0;z-index:8000;pointer-events:none;}
 .tour-highlight{position:fixed;border-radius:8px;box-shadow:0 0 0 3px #8b6bbf,0 0 0 9999px rgba(0,0,0,.55);z-index:8001;pointer-events:none;transition:all .3s ease;}
@@ -1299,9 +1370,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <button class="lang-btn" id="BTN_EN" onclick="setLang('EN')">EN</button>
     </div>
     <div class="tdots">
-      <div class="tdot on" id="DOT_ink" style="background:#4a7ab5;" onclick="setTheme('ink')" title="Ink"></div>
-      <div class="tdot" id="DOT_sage" style="background:#2d5016;" onclick="setTheme('sage')" title="Sage"></div>
-      <div class="tdot" id="DOT_plum" style="background:#3d1a4a;" onclick="setTheme('plum')" title="Plum"></div>
+      <div class="tdot on" id="DOT_ink" style="background:#4a7ab5;" onclick="setTheme('ink')" title="Ink (Blue)"></div>
+      <div class="tdot" id="DOT_plum" style="background:#6a4a8a;" onclick="setTheme('plum')" title="Plum (Purple)"></div>
+      <div class="tdot" id="DOT_sage" style="background:#2d6a4f;" onclick="setTheme('sage')" title="Sage (Green)"></div>
     </div>
     <div class="vsep"></div>
     <button id="PRO_TOPBAR_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')"
@@ -1324,38 +1395,6 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <div class="user-avatar" id="USER_AVATAR">?</div>
       <span id="USER_EMAIL_SHORT"></span>
     </div>
-  </div>
-</div>
-
-<!-- TOOLS BAR -->
-<div class="tools-bar" id="TOOLS_BAR">
-  <div class="tools-bar-inner">
-    <span class="tools-bar-label" id="TOOLS_BAR_AI_LABEL">AI</span>
-    <button class="ai-btn" id="AI_BTN_1" onclick="doAI('summary')">Özetle</button>
-    <button class="ai-btn" id="AI_BTN_2" onclick="doAI('todo')">Görevler</button>
-    <button class="ai-btn" id="AI_BTN_3" onclick="doAI('grammar')">Düzelt</button>
-    <button class="ai-btn" id="AI_BTN_4" onclick="doAI('translate')">Çevir</button>
-    <div class="tools-sep"></div>
-    <button id="AI_MERGE_BTN" class="merge-pill merge-pill-ai-merge" onclick="toggleMergeMode()"
-      title="Notları AI ile birleştir">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-      <span id="LBL_AI_MERGE_BTN">AI ile Birleştir</span>
-    </button>
-    <button class="merge-pill merge-pill-pdf" onclick="openModal('PDF_FLASH_MODAL')"
-      style="background:var(--work2);color:var(--work-text);border-color:rgba(196,119,59,.2);"
-      title="Metinden Flash Kart Üret">
-      📄 <span id="LBL_PDF_FLASH_BTN">Metin→Flashcard</span>
-    </button>
-    <button class="merge-pill merge-pill-todo" id="MERGE_TODO_PILL"
-      onclick="openMergeTodoModal()"
-      title="To Do kartlarında yapılmamış To Do'ları birleştirir">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
-      <span id="LBL_MERGE_TODO_BTN">To Do Birleştir</span>
-    </button>
-    <button class="merge-pill merge-pill-transcript" id="TRANSCRIPT_BTN" onclick="openModal('TRANSCRIPT_MODAL')"
-      title="Ses kaydını metne çevir">
-      🎙️ <span id="LBL_TRANSCRIPT_BTN">Ses Transkript</span>
-    </button>
   </div>
 </div>
 
@@ -1443,17 +1482,21 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
     <div class="editor-area hidden" id="EDITOR_AREA">
       <div class="ed-topbar">
-        <!-- Mobil: geri dön butonu -->
         <button class="ic-btn mob-back-btn" id="MOB_BACK_BTN" onclick="mobileBackToList()" title="Geri" style="margin-right:2px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div class="fpill" id="FOLDER_PILL" onclick="openChangeFolderModal()">📁 Klasörsüz</div>
-        <div class="media-pill" onclick="openMediaModal()">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <span id="LBL_MEDIA">Medya Ekle</span>
+        <div class="ed-topbar-left">
+          <button class="ed-icon-btn" id="FOLDER_PILL" onclick="openChangeFolderModal()" title="Klasör">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <button class="ed-icon-btn" onclick="openMediaModal()" title="Medya Ekle">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </button>
+          <button class="ed-icon-btn" id="TYPE_PILL" onclick="toggleNoteType()" title="Not Tipi">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </button>
         </div>
-        <div class="type-pill" id="TYPE_PILL" style="background:var(--accent2);border-color:var(--accent);color:var(--accent-text);" onclick="toggleNoteType()">📝 <span id="TYPE_LABEL">Genel Not</span></div>
-        <button class="del-btn" onclick="deleteNote()" title="Sil">
+        <button class="ed-icon-btn ed-del-btn" onclick="deleteNote()" title="Sil">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
         </button>
       </div>
@@ -1484,13 +1527,18 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <option value="heading" id="OPT_HEADING">Heading</option>
           <option value="title" id="OPT_TITLE">Title</option>
         </select>
-        <div class="fb-sep"></div>
-        <button class="drive-btn" onclick="openDriveModal()">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
-          Drive
-        </button>
-        <button class="fb" onclick="insertCalcLine()" title="Hesaplama satırı ekle" style="font-size:14px;font-weight:500;color:var(--accent);">∑</button>
-        <button class="fb" id="FAV_NOTE_BTN" onclick="toggleNoteFav()" title="Favorile" style="font-size:15px;line-height:1;">♡</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+          <button class="drive-btn" onclick="openMediaModal()" id="ADD_MEDIA_BTN">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span id="LBL_MEDIA">Add Media</span>
+          </button>
+          <button class="drive-btn" onclick="openDriveModal()">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
+            Drive
+          </button>
+          <button class="fb" onclick="insertCalcLine()" title="Hesaplama satırı ekle" style="font-size:14px;font-weight:500;color:var(--accent);">∑</button>
+          <button class="fb" id="FAV_NOTE_BTN" onclick="toggleNoteFav()" title="Favorile" style="font-size:15px;line-height:1;">♡</button>
+        </div>
       </div>
 
       <!-- Normal note editor -->
@@ -1511,6 +1559,27 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         <div class="media-area" id="MEDIA_AREA"></div>
         <input type="file" id="IMG_INPUT" accept="image/*" class="hidden" onchange="handleImgFile(this)">
         <input type="file" id="AUD_INPUT" accept="audio/*" class="hidden" onchange="handleAudFile(this)">
+        <!-- Floating AI Toolbar -->
+        <div class="float-ai-bar" id="FLOAT_AI_BAR">
+          <span class="float-ai-note-label" id="FLOAT_AI_NOTE_LABEL">+ THIS NOTE</span>
+          <div class="float-ai-sep"></div>
+          <button class="float-ai-btn" id="AI_BTN_1" onclick="doAI('summary')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="13" y2="18"/><polyline points="3 6 4 7 6 5"/><polyline points="3 12 4 13 6 11"/><polyline points="3 18 4 19 6 17"/></svg>
+            <span id="FLOAT_BTN_1">Summarize</span>
+          </button>
+          <button class="float-ai-btn" id="AI_BTN_2" onclick="doAI('todo')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
+            <span id="FLOAT_BTN_2">Tasks</span>
+          </button>
+          <button class="float-ai-btn" id="AI_BTN_3" onclick="doAI('grammar')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span id="FLOAT_BTN_3">Fix</span>
+          </button>
+          <button class="float-ai-btn" id="AI_BTN_4" onclick="doAI('translate')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+            <span id="FLOAT_BTN_4">Translate</span>
+          </button>
+        </div>
       </div>
 
       <!-- Todo view -->
@@ -2508,6 +2577,8 @@ const THEME_WORK={
 };
 function setTheme(name){
   currentTheme=name;localStorage.setItem('nt_theme',name);
+  // data-color attribute — CSS variables ile tema
+  document.body.setAttribute('data-color', name==='ink'?'' : name);
   const th=THEMES[name]||THEMES.ink;
   const wh=THEME_WORK[name]||THEME_WORK.ink;
   document.documentElement.style.setProperty('--accent',th.accent);
@@ -2610,6 +2681,19 @@ function applyLangLabels(){
   if (pdfGenerateBtn) pdfGenerateBtn.textContent = currentLang==='TR' ? '⚡ Flash Kart Üret' : '⚡ Generate Flash Cards';
   if (pdfFlashBtn) pdfFlashBtn.textContent = currentLang==='TR' ? 'Metin→Flashcard' : 'Text→Flashcard';
   updateMergeBtn();
+  // Floating AI toolbar
+  const floatNote=document.getElementById('FLOAT_AI_NOTE_LABEL');
+  const floatBtn1=document.getElementById('FLOAT_BTN_1');
+  const floatBtn2=document.getElementById('FLOAT_BTN_2');
+  const floatBtn3=document.getElementById('FLOAT_BTN_3');
+  const floatBtn4=document.getElementById('FLOAT_BTN_4');
+  const addMediaBtn=document.getElementById('ADD_MEDIA_BTN');
+  if(floatNote) floatNote.textContent=currentLang==='TR'?'+ BU NOT':'+ THIS NOTE';
+  if(floatBtn1) floatBtn1.textContent=currentLang==='TR'?'Özetle':'Summarize';
+  if(floatBtn2) floatBtn2.textContent=currentLang==='TR'?'Görevler':'Tasks';
+  if(floatBtn3) floatBtn3.textContent=currentLang==='TR'?'Düzelt':'Fix';
+  if(floatBtn4) floatBtn4.textContent=currentLang==='TR'?'Çevir':'Translate';
+  if(addMediaBtn) { const span=addMediaBtn.querySelector('span'); if(span) span.textContent=currentLang==='TR'?'Medya Ekle':'Add Media'; }
   const optBody=document.getElementById('OPT_BODY');
   const optHeading=document.getElementById('OPT_HEADING');
   const optTitle=document.getElementById('OPT_TITLE');
@@ -4559,7 +4643,7 @@ const lpStrings = {
   },
   TR: {
     badge:'Erken Erişim', signin:'Giriş yap', ctaNav:'Ücretsiz kaydol',
-    h1:'not al, kolayca.<br><span>hiçbir şey kaybolmasın, sonunda.</span>',
+    h1:'Note that, easily.<br><span>Lose nothing, finally.</span>',
     sub:'Not al. Gerisini AI halleder.',
     btnStart:'Ücretsiz başla', btnFeat:'Özellikleri gör',
     f1t:'Metin → Flashcard', f1d:'Herhangi bir metin veya PDF yapıştır. Anında flashcard üretilir.',

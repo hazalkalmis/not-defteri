@@ -948,6 +948,74 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   .lp-testimonials{padding:50px 16px 40px;}
 }
 
+
+/* ── FLOAT AI BAR ── */
+.float-ai-bar{
+  position:sticky;bottom:16px;
+  display:flex;align-items:center;gap:2px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:24px;
+  padding:5px 10px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  width:fit-content;
+  margin:12px auto 8px;
+  z-index:10;
+}
+[data-theme=dark] .float-ai-bar{box-shadow:0 2px 16px rgba(0,0,0,.4);}
+.float-ai-note-label{font-size:11px;color:var(--text2);font-weight:600;letter-spacing:.04em;padding:0 6px;white-space:nowrap;}
+.float-ai-sep{width:1px;height:14px;background:var(--border2);margin:0 4px;}
+.float-ai-btn{
+  display:flex;align-items:center;gap:5px;
+  height:28px;padding:0 10px;
+  background:none;border:none;border-radius:16px;
+  font-size:12px;color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:.12s;white-space:nowrap;
+}
+.float-ai-btn:hover{background:var(--bg2);color:var(--text);}
+.float-ai-btn svg{flex-shrink:0;opacity:.9;}
+
+/* ── TRANSCRIPT MODAL ── */
+.transcript-modal-box{
+  background:var(--surface);
+  border-radius:16px;
+  padding:24px;
+  width:460px;
+  max-width:95vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
+  border:1px solid var(--border);
+}
+.transcript-lang-row{display:flex;align-items:center;gap:10px;}
+.transcript-lang-label{font-size:13px;color:var(--text2);white-space:nowrap;}
+.transcript-rec-btn{
+  display:flex;align-items:center;gap:8px;
+  width:100%;padding:10px 16px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:10px;font-size:13px;font-weight:500;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  cursor:pointer;margin-bottom:10px;transition:.15s;
+}
+.transcript-rec-btn:hover{background:var(--bg3);}
+.transcript-rec-btn.recording{background:rgba(192,57,43,.12);border-color:rgba(192,57,43,.3);color:#c0392b;}
+.transcript-drop{
+  border:1.5px dashed var(--border2);
+  border-radius:10px;
+  padding:14px;
+  text-align:center;
+  font-size:12px;color:var(--text3);
+  cursor:pointer;margin-bottom:12px;
+  transition:.15s;
+}
+.transcript-drop:hover{border-color:var(--accent);color:var(--accent);}
+.transcript-status{font-size:12px;color:var(--text2);min-height:18px;margin-bottom:8px;}
+
+/* ── MERGE MODE ── */
+.merge-select-mode .ncard-merge-cb{display:flex !important;}
+.ncard-merge-cb{display:none;position:absolute;left:8px;top:50%;transform:translateY(-50%);width:15px;height:15px;cursor:pointer;accent-color:var(--accent);}
+.merge-selected{background:var(--bg2) !important;border-left-color:var(--accent) !important;}
+.ncard{position:relative;}
+
 </style>
 </head>
 <body>
@@ -2383,7 +2451,7 @@ function checkDriveOAuthCallback() {
 function openDriveModal() {
   const n = getActive(); if (!n) return;
   document.getElementById('DRIVE_TEXT').textContent =
-    currentLang==='TR' ? `"${n.title || 'Başlıksız not'}" notunu Google Drive’a .txt olarak aktar.` : `Export "${n.title || 'Untitled note'}" to Google Drive as .txt.`;
+    currentLang==='TR' ? `"${n.title || 'Başlıksız not'}" notunu Google Drive'a .txt olarak aktar.` : `Export "${n.title || 'Untitled note'}" to Google Drive as .txt.`;
   document.getElementById('DRIVE_STATUS').style.display = 'none';
   document.getElementById('DRIVE_STATUS').style.color = 'var(--text2)';
   const oauthArea = document.getElementById('DRIVE_OAUTH_AREA');
@@ -2691,13 +2759,13 @@ function applyLangLabels(){
   if(trLangLabel) trLangLabel.textContent=currentLang==='TR'?'Çeviri dili:':'Translate to:';
   // Drive modal
   const driveTitle=document.getElementById('DRIVE_TITLE');
-  if(driveTitle) driveTitle.textContent=currentLang==='TR'?'Google Drive\u2019a Gönder':'Send to Google Drive';
+  if(driveTitle) driveTitle.textContent=currentLang==='TR'?'Google Drive’a Gönder':'Send to Google Drive';
   const driveCancelBtn=document.getElementById('DRIVE_CANCEL_BTN');
   if(driveCancelBtn) driveCancelBtn.textContent=currentLang==='TR'?'İptal':'Cancel';
   const driveSendBtn=document.getElementById('DRIVE_SEND_BTN');
-  if(driveSendBtn) driveSendBtn.textContent=currentLang==='TR'?'Drive\u2019a Aktar':'Export to Drive';
+  if(driveSendBtn) driveSendBtn.textContent=currentLang==='TR'?'Drive’a Aktar':'Export to Drive';
   const driveConnectBtn=document.getElementById('DRIVE_CONNECT_BTN');
-  if(driveConnectBtn) driveConnectBtn.textContent=currentLang==='TR'?'Google ile Drive\u2019a Ba\u011flan':'Connect with Google Drive';
+  if(driveConnectBtn) driveConnectBtn.textContent=currentLang==='TR'?'Google ile Drive’a Bağlan':'Connect with Google Drive';
   if(trDropText && !transcriptRecording) trDropText.textContent=currentLang==='TR'?'🎵 Ses dosyası sürükle veya tıkla':'🎵 Drop audio file or click';
   if(trCancelBtn) trCancelBtn.textContent=currentLang==='TR'?'İptal':'Cancel';
   if(trRecLabel && !transcriptRecording) trRecLabel.textContent=currentLang==='TR'?'Kayıt Başlat':'Start Recording';
@@ -3772,10 +3840,15 @@ function enterMergeMode() {
 function exitMergeMode() {
   mergeSelectMode = false;
   mergeSelectedIds.clear();
-  document.getElementById('LEFT').classList.remove('merge-select-mode');
+  const left = document.getElementById('LEFT');
+  if(left) left.classList.remove('merge-select-mode');
   document.querySelectorAll('.ncard-merge-cb').forEach(cb => { cb.checked = false; });
   document.querySelectorAll('.ncard').forEach(el => { el.classList.remove('merge-selected'); });
-  updateMergeBtn();
+  // Merge butonunu sıfırla
+  const btn = document.getElementById('AI_MERGE_BTN');
+  if(btn){ btn.classList.remove('active','ready'); btn.disabled = false; }
+  const lbl = document.getElementById('LBL_AI_MERGE_BTN');
+  if(lbl) lbl.textContent = currentLang==='TR' ? 'AI ile Birleştir' : 'AI Merge';
 }
 
 function toggleMergeSelect(nid, checked) {

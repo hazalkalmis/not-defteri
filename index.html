@@ -949,66 +949,117 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 }
 
 
-/* ── FLOAT AI BAR ── */
-.float-ai-bar{
-  position:sticky;bottom:16px;
-  display:flex;align-items:center;gap:2px;
-  background:var(--surface);
-  border:1px solid var(--border2);
-  border-radius:24px;
-  padding:5px 10px;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);
-  width:fit-content;
-  margin:12px auto 8px;
-  z-index:10;
-}
-[data-theme=dark] .float-ai-bar{box-shadow:0 2px 16px rgba(0,0,0,.4);}
-.float-ai-note-label{font-size:11px;color:var(--text2);font-weight:600;letter-spacing:.04em;padding:0 6px;white-space:nowrap;}
-.float-ai-sep{width:1px;height:14px;background:var(--border2);margin:0 4px;}
-.float-ai-btn{
-  display:flex;align-items:center;gap:5px;
-  height:28px;padding:0 10px;
-  background:none;border:none;border-radius:16px;
-  font-size:12px;color:var(--text);
-  font-family:'DM Sans',sans-serif;
-  cursor:pointer;transition:.12s;white-space:nowrap;
-}
-.float-ai-btn:hover{background:var(--bg2);color:var(--text);}
-.float-ai-btn svg{flex-shrink:0;opacity:.9;}
 
-/* ── TRANSCRIPT MODAL ── */
-.transcript-modal-box{
-  background:var(--surface);
-  border-radius:16px;
-  padding:24px;
-  width:460px;
-  max-width:95vw;
-  box-shadow:0 12px 40px rgba(0,0,0,.18);
-  border:1px solid var(--border);
+
+/* ── PDF / FLASHCARD MODAL ── */
+.pdf-flash-modal{
+  background:var(--surface);border-radius:16px;padding:24px;
+  width:500px;max-width:95vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);border:1px solid var(--border);
+  font-family:'DM Sans',sans-serif;
 }
-.transcript-lang-row{display:flex;align-items:center;gap:10px;}
+.pdf-drop-area{
+  border:1.5px dashed var(--border2);border-radius:10px;
+  padding:20px;text-align:center;cursor:pointer;
+  margin-bottom:14px;transition:.15s;background:var(--bg2);
+}
+.pdf-drop-area:hover,.pdf-drop-area.dragover{border-color:var(--accent);background:var(--bg3);}
+.pdf-drop-icon{font-size:24px;margin-bottom:6px;}
+.pdf-drop-text{font-size:13px;color:var(--text2);font-weight:500;}
+.pdf-drop-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+.pdf-select{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:8px;padding:6px 10px;font-size:13px;
+  color:var(--text);font-family:'DM Sans',sans-serif;cursor:pointer;
+}
+.pdf-or{
+  text-align:center;color:var(--text3);font-size:12px;
+  margin:10px 0;display:flex;align-items:center;gap:8px;
+}
+.pdf-or::before,.pdf-or::after{content:'';flex:1;height:1px;background:var(--border2);}
+.pdf-textarea{
+  width:100%;min-height:100px;resize:vertical;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:10px;padding:10px 12px;font-size:13px;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  line-height:1.6;box-sizing:border-box;
+}
+.pdf-textarea:focus{outline:none;border-color:var(--accent);}
+.pdf-opts{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.pdf-opts label{font-size:12px;color:var(--text2);}
+.pdf-progress{
+  font-size:12px;color:var(--text2);text-align:center;
+  padding:8px;background:var(--bg2);border-radius:8px;margin-bottom:10px;
+}
+
+/* ── TRANSCRIPT MODAL — not·that uyumlu ── */
+.transcript-modal-box{
+  background:var(--surface);border-radius:16px;padding:24px;
+  width:460px;max-width:95vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);border:1px solid var(--border);
+  font-family:'DM Sans',sans-serif;
+}
+.transcript-modal-box h3{
+  font-family:'Lora',serif;font-size:17px;font-weight:500;
+  color:var(--text);margin:0 0 4px;
+}
+.transcript-modal-box p{
+  font-size:13px;color:var(--text2);margin:0;line-height:1.5;
+}
+.transcript-lang-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .transcript-lang-label{font-size:13px;color:var(--text2);white-space:nowrap;}
 .transcript-rec-btn{
-  display:flex;align-items:center;gap:8px;
-  width:100%;padding:10px 16px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:11px 16px;
   background:var(--bg2);border:1px solid var(--border2);
   border-radius:10px;font-size:13px;font-weight:500;
   color:var(--text);font-family:'DM Sans',sans-serif;
   cursor:pointer;margin-bottom:10px;transition:.15s;
 }
 .transcript-rec-btn:hover{background:var(--bg3);}
-.transcript-rec-btn.recording{background:rgba(192,57,43,.12);border-color:rgba(192,57,43,.3);color:#c0392b;}
+.transcript-rec-btn.recording{
+  background:rgba(192,57,43,.1);border-color:rgba(192,57,43,.3);
+  color:#c0392b;animation:pulse 1.5s infinite;
+}
 .transcript-drop{
-  border:1.5px dashed var(--border2);
-  border-radius:10px;
-  padding:14px;
-  text-align:center;
-  font-size:12px;color:var(--text3);
-  cursor:pointer;margin-bottom:12px;
-  transition:.15s;
+  border:1.5px dashed var(--border2);border-radius:10px;
+  padding:14px;text-align:center;font-size:12px;color:var(--text3);
+  cursor:pointer;margin-bottom:12px;transition:.15s;background:var(--bg2);
 }
 .transcript-drop:hover{border-color:var(--accent);color:var(--accent);}
-.transcript-status{font-size:12px;color:var(--text2);min-height:18px;margin-bottom:8px;}
+.transcript-status{
+  font-size:12px;color:var(--accent);min-height:18px;
+  margin-bottom:8px;font-weight:500;
+}
+
+/* ── FLOAT AI BAR — koyulaştırılmış ── */
+.float-ai-bar{
+  position:sticky;bottom:16px;
+  display:flex;align-items:center;gap:2px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:24px;padding:5px 10px;
+  box-shadow:0 2px 16px rgba(0,0,0,.15);
+  width:fit-content;margin:12px auto 8px;z-index:10;
+}
+[data-theme=dark] .float-ai-bar{
+  background:#1a1f2e;border-color:rgba(255,255,255,.18);
+  box-shadow:0 2px 20px rgba(0,0,0,.45);
+}
+.float-ai-note-label{
+  font-size:11px;color:var(--text);font-weight:700;
+  letter-spacing:.05em;padding:0 6px;white-space:nowrap;opacity:.7;
+}
+.float-ai-sep{width:1px;height:14px;background:var(--border);margin:0 4px;}
+.float-ai-btn{
+  display:flex;align-items:center;gap:5px;height:28px;padding:0 10px;
+  background:none;border:none;border-radius:16px;
+  font-size:12px;font-weight:600;color:var(--text);
+  font-family:'DM Sans',sans-serif;cursor:pointer;transition:.12s;white-space:nowrap;
+}
+.float-ai-btn:hover{background:var(--accent2);color:var(--accent);}
+.float-ai-btn svg{flex-shrink:0;opacity:1;}
+
 
 /* ── MERGE MODE ── */
 .merge-select-mode .ncard-merge-cb{display:flex !important;}
@@ -3833,9 +3884,8 @@ let mergeSelectMode = false;
 let mergeSelectedIds = new Set();
 
 function toggleMergeMode() {
-  if (mergeSelectMode && mergeSelectedIds.size >= 2) {
-    doAIMerge();
-  } else if (mergeSelectMode) {
+  if (mergeSelectMode) {
+    // Mode açıksa: her zaman kapat (cancel)
     exitMergeMode();
   } else {
     enterMergeMode();
@@ -3857,6 +3907,8 @@ function exitMergeMode() {
   document.querySelectorAll('.ncard-merge-cb').forEach(cb => { cb.checked = false; });
   document.querySelectorAll('.ncard').forEach(el => { el.classList.remove('merge-selected'); });
   // Merge butonunu sıfırla
+  const mergeNowClean = document.getElementById('AI_MERGE_NOW_BTN');
+  if(mergeNowClean) mergeNowClean.style.display='none';
   const btn = document.getElementById('AI_MERGE_BTN');
   if(btn){ btn.classList.remove('active','ready'); btn.disabled = false; }
   const lbl = document.getElementById('LBL_AI_MERGE_BTN');
@@ -3874,22 +3926,38 @@ function toggleMergeSelect(nid, checked) {
 function updateMergeBtn() {
   const btn = document.getElementById('AI_MERGE_BTN');
   const lbl = document.getElementById('LBL_AI_MERGE_BTN');
+  let mergeNowBtn = document.getElementById('AI_MERGE_NOW_BTN');
   if (!btn || !lbl) return;
   if (!mergeSelectMode) {
     btn.classList.remove('active','ready');
     btn.disabled = false;
     lbl.textContent = currentLang==='TR' ? 'AI ile Birleştir' : 'AI Merge';
+    if (mergeNowBtn) mergeNowBtn.style.display = 'none';
     return;
   }
-  const count = mergeSelectedIds.size;
+  // Mode açık — buton artık "İptal" görevi görür
   btn.classList.add('active');
+  lbl.textContent = currentLang==='TR' ? 'İptal' : 'Cancel';
+  const count = mergeSelectedIds.size;
+  // Ayrı merge butonu
+  var mergeNowBtnEl = document.getElementById('AI_MERGE_NOW_BTN');
+  if (!mergeNowBtnEl) {
+    mergeNowBtnEl = document.createElement('button');
+    mergeNowBtnEl.id = 'AI_MERGE_NOW_BTN';
+    mergeNowBtnEl.className = 'tool-btn tool-btn-merge';
+    mergeNowBtnEl.onclick = doAIMerge;
+    mergeNowBtnEl.style.cssText = 'margin-left:4px;display:none;';
+    btn.parentNode.insertBefore(mergeNowBtnEl, btn.nextSibling);
+  }
   if (count >= 2) {
     btn.classList.add('ready');
     btn.disabled = false;
-    lbl.textContent = currentLang==='TR' ? `Seçilileri Birleştir (${count})` : `Merge Selected (${count})`;
+    mergeNowBtnEl.style.display = '';
+    mergeNowBtnEl.innerHTML = `<span>⇄ ${currentLang==='TR' ? 'Birleştir' : 'Merge'} (${count})</span>`;
   } else {
     btn.classList.remove('ready');
-    btn.disabled = true;
+    btn.disabled = false;
+    mergeNowBtnEl.style.display = 'none';
     lbl.textContent = currentLang==='TR' ? 'AI ile Birleştir' : 'AI Merge';
   }
 }

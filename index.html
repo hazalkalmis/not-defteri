@@ -309,10 +309,10 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .modal{background:var(--surface);border-radius:14px;padding:22px 24px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid var(--border);}
 .modal h3{font-family:'Lora',serif;font-size:17px;font-weight:500;margin-bottom:7px;color:var(--text);}
 .modal p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;}
-.mact{display:flex;gap:8px;justify-content:flex-end;}
-.btn{height:33px;padding:0 15px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);color:var(--text);transition:.12s;}
+.mact{display:flex;gap:8px;justify-content:flex-end;align-items:center;}
+.btn{height:36px;padding:0 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);color:var(--text);transition:.12s;display:inline-flex;align-items:center;justify-content:center;}
 .btn:hover{background:var(--bg3);}
-.btn-p{height:33px;padding:0 15px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:.12s;}
+.btn-p{height:36px;padding:0 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:.12s;;display:inline-flex;align-items:center;justify-content:center;}
 .btn-p:hover{filter:brightness(1.06);}
 .inp{width:100%;height:35px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:0 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;margin-bottom:11px;}
 .inp:focus{border-color:var(--accent);}
@@ -3190,6 +3190,26 @@ function deleteNote(){
   activeId=null;save();saveFavNotesToCloud();
   renderAllCards();hide('EDITOR_AREA');show('EMPTY_STATE');
 }
+
+function updateFloatBarTheme(n) {
+  const bar = document.getElementById('FLOAT_AI_BAR');
+  if (!bar) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (n && n.space === 'work') {
+    // Work = --work rengi (turuncu/krem)
+    bar.style.background = 'var(--work2)';
+    bar.style.borderColor = 'var(--work)';
+    bar.querySelectorAll('.float-ai-btn').forEach(b => b.style.color = 'var(--work-text)');
+    bar.querySelectorAll('.float-ai-note-label').forEach(l => l.style.color = 'var(--work)');
+  } else {
+    // Personal = --accent rengi (mor)
+    bar.style.background = 'var(--accent2)';
+    bar.style.borderColor = 'var(--accent)';
+    bar.querySelectorAll('.float-ai-btn').forEach(b => b.style.color = 'var(--accent-text,var(--text))');
+    bar.querySelectorAll('.float-ai-note-label').forEach(l => l.style.color = 'var(--accent)');
+  }
+}
+
 function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
 function updateDateLine(n){
   const d=new Date(n.updatedAt);

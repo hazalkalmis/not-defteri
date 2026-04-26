@@ -2305,13 +2305,19 @@ async function loadNotesFromCloud() {
   if (_local.length) { notes = _local; renderAllCards(); }
   setSyncState('syncing');
   try {
+    // images/audios hariç tut — büyük base64 veri, egress şişiriyor
+    // Sadece liste ve editör için gereken alanlar
     const { data, error } = await sbClient
       .from('notes')
-      .select('*')
+      .select('id,title,content,space,type,todo_items,todo_type,created_at,updated_at,font_family,font_size,space_order')
       .eq('user_id', currentUser.id)
       .order('updated_at', { ascending: false });
     if (error) throw error;
     // Map snake_case DB columns → camelCase app fields
+    // images/audios: localStorage'dan geri yükle (kayıp olmasın)
+    const localNotes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+    const localMap = {};
+    localNotes.forEach(n => { localMap[n.id] = n; });
     notes = (data || []).map(r => ({
       id: r.id,
       title: r.title || '',
@@ -2322,8 +2328,8 @@ async function loadNotesFromCloud() {
       todoType: r.todo_type || null,
       createdAt: r.created_at,
       updatedAt: r.updated_at,
-      images: r.images || [],
-      audios: r.audios || [],
+      images: localMap[r.id]?.images || [],
+      audios: localMap[r.id]?.audios || [],
       fontFamily: r.font_family,
       fontSize: r.font_size,
       spaceOrder: r.space_order,
@@ -2369,6 +2375,9 @@ async function saveNoteToCloud(note) {
   if (!sbClient || !currentUser) return;
   setSyncState('syncing');
   try {
+    // images/audios'u sadece varsa gönder — büyük base64 egress şişiriyor
+    // Metin içeriği için hafif row, media için ayrı
+    const hasMedia = (note.images && note.images.length > 0) || (note.audios && note.audios.length > 0);
     const row = {
       id: note.id,
       user_id: currentUser.id,
@@ -2378,14 +2387,17 @@ async function saveNoteToCloud(note) {
       type: note.type,
       todo_items: note.todoItems || [],
       todo_type: note.todoType || null,
-      images: note.images || [],
-      audios: note.audios || [],
       font_family: note.fontFamily || null,
       font_size: note.fontSize || null,
       space_order: note.spaceOrder ?? null,
       updated_at: note.updatedAt,
       created_at: note.createdAt,
     };
+    // images/audios sadece varsa ekle
+    if (hasMedia) {
+      row.images = note.images || [];
+      row.audios = note.audios || [];
+    }
     const { error } = await sbClient.from('notes').upsert(row, { onConflict: 'id' });
     if (error) throw error;
     setSyncState('ok');
@@ -3092,9 +3104,9 @@ function openNote(id){
   // mobil: drawer'ı kapat
   if(typeof isMobile==='function' && isMobile()) closeMobilePanel();
 }
-function onTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TITLE_INPUT'));}
-function onBodyChange(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{saveNote();processCalcInBody();},500);renderCalcLines();}
-function onTodoTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,500);autoResize(document.getElementById('TODO_TITLE'));}
+function onTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,2000);autoResize(document.getElementById('TITLE_INPUT'));}
+function onBodyChange(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{saveNote();processCalcInBody();},2000);renderCalcLines();}
+function onTodoTitleChange(){clearTimeout(saveTimer);saveTimer=setTimeout(saveNote,2000);autoResize(document.getElementById('TODO_TITLE'));}
 function checkMergeTodo(){
   saveNote();
   if(!document.getElementById('MERGE_TOGGLE').checked||!activeId)return;

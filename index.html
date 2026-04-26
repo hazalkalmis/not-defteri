@@ -33,10 +33,55 @@
 /* ── RESET ── */
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;transition:background .2s,color .2s;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;transition:background .2s,color .2s;height:100%;overflow:hidden;}
 
 /* ── TOPBAR ── */
-.topbar{height:48px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;}
+html,body{height:100%;overflow:hidden;}
+.app{display:none;} /* app div artık kullanılmıyor, right-col var */
+.right-col{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+.right{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#fff;}
+[data-theme=dark] .right{background:var(--surface);}
+
+/* Left panel — full height from top */
+.left{display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;position:relative;width:260px;min-width:160px;max-width:400px;transition:width .15s ease;height:100%;border-right:1px solid var(--border);}
+.left-top{padding:16px 14px 10px;flex-shrink:0;}
+.left-logo{font-family:'Lora',serif;font-size:20px;font-weight:500;color:var(--text);display:block;margin-bottom:10px;}
+.left-srch{display:flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(0,0,0,.08);border-radius:8px;border:none;}
+.left-inner{flex:1;overflow-y:auto;}
+
+/* Topbar — sadece araçlar */
+.topbar{height:44px;background:var(--topbar-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:6px;flex-shrink:0;overflow:visible;}
+
+/* Tool buttons */
+.tool-btns{display:flex;align-items:center;gap:1px;flex:1;}
+.tool-btn{display:flex;align-items:center;gap:5px;height:30px;padding:0 10px;background:none;border:none;border-radius:6px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;color:var(--text2);cursor:pointer;transition:.12s;white-space:nowrap;flex-shrink:0;}
+.tool-btn:hover{background:rgba(0,0,0,.05);color:var(--text);}
+[data-theme=dark] .tool-btn:hover{background:rgba(255,255,255,.06);}
+.tool-btn svg{flex-shrink:0;opacity:.65;}
+.tool-btn-merge.active,.tool-btn-merge.ready{color:var(--accent);font-weight:600;}
+
+/* THEME COLORS */
+/* Ink (blue) */
+.left,.left-top,.left-inner{background:#e8eef8;}
+.topbar{--topbar-bg:#f0f4fb;}
+
+/* Plum */
+[data-color=plum] .left,[data-color=plum] .left-top,[data-color=plum] .left-inner{background:#eee9f8;}
+[data-color=plum] .topbar{--topbar-bg:#f4f0fc;}
+[data-color=plum] .left-srch{background:rgba(0,0,0,.07);}
+
+/* Sage/Warm */
+[data-color=sage] .left,[data-color=sage] .left-top,[data-color=sage] .left-inner{background:#eee8d8;}
+[data-color=sage] .topbar{--topbar-bg:#f5f2eb;}
+[data-color=sage] .left-srch{background:rgba(0,0,0,.07);}
+
+/* Dark modes */
+[data-theme=dark] .left,[data-theme=dark] .left-top,[data-theme=dark] .left-inner{background:#0d1018;}
+[data-theme=dark] .topbar{--topbar-bg:#0a0c14;}
+[data-color=plum][data-theme=dark] .left,[data-color=plum][data-theme=dark] .left-top,[data-color=plum][data-theme=dark] .left-inner{background:#160d28;}
+[data-color=plum][data-theme=dark] .topbar{--topbar-bg:#0f0a1a;}
+[data-color=sage][data-theme=dark] .left,[data-color=sage][data-theme=dark] .left-top,[data-color=sage][data-theme=dark] .left-inner{background:#130e06;}
+[data-color=sage][data-theme=dark] .topbar{--topbar-bg:#110d06;}
 .logo{font-family:'Lora',serif;font-size:16px;font-weight:500;color:var(--text);letter-spacing:-.2px;white-space:nowrap;}
 .logo-dot{color:var(--accent);transition:color .2s;}
 .srch{flex:1;max-width:360px;position:relative;}
@@ -44,8 +89,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .srch input:focus{border-color:var(--accent);}
 .srch input::placeholder{color:var(--text3);}
 .srch-ic{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+/* Sol paneldeki search — parent left-srch container halleder */
+.left-srch .srch-ic{position:static;transform:none;}
+.left-srch input{background:none;border:none;padding:0;height:auto;font-size:12px;}
+.left-srch input:focus{border:none;}
 /* topbar right controls */
-.tbr{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:6px;overflow:visible;flex-shrink:0;}
 .tgl-wrap{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);}
 .tgl{position:relative;width:32px;height:17px;cursor:pointer;flex-shrink:0;}
 .tgl input{opacity:0;width:0;height:0;position:absolute;}
@@ -67,7 +116,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .app{display:flex;flex:1;min-height:0;overflow:hidden;}
 
 /* ── LEFT PANEL ── */
-.left{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;position:relative;width:260px;min-width:160px;max-width:400px;transition:width .15s ease;align-self:stretch;}
+.left{display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;position:relative;width:260px;min-width:160px;max-width:400px;transition:width .15s ease;align-self:stretch;border-right:1px solid var(--border);}
 .left.collapsed{width:10px!important;min-width:10px;}
 
 /* resize handle */
@@ -179,7 +228,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .body-preview .collapsible-body.collapsed{max-height:0!important;}
 
 /* editor content */
-.ed-scroll{flex:1;overflow-y:auto;padding:22px 28px 40px;display:flex;flex-direction:column;}
+.ed-scroll{flex:1;overflow-y:auto;padding:22px 28px 0;display:flex;flex-direction:column;}
 .ed-scroll::-webkit-scrollbar{width:5px;}
 .ed-scroll::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px;}
 .title-input{width:100%;font-family:'Lora',serif;font-size:26px;font-weight:500;color:var(--text);background:none;border:none;outline:none;resize:none;line-height:1.3;margin-bottom:5px;flex-shrink:0;}
@@ -308,8 +357,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 .ctx-sub:hover .ctx-sub-menu{display:block;}
 
 /* ── MERGE PILLS ── */
-.merge-pill{display:flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:7px;border:1.5px solid transparent;font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:.15s;white-space:nowrap;}
-.merge-pill{background:var(--accent2);color:var(--accent-text);border-color:rgba(74,122,181,.2);}
+.merge-pill{display:flex;align-items:center;gap:4px;height:26px;padding:0 11px;border-radius:13px;border:1px solid var(--border2);font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:.15s;white-space:nowrap;flex-shrink:0;background:var(--surface);color:var(--text2);}
+.merge-pill:hover{background:var(--bg2);color:var(--text);}
 .merge-pill:hover{filter:brightness(.95);}
 .merge-pill.off{background:var(--bg2);color:var(--text3);border-color:var(--border2);}
 .merge-pill.off:hover{color:var(--text2);}
@@ -867,19 +916,20 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   --accent:#9a6abf;--accent2:#1e1035;--accent-text:#c4a0e8;
 }
 [data-color=sage]{
-  --bg:#f0f5ef;--bg2:#e0ede0;--bg3:#c8ddc8;
-  --surface:#fff;--surface2:#f5faf5;
-  --border:rgba(45,106,79,.08);--border2:rgba(45,106,79,.15);
-  --text:#0f1f14;--text2:#3d6a4a;--text3:#90b8a0;
-  --accent:#2d6a4f;--accent2:#e0ede0;--accent-text:#0a3320;
-  --work:#c4773b;--work2:#f0e4d4;--work-text:#7a4520;
+  --bg:#faf6f0;--bg2:#f0e8da;--bg3:#e2d4c0;
+  --surface:#fff;--surface2:#fdf9f5;
+  --border:rgba(196,119,59,.1);--border2:rgba(196,119,59,.2);
+  --text:#1f1508;--text2:#6b4a20;--text3:#b8956a;
+  --accent:#c4773b;--accent2:#f0e4d4;--accent-text:#7a3d0a;
+  --work:#4a7ab5;--work2:#dde8f5;--work-text:#1a3d6a;
 }
 [data-color=sage][data-theme=dark]{
-  --bg:#080f0a;--bg2:#0f1a10;--bg3:#162318;
-  --surface:#0a1209;--surface2:#111a11;
-  --border:rgba(45,106,79,.1);--border2:rgba(45,106,79,.18);
-  --text:#c8e8d0;--text2:#507060;--text3:#2a4030;
-  --accent:#3d8a60;--accent2:#0e2015;--accent-text:#70c090;
+  --bg:#110d08;--bg2:#1e1408;--bg3:#2a1c0a;
+  --surface:#150f06;--surface2:#1e1608;
+  --border:rgba(196,119,59,.12);--border2:rgba(196,119,59,.22);
+  --text:#f0e0c8;--text2:#a07848;--text3:#604828;
+  --accent:#c47840;--accent2:#1e1008;--accent-text:#e09860;
+  --work:#4a7ab5;--work2:#0e1828;--work-text:#6aaaf0;
 }
 
 /* ── FLOATING AI TOOLBAR ── */
@@ -987,9 +1037,9 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
 [data-theme=dark] .tools-bar{background:#120a22;border-bottom-color:rgba(138,107,191,.15);}
 
-.merge-pill-ai-merge:hover{filter:brightness(.95);}
 .merge-pill-ai-merge.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.merge-pill-ai-merge.ready{background:#6a4a8a;color:#fff;border-color:#6a4a8a;}
+.merge-pill-ai-merge.ready{background:var(--accent);color:#fff;border-color:var(--accent);}
+.merge-pill-transcript.recording{background:#c0392b;color:#fff;border-color:#c0392b;animation:pulse-rec .8s ease-in-out infinite;}
 
 /* merge select mode checkboxes */
 .ncard-merge-cb{
@@ -1348,65 +1398,19 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   </div>
 </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <!-- Mobil: hamburger menü -->
-  <button class="ic-btn mob-menu-btn" id="MOB_MENU_BTN" onclick="toggleMobilePanel()" title="Notlar">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <div class="logo">not<span class="logo-dot" id="LOGO_DOT">·</span>that</div>
-  <div class="srch" id="SRCH_BOX">
-    <svg class="srch-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="SEARCH_INPUT" oninput="doSearch(this.value)">
-  </div>
-  <div class="tbr">
-    <!-- Mobil: arama ikonu -->
-    <button class="ic-btn mob-search-btn" id="MOB_SEARCH_BTN" onclick="toggleMobileSearch()" title="Ara">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+<!-- LEFT PANEL — full height, logo + search + notes -->
+<div class="left" id="LEFT">
+  <div class="left-top">
+    <button class="ic-btn mob-menu-btn" id="MOB_MENU_BTN" onclick="toggleMobilePanel()" title="Notlar" style="display:none;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <div class="vsep"></div>
-    <div class="lang-seg">
-      <button class="lang-btn on" id="BTN_TR" onclick="setLang('TR')">TR</button>
-      <button class="lang-btn" id="BTN_EN" onclick="setLang('EN')">EN</button>
-    </div>
-    <div class="tdots">
-      <div class="tdot on" id="DOT_ink" style="background:#4a7ab5;" onclick="setTheme('ink')" title="Ink (Blue)"></div>
-      <div class="tdot" id="DOT_plum" style="background:#6a4a8a;" onclick="setTheme('plum')" title="Plum (Purple)"></div>
-      <div class="tdot" id="DOT_sage" style="background:#2d6a4f;" onclick="setTheme('sage')" title="Sage (Green)"></div>
-    </div>
-    <div class="vsep"></div>
-    <button id="PRO_TOPBAR_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')"
-      style="height:24px;padding:0 12px;background:#6a4a8a;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;transition:.15s;"
-      onmouseover="this.style.background='#7a5a9a'" onmouseout="this.style.background='#6a4a8a'">
-      <span id="LBL_PRO_TOPBAR">Pro'ya geç ✦</span>
-    </button>
-    <button class="ic-btn" id="FAV_BTN" onclick="showFavPanel()" title="Favoriler">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    </button>
-    <button class="ic-btn" onclick="openDlModal()" title="İndir">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    </button>
-    <button class="ic-btn" onclick="toggleDarkMode()" title="Karanlık mod">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-    <div class="vsep"></div>
-    <div class="sync-dot" id="SYNC_DOT" title="Bulut senkronizasyonu"></div>
-    <div class="user-pill" id="USER_PILL" onclick="signOut()" style="display:none;" title="Çıkış yap">
-      <div class="user-avatar" id="USER_AVATAR">?</div>
-      <span id="USER_EMAIL_SHORT"></span>
+    <div class="logo left-logo">not<span class="logo-dot" id="LOGO_DOT">·</span>that</div>
+    <div class="srch left-srch" id="SRCH_BOX">
+      <svg class="srch-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="SEARCH_INPUT" oninput="doSearch(this.value)">
     </div>
   </div>
-</div>
-
-<!-- Mobil drawer backdrop -->
-<div class="mob-backdrop" id="MOB_BACKDROP" onclick="closeMobilePanel()"></div>
-
-<!-- APP -->
-<div class="app">
-
-  <!-- LEFT -->
-  <div class="left" id="LEFT">
-    <div class="left-inner" id="LEFT_INNER">
+  <div class="left-inner" id="LEFT_INNER">
 
       <!-- ÖZEL SECTION -->
       <div class="space-section" id="SEC_PERSONAL">
@@ -1473,6 +1477,69 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     <div class="resize-handle" id="RESIZE_HANDLE" onmousedown="startResize(event)"></div>
   </div>
 
+  <!-- RIGHT COLUMN — topbar + editor -->
+  <div class="right-col">
+    <!-- TOPBAR — araçlar + sağ ikonlar -->
+    <div class="topbar">
+      <button class="ic-btn mob-menu-btn" id="MOB_MENU_BTN" onclick="toggleMobilePanel()" title="Notlar">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="tool-btns">
+        <button id="AI_MERGE_BTN" class="tool-btn tool-btn-merge" onclick="toggleMergeMode()" title="AI Merge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+          <span id="LBL_AI_MERGE_BTN">AI Merge</span>
+        </button>
+        <button class="tool-btn" onclick="openModal('PDF_FLASH_MODAL')" title="Text→Flashcard">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span id="LBL_PDF_FLASH_BTN">Text→Flashcard</span>
+        </button>
+        <button class="tool-btn" id="MERGE_TODO_PILL" onclick="openMergeTodoModal()" title="To Do Merge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
+          <span id="LBL_MERGE_TODO_BTN">To Do Merge</span>
+        </button>
+        <button class="tool-btn" id="TRANSCRIPT_BTN" onclick="openModal('TRANSCRIPT_MODAL')" title="Transcript">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <span id="LBL_TRANSCRIPT_BTN">Transcript</span>
+        </button>
+      </div>
+      <div class="tbr">
+        <button class="ic-btn mob-search-btn" id="MOB_SEARCH_BTN" onclick="toggleMobileSearch()" title="Ara">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="ic-btn" id="FAV_BTN" onclick="showFavPanel()" title="Favoriler">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="ic-btn" onclick="openDlModal()" title="İndir">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <button class="ic-btn" onclick="toggleDarkMode()" title="Karanlık mod">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="vsep"></div>
+        <div class="lang-seg">
+          <button class="lang-btn on" id="BTN_TR" onclick="setLang('TR')">TR</button>
+          <button class="lang-btn" id="BTN_EN" onclick="setLang('EN')">EN</button>
+        </div>
+        <div class="tdots">
+          <div class="tdot on" id="DOT_ink" style="background:#4a7ab5;" onclick="setTheme('ink')" title="Ink"></div>
+          <div class="tdot" id="DOT_plum" style="background:#6a4a8a;" onclick="setTheme('plum')" title="Plum"></div>
+          <div class="tdot" id="DOT_sage" style="background:#c4773b;" onclick="setTheme('sage')" title="Warm"></div>
+        </div>
+        <div class="vsep"></div>
+        <button id="PRO_TOPBAR_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')"
+          style="height:26px;padding:0 12px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          <span id="LBL_PRO_TOPBAR">Go Pro +</span>
+        </button>
+        <div class="vsep"></div>
+        <div class="sync-dot" id="SYNC_DOT" title="Senkronizasyon"></div>
+        <div class="user-pill" id="USER_PILL" onclick="signOut()" style="display:none;" title="Çıkış yap">
+          <div class="user-avatar" id="USER_AVATAR"></div>
+          <span id="USER_EMAIL_SHORT"></span>
+        </div>
+      </div>
+    </div>
+    <div class="mob-backdrop" id="MOB_BACKDROP" onclick="closeMobilePanel()"></div>
+
   <!-- RIGHT -->
   <div class="right">
     <div class="empty-state" id="EMPTY_STATE">
@@ -1481,25 +1548,13 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     </div>
 
     <div class="editor-area hidden" id="EDITOR_AREA">
-      <div class="ed-topbar">
-        <button class="ic-btn mob-back-btn" id="MOB_BACK_BTN" onclick="mobileBackToList()" title="Geri" style="margin-right:2px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="ed-topbar-left">
-          <button class="ed-icon-btn" id="FOLDER_PILL" onclick="openChangeFolderModal()" title="Klasör">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <button class="ed-icon-btn" onclick="openMediaModal()" title="Medya Ekle">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </button>
-          <button class="ed-icon-btn" id="TYPE_PILL" onclick="toggleNoteType()" title="Not Tipi">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </button>
-        </div>
-        <button class="ed-icon-btn ed-del-btn" onclick="deleteNote()" title="Sil">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-        </button>
-      </div>
+      <!-- Hidden pills for JS compatibility -->
+      <div id="FOLDER_PILL" style="display:none;"></div>
+      <div id="TYPE_PILL" style="display:none;"><span id="TYPE_LABEL"></span></div>
+      <!-- Mobil geri butonu — sadece mobilde görünür -->
+      <button class="ic-btn mob-back-btn" id="MOB_BACK_BTN" onclick="mobileBackToList()" title="Geri">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <div class="fmt-bar">
         <button class="fb" onclick="fmt('bold')"><b>B</b></button>
         <button class="fb" onclick="fmt('italic')"><i>I</i></button>
@@ -1536,8 +1591,12 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 19.5h20L12 2z" stroke-linejoin="round"/><path d="M2 19.5h20"/><path d="M12 2l5 17.5"/></svg>
             Drive
           </button>
-          <button class="fb" onclick="insertCalcLine()" title="Hesaplama satırı ekle" style="font-size:14px;font-weight:500;color:var(--accent);">∑</button>
+          <button class="fb" onclick="insertCalcLine()" title="Hesaplama" style="font-size:14px;font-weight:500;color:var(--accent);">∑</button>
           <button class="fb" id="FAV_NOTE_BTN" onclick="toggleNoteFav()" title="Favorile" style="font-size:15px;line-height:1;">♡</button>
+          <div class="fb-sep"></div>
+          <button class="fb" onclick="deleteNote()" title="Sil" style="color:var(--text3);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+          </button>
         </div>
       </div>
 
@@ -1624,6 +1683,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <div id="SEARCH_RESULTS"></div>
     </div>
   </div>
+  </div><!-- end right -->
+</div><!-- end right-col -->
 </div>
 
 <!-- CONTEXT MENU -->
@@ -2120,13 +2181,16 @@ async function onSignedIn() {
   const lp = document.getElementById('landing-page');
   if (lp) { lp.style.opacity = '0'; lp.style.pointerEvents = 'none'; }
   localStorage.setItem('nt_landing_seen', '1');
-  // Hash kalıntısını temizle — her durumda
   history.replaceState(null, '', window.location.pathname.replace(/\/$/, '') || '/');
   const email = currentUser.email || '';
-  const initials = email.charAt(0).toUpperCase();
-  document.getElementById('USER_AVATAR').textContent = initials;
-  document.getElementById('USER_EMAIL_SHORT').textContent = email.split('@')[0];
-  document.getElementById('USER_PILL').style.display = 'flex';
+  const username = email.split('@')[0] || '?';
+  const initials = username.charAt(0).toUpperCase();
+  const pill = document.getElementById('USER_PILL');
+  const avatar = document.getElementById('USER_AVATAR');
+  const emailShort = document.getElementById('USER_EMAIL_SHORT');
+  if(avatar) avatar.textContent = initials;
+  if(emailShort) emailShort.textContent = username;
+  if(pill) pill.style.display = 'flex';
   // Google ile giriş yapıldıysa Drive token'ını al
   try {
     const { data: { session } } = await sbClient.auth.getSession();
@@ -2257,6 +2321,9 @@ function setSyncState(state) { // 'ok' | 'syncing' | 'error'
 
 async function loadNotesFromCloud() {
   if (!sbClient || !currentUser) return;
+  // Önce localStorage'dan anında göster
+  const _local = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+  if (_local.length) { notes = _local; renderAllCards(); }
   setSyncState('syncing');
   try {
     const { data, error } = await sbClient
@@ -2488,7 +2555,7 @@ let resizing=false, resizeStartX=0, resizeStartW=0;
 
 const THEMES={
   ink: {accent:'#4a7ab5',accent2:'#e8f0fa',accentText:'#1e4a80'},
-  sage:{accent:'#3d7a52',accent2:'#e4f2ea',accentText:'#1e4a30'},
+  sage:{accent:'#c4773b',accent2:'#f0e4d4',accentText:'#7a3d0a'},
   plum:{accent:'#6a4a8a',accent2:'#f0eaf8',accentText:'#3d1a5a'}
 };
 let currentTheme=localStorage.getItem('nt_theme')||'ink';
@@ -2572,7 +2639,7 @@ function show(id){document.getElementById(id).classList.remove('hidden');}
 // Work color complements for each theme
 const THEME_WORK={
   ink: {work:'#c4773b',work2:'#f0e4d4',workText:'#7a4520'},
-  sage:{work:'#7a5c2e',work2:'#f0e8d4',workText:'#4a3010'},
+  sage:{work:'#4a7ab5',work2:'#dde8f5',workText:'#1a3d6a'},
   plum:{work:'#c06030',work2:'#fae8d8',workText:'#7a3010'}
 };
 function setTheme(name){
@@ -3004,7 +3071,8 @@ function openNote(id){
   activeId=id;const n=getActive();if(!n)return;
   hide('EMPTY_STATE');hide('FAV_PANEL');hide('SEARCH_PANEL');hide('AI_RESULT');
   const ea=document.getElementById('EDITOR_AREA');ea.classList.remove('hidden');
-  // fill
+  // fill — height reset (önceki todo'dan 0px kalabilir)
+  document.getElementById('TITLE_INPUT').style.height='auto';
   document.getElementById('TITLE_INPUT').value=n.title;
   document.getElementById('BODY_INPUT').value=n.content;
   const ta = document.getElementById('BODY_INPUT');
@@ -3016,11 +3084,21 @@ function openNote(id){
   const fs=document.getElementById('FONT_SEL'); const styleSel=document.getElementById('STYLE_SEL');
   if(fs)fs.value=n.fontFamily||"'DM Sans',sans-serif";
   if(styleSel)styleSel.value=n.textStyle||'body';
-  autoResize(document.getElementById('TITLE_INPUT'));
   updateDateLine(n);updateFolderPill(n);
-  // view
+  // view — önce göster, sonra resize (gizliyken scrollHeight=0 olur)
   if(n.type==='todo'){showTodoView(n);}else{showNormalView();}
-  renderMedia(n);renderAllCards();
+  // DOM layout hazır olduktan sonra resize
+  requestAnimationFrame(()=>{
+    if(n.type==='todo'){
+      autoResize(document.getElementById('TODO_TITLE'));
+    } else {
+      autoResize(document.getElementById('TITLE_INPUT'));
+    }
+  });
+  renderMedia(n);
+  document.querySelectorAll('.ncard').forEach(el=>{
+    el.classList.toggle('active', el.dataset.nid===id);
+  });
   updateFavNoteBtn(n.id);
   updateAILimitUI();
   // mobil: drawer'ı kapat
@@ -3072,6 +3150,7 @@ function updateFolderPill(n){document.getElementById('FOLDER_PILL').textContent=
 // ── NOTE VIEWS ──
 function showNormalView(){
   show('NORMAL_VIEW');hide('TODO_VIEW');
+  requestAnimationFrame(()=>autoResize(document.getElementById('TITLE_INPUT')));
   document.getElementById('TYPE_PILL').style.background='var(--accent2)';
   document.getElementById('TYPE_PILL').style.borderColor='var(--accent)';
   document.getElementById('TYPE_PILL').style.color='var(--accent-text)';
@@ -3085,7 +3164,7 @@ function showTodoView(n){
   document.getElementById('TYPE_LABEL').textContent=s('todoNote');
   document.getElementById('TODO_TITLE').value=n.title;
   document.getElementById('TODO_TITLE').style.color='var(--work)';
-  autoResize(document.getElementById('TODO_TITLE'));
+  document.getElementById('TODO_TITLE').style.height='auto'; // rAF'ta resize edilecek
   // date line
   const d=new Date(n.updatedAt);
   const done=(n.todoItems||[]).filter(i=>i.done).length;

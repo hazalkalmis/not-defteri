@@ -825,310 +825,248 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 #DRIVE_STATUS { transition: all .2s; }
 
 /* ── LANDING PAGE ── */
-#landing-page{position:fixed;inset:0;z-index:10002;background:#0d0a1a;overflow-y:auto;font-family:'DM Sans',sans-serif;transition:opacity .2s;}
-.lp-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(255,255,255,.06);}
-.lp-logo{font-family:'Lora',serif;font-size:20px;font-weight:500;color:#e8e0f0;letter-spacing:-.3px;}
+#landing-page{position:fixed;inset:0;z-index:99999;background:#0d0a1a;overflow-y:auto;overflow-x:hidden;font-family:'DM Sans',sans-serif;transition:opacity .2s;}
+
+/* ── WRAPPER — tüm içerik bu max-width içinde ── */
+.lp-wrap{padding:0 16px;}
+
+/* ── NAV ── */
+.lp-nav-border{position:sticky;top:0;z-index:10;background:rgba(13,10,26,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06);}
+.lp-nav{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.lp-logo{font-size:17px;font-weight:700;color:#f0eaf8;letter-spacing:-.3px;}
 .lp-logo span{color:#8b6bbf;}
-.lp-nav-btns{display:flex;gap:12px;align-items:center;}
-.lp-signin-btn{font-size:13px;color:#e8e0f0;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;font-family:'DM Sans',sans-serif;padding:9px 18px;font-weight:500;transition:.15s;}
-.lp-signin-btn:hover{background:rgba(255,255,255,.13);}
-.lp-signin{font-size:13px;color:#9090b0;cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
-.lp-signin:hover{color:#e8e0f0;}
-.lp-cta-btn{background:#6a4a8a;color:#fff;font-size:13px;padding:9px 20px;border-radius:8px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-weight:500;transition:.15s;}
-.lp-cta-btn:hover{background:#7a5a9a;}
-.lp-hero{text-align:center;padding:80px 40px 56px;}
-.lp-badge{display:inline-block;background:rgba(138,107,191,.15);border:1px solid rgba(138,107,191,.25);border-radius:99px;padding:5px 14px;font-size:11px;color:#c4a0e8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px;}
-.lp-h1{font-family:'Lora',serif;font-size:52px;font-weight:500;color:#f0eaf8;line-height:1.15;margin:0 0 16px;letter-spacing:-.5px;}
-.lp-h1 span{color:#8b6bbf;}
-.lp-sub{font-size:16px;color:#9090b0;line-height:1.7;max-width:480px;margin:0 auto 36px;}
+.lp-nav-btns{display:flex;align-items:center;gap:10px;}
+.lp-lang-toggle{display:flex;background:rgba(255,255,255,.08);border-radius:6px;padding:2px;gap:2px;}
+.lp-lang-btn{background:none;border:none;color:#7a6a9a;font-size:12px;font-weight:600;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lp-lang-btn.active{background:rgba(255,255,255,.15);color:#f0eaf8;}
+.lp-signin-btn{background:none;border:1px solid rgba(255,255,255,.15);color:#d0c8e8;font-size:13px;font-weight:500;padding:7px 16px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lp-signin-btn:hover{background:rgba(255,255,255,.08);}
+.lp-cta-btn{background:var(--accent,#6c4fc0);color:#fff;font-size:13px;font-weight:600;padding:7px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lp-cta-btn:hover{background:#7d5fd4;}
+
+/* ── HERO ── */
+.lp-hero{text-align:center;padding:64px 16px 48px;max-width:840px;margin:0 auto;}
+.lp-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(138,107,191,.15);border:1px solid rgba(138,107,191,.3);color:#c4a0e8;font-size:11px;font-weight:600;letter-spacing:.08em;padding:4px 12px;border-radius:20px;margin-bottom:20px;}
+.lp-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#c4a0e8;}
+.lp-h1{font-family:'Lora',serif;font-size:clamp(40px,5.5vw,64px);font-weight:500;color:#f0eaf8;line-height:1.12;margin:0 0 20px;letter-spacing:-.5px;}
+.lp-h1 span{color:#a07fd4;font-style:italic;display:block;}
+.lp-sub{font-size:16px;color:#9080b0;line-height:1.65;max-width:520px;margin:0 auto 28px;}
 .lp-hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.lp-btn-primary{background:#6a4a8a;color:#fff;font-size:14px;padding:13px 30px;border-radius:10px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;font-weight:500;transition:.15s;}
-.lp-btn-primary:hover{background:#7a5a9a;}
-.lp-btn-secondary{border:1px solid rgba(255,255,255,.12);color:#c4a0e8;font-size:14px;padding:13px 30px;border-radius:10px;cursor:pointer;background:none;font-family:'DM Sans',sans-serif;transition:.15s;}
-.lp-btn-secondary:hover{border-color:rgba(255,255,255,.25);}
-.lp-preview{background:#150d27;margin:0 48px 64px;border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,.07);}
-.lp-preview-bar{display:flex;gap:6px;margin-bottom:14px;}
+.lp-btn-primary{background:var(--accent,#6c4fc0);color:#fff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lp-btn-primary:hover{background:#7d5fd4;}
+.lp-btn-secondary{background:none;color:#d0c8e8;font-size:14px;font-weight:500;padding:12px 24px;border-radius:10px;border:1px solid rgba(255,255,255,.15);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lp-btn-secondary:hover{background:rgba(255,255,255,.06);}
+
+/* ── PREVIEW (app mockup) ── */
+.lp-preview{margin:0 auto 64px;padding:0 16px;}
+.lp-preview-card{background:#150d27;border-radius:12px;border:1px solid rgba(255,255,255,.08);overflow:hidden;}
+.lp-preview-bar{padding:10px 14px;display:flex;gap:6px;border-bottom:1px solid rgba(255,255,255,.05);}
 .lp-dot{width:10px;height:10px;border-radius:50%;}
-.lp-preview-inner{display:flex;gap:14px;}
-.lp-preview-left{width:160px;flex-shrink:0;background:#1a1228;border-radius:8px;padding:12px;}
-.lp-preview-right{flex:1;background:#1a1228;border-radius:8px;padding:16px;}
-.lp-features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 48px 64px;}
-.lp-feat{background:#150d27;border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,.07);}
+.lp-preview-inner{display:grid;grid-template-columns:170px 1fr;min-height:240px;}
+.lp-preview-left{border-right:1px solid rgba(255,255,255,.06);padding:16px 14px;background:rgba(255,255,255,.01);}
+.lp-preview-right{padding:20px 24px;}
+
+/* ── TESTIMONIALS ── */
+.lp-testimonials{padding:64px 32px 48px;max-width:840px;margin:0 auto;}
+.lp-section-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8b6bbf;margin-bottom:14px;}
+.lp-section-title{font-family:'Lora',serif;font-size:clamp(26px,3.5vw,40px);color:#f0eaf8;line-height:1.2;margin-bottom:12px;}
+.lp-section-title em{font-style:italic;color:#a07fd4;}
+.lp-section-sub{font-size:14px;color:#7a6a9a;line-height:1.6;margin-bottom:32px;max-width:540px;}
+.lp-testimonial-list{display:flex;flex-direction:column;}
+.lp-testimonial{padding:24px 0;border-top:1px solid rgba(255,255,255,.07);}
+.lp-testimonial:last-child{border-bottom:1px solid rgba(255,255,255,.07);}
+.lp-testi-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.lp-testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;}
+.lp-testi-name{font-size:14px;font-weight:600;color:#f0eaf8;}
+.lp-testi-role{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5a4a7a;margin-top:2px;}
+.lp-testi-quote{font-size:14px;color:#c4b8d8;line-height:1.7;margin-bottom:14px;}
+.lp-testi-quote em{font-style:italic;color:#c4a0e8;}
+.lp-testi-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.lp-testi-tags span{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(138,107,191,.12);color:#a07fd4;border:1px solid rgba(138,107,191,.18);}
+
+/* ── FEATURES ── */
+.lp-features{padding:48px 32px;max-width:840px;margin:0 auto;}
+.lp-feat-main-title{font-family:'Lora',serif;font-size:clamp(26px,3.5vw,40px);color:#f0eaf8;text-align:center;margin-bottom:8px;}
+.lp-feat-main-title em{font-style:italic;color:#a07fd4;}
+.lp-feat-main-sub{font-size:14px;color:#7a6a9a;text-align:center;margin-bottom:32px;}
+.lp-feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.08);border-radius:12px;overflow:hidden;max-width:800px;margin:0 auto;}
+.lp-feat{background:#0f0b1e;padding:24px;}
+.lp-feat:hover{background:#13102a;}
 .lp-feat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
-.lp-feat h3{font-size:14px;color:#e8e0f0;margin:0 0 6px;font-family:'DM Sans',sans-serif;font-weight:500;}
-.lp-feat p{font-size:12px;color:#5a4a7a;margin:0;line-height:1.6;}
-.lp-footer{text-align:center;padding:40px;border-top:1px solid rgba(255,255,255,.06);}
-.lp-footer h2{font-family:'Lora',serif;font-size:26px;color:#f0eaf8;margin:0 0 10px;}
-.lp-footer p{font-size:13px;color:#5a4a7a;margin:0 0 24px;}
+.lp-feat h3{font-size:14px;font-weight:600;color:#e8e0f0;margin:0 0 6px;font-family:'DM Sans',sans-serif;}
+.lp-feat p{font-size:13px;color:#7a6a9a;margin:0;line-height:1.5;}
 
-/* Lang toggle */
-.lp-lang-toggle{display:flex;background:rgba(255,255,255,.06);border-radius:7px;padding:2px;gap:2px;}
-.lp-lang-btn{background:none;border:none;color:#9090b0;font-size:11px;font-family:'DM Sans',sans-serif;padding:4px 10px;border-radius:5px;cursor:pointer;font-weight:500;transition:.15s;}
-.lp-lang-btn.active{background:rgba(255,255,255,.1);color:#e8e0f0;}
-
-/* Pricing */
-.lp-pricing{padding:0 48px 64px;text-align:center;}
-.lp-pricing-title{font-family:'Lora',serif;font-size:28px;color:#f0eaf8;margin:0 0 8px;}
-.lp-pricing-sub{font-size:14px;color:#5a4a7a;margin:0 0 32px;}
-.lp-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto;}
-.lp-plan{background:#150d27;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:28px;text-align:left;display:flex;flex-direction:column;}
-.lp-plan-pro{border-color:rgba(138,107,191,.4);background:linear-gradient(135deg,#1a0d35,#150d27);}
-.lp-plan-badge{display:inline-block;background:rgba(138,107,191,.2);color:#c4a0e8;font-size:10px;padding:3px 10px;border-radius:99px;margin-bottom:12px;font-weight:600;letter-spacing:.04em;}
-.lp-plan-name{font-family:'Lora',serif;font-size:18px;color:#f0eaf8;margin-bottom:6px;}
-.lp-plan-price{font-size:32px;font-weight:700;color:#f0eaf8;margin-bottom:20px;font-family:'DM Sans',sans-serif;}
-.lp-plan-price span{font-size:13px;font-weight:400;color:#5a4a7a;}
-.lp-plan-features{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;flex:1;}
+/* ── PRICING ── */
+.lp-pricing{padding:48px 32px;max-width:840px;margin:0 auto;text-align:center;}
+.lp-pricing-title{font-family:'Lora',serif;font-size:clamp(26px,3.5vw,40px);color:#f0eaf8;margin:0 0 8px;}
+.lp-pricing-sub{font-size:14px;color:#7a6a9a;margin:0 0 32px;}
+.lp-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px;margin:0 auto;}
+.lp-plan{background:#150d27;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;text-align:left;}
+.lp-plan-pro{border-color:rgba(138,107,191,.4);}
+.lp-plan-name{font-size:14px;font-weight:600;color:#9080b0;margin-bottom:8px;}
+.lp-plan-price{font-family:'Lora',serif;font-size:42px;color:#f0eaf8;margin-bottom:16px;line-height:1;}
+.lp-plan-price span{font-size:14px;color:#7a6a9a;font-family:'DM Sans',sans-serif;}
+.lp-plan-features{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;}
+.lp-plan-features li{font-size:13px;color:#c4b8d8;display:flex;align-items:center;gap:8px;}
+.lp-plan-features li::before{content:'✓';color:#8b6bbf;font-weight:700;flex-shrink:0;}
 .lp-plan-btn-wrap{margin-top:auto;}
-.lp-plan-features li{font-size:13px;color:#9090b0;line-height:1.4;}
-.lp-plan-features li span{color:#c4a0e8;}
-.lp-plan-btn{width:100%;height:40px;border-radius:9px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:.15s;}
-.lp-plan-btn-free{background:rgba(255,255,255,.08);color:#e8e0f0;}
-.lp-plan-btn-free:hover{background:rgba(255,255,255,.13);}
-.lp-plan-btn-pro{background:#6a4a8a;color:#fff;}
-.lp-plan-btn-pro:hover{background:#7a5a9a;}
+.lp-plan-btn{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;}
+.lp-plan-btn-free{background:rgba(255,255,255,.08);color:#d0c8e8;}
+.lp-plan-btn-free:hover{background:rgba(255,255,255,.14);}
+.lp-plan-btn-pro{background:var(--accent,#6c4fc0);color:#fff;}
+.lp-plan-btn-pro:hover{background:#7d5fd4;}
+.lp-plan-badge{font-size:10px;font-weight:700;letter-spacing:.06em;background:rgba(138,107,191,.2);color:#c4a0e8;border:1px solid rgba(138,107,191,.3);padding:3px 8px;border-radius:6px;}
 
-@media(max-width:600px){
+/* ── FOOTER CTA ── */
+.lp-footer-wrap{border-top:1px solid rgba(255,255,255,.06);}
+.lp-footer{text-align:center;padding:64px 32px 48px;max-width:840px;margin:0 auto;}
+.lp-footer-cta-title{font-family:'Lora',serif;font-size:clamp(32px,4.5vw,52px);color:#f0eaf8;line-height:1.15;margin-bottom:12px;}
+.lp-footer-cta-title em{font-style:italic;color:#a07fd4;display:block;}
+.lp-footer-cta-sub{font-size:14px;color:#7a6a9a;margin-bottom:24px;}
+.lp-footer-links{display:flex;align-items:center;gap:24px;margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,.07);font-size:12px;color:#5a4a7a;flex-wrap:wrap;justify-content:space-between;}
+.lp-footer-links a{color:#7a6a9a;text-decoration:none;}
+.lp-footer-links a:hover{color:#c4a0e8;}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  .lp-nav{padding:12px 20px;}
+  .lp-hero{padding:48px 20px 36px;}
+  .lp-preview{padding:0 20px;}
+  .lp-testimonials{padding:48px 20px 36px;}
+  .lp-features{padding:36px 20px;}
+  .lp-pricing{padding:36px 20px;}
+  .lp-footer{padding:48px 20px 36px;}
   .lp-plans{grid-template-columns:1fr;}
-  .lp-pricing{padding:0 20px 40px;}
-}
-@media(max-width:768px){
-  .lp-nav{padding:16px 20px;}
-  .lp-h1{font-size:32px;}
-  .lp-hero{padding:48px 20px 40px;}
-  .lp-preview{margin:0 20px 40px;}
-  .lp-features{grid-template-columns:1fr 1fr;padding:0 20px 40px;gap:10px;}
+  .lp-feat-grid{grid-template-columns:1fr;}
+  .lp-preview-inner{grid-template-columns:1fr;}
   .lp-preview-left{display:none;}
 }
 
-/* ── 3 COLOR THEMES ── */
-[data-color=plum]{
-  --bg:#f7f5ff;--bg2:#ede9f8;--bg3:#ddd6f0;
-  --surface:#fff;--surface2:#faf8ff;
-  --border:rgba(106,74,138,.08);--border2:rgba(106,74,138,.15);
-  --text:#1a1228;--text2:#6a5a7a;--text3:#b0a0c0;
-  --accent:#6a4a8a;--accent2:#ede9f8;--accent-text:#3d1f5a;
-  --work:#c4773b;--work2:#f0e4d4;--work-text:#7a4520;
-}
-[data-color=plum][data-theme=dark]{
-  --bg:#0f0a1f;--bg2:#180f2e;--bg3:#22153d;
-  --surface:#130b25;--surface2:#1a1030;
-  --border:rgba(138,107,191,.08);--border2:rgba(138,107,191,.15);
-  --text:#e0d8f0;--text2:#8070a0;--text3:#4a3a6a;
-  --accent:#9a6abf;--accent2:#1e1035;--accent-text:#c4a0e8;
-}
-[data-color=sage]{
-  --bg:#faf6f0;--bg2:#f0e8da;--bg3:#e2d4c0;
-  --surface:#fff;--surface2:#fdf9f5;
-  --border:rgba(196,119,59,.1);--border2:rgba(196,119,59,.2);
-  --text:#1f1508;--text2:#6b4a20;--text3:#b8956a;
-  --accent:#c4773b;--accent2:#f0e4d4;--accent-text:#7a3d0a;
-  --work:#4a7ab5;--work2:#dde8f5;--work-text:#1a3d6a;
-}
-[data-color=sage][data-theme=dark]{
-  --bg:#110d08;--bg2:#1e1408;--bg3:#2a1c0a;
-  --surface:#150f06;--surface2:#1e1608;
-  --border:rgba(196,119,59,.12);--border2:rgba(196,119,59,.22);
-  --text:#f0e0c8;--text2:#a07848;--text3:#604828;
-  --accent:#c47840;--accent2:#1e1008;--accent-text:#e09860;
-  --work:#4a7ab5;--work2:#0e1828;--work-text:#6aaaf0;
+@media(max-width:600px){
+  #landing-page section,#landing-page>div{padding-left:16px!important;padding-right:16px!important;}
+  .lp-preview{width:calc(100% - 32px)!important;}
+  .lp-feat-grid{grid-template-columns:1fr;}
+  .lp-testimonials{padding:50px 16px 40px;}
 }
 
-/* ── FLOATING AI TOOLBAR ── */
+
+
+
+/* ── PDF / FLASHCARD MODAL ── */
+.pdf-flash-modal{
+  background:var(--surface);border-radius:16px;padding:24px;
+  width:500px;max-width:95vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);border:1px solid var(--border);
+  font-family:'DM Sans',sans-serif;
+}
+.pdf-drop-area{
+  border:1.5px dashed var(--border2);border-radius:10px;
+  padding:20px;text-align:center;cursor:pointer;
+  margin-bottom:14px;transition:.15s;background:var(--bg2);
+}
+.pdf-drop-area:hover,.pdf-drop-area.dragover{border-color:var(--accent);background:var(--bg3);}
+.pdf-drop-icon{font-size:24px;margin-bottom:6px;}
+.pdf-drop-text{font-size:13px;color:var(--text2);font-weight:500;}
+.pdf-drop-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+.pdf-select{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:8px;padding:6px 10px;font-size:13px;
+  color:var(--text);font-family:'DM Sans',sans-serif;cursor:pointer;
+}
+.pdf-or{
+  text-align:center;color:var(--text3);font-size:12px;
+  margin:10px 0;display:flex;align-items:center;gap:8px;
+}
+.pdf-or::before,.pdf-or::after{content:'';flex:1;height:1px;background:var(--border2);}
+.pdf-textarea{
+  width:100%;min-height:100px;resize:vertical;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:10px;padding:10px 12px;font-size:13px;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  line-height:1.6;box-sizing:border-box;
+}
+.pdf-textarea:focus{outline:none;border-color:var(--accent);}
+.pdf-opts{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.pdf-opts label{font-size:12px;color:var(--text2);}
+.pdf-progress{
+  font-size:12px;color:var(--text2);text-align:center;
+  padding:8px;background:var(--bg2);border-radius:8px;margin-bottom:10px;
+}
+
+/* ── TRANSCRIPT MODAL — not·that uyumlu ── */
+.transcript-modal-box{
+  background:var(--surface);border-radius:16px;padding:24px;
+  width:460px;max-width:95vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);border:1px solid var(--border);
+  font-family:'DM Sans',sans-serif;
+}
+.transcript-modal-box h3{
+  font-family:'Lora',serif;font-size:17px;font-weight:500;
+  color:var(--text);margin:0 0 4px;
+}
+.transcript-modal-box p{
+  font-size:13px;color:var(--text2);margin:0;line-height:1.5;
+}
+.transcript-lang-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.transcript-lang-label{font-size:13px;color:var(--text2);white-space:nowrap;}
+.transcript-rec-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:11px 16px;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:10px;font-size:13px;font-weight:500;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  cursor:pointer;margin-bottom:10px;transition:.15s;
+}
+.transcript-rec-btn:hover{background:var(--bg3);}
+.transcript-rec-btn.recording{
+  background:rgba(192,57,43,.1);border-color:rgba(192,57,43,.3);
+  color:#c0392b;animation:pulse 1.5s infinite;
+}
+.transcript-drop{
+  border:1.5px dashed var(--border2);border-radius:10px;
+  padding:14px;text-align:center;font-size:12px;color:var(--text3);
+  cursor:pointer;margin-bottom:12px;transition:.15s;background:var(--bg2);
+}
+.transcript-drop:hover{border-color:var(--accent);color:var(--accent);}
+.transcript-status{
+  font-size:12px;color:var(--accent);min-height:18px;
+  margin-bottom:8px;font-weight:500;
+}
+
+/* ── FLOAT AI BAR — koyulaştırılmış ── */
 .float-ai-bar{
   position:sticky;bottom:16px;
   display:flex;align-items:center;gap:2px;
-  background:var(--surface);
-  border:1px solid var(--border2);
-  border-radius:24px;
-  padding:5px 10px;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);
-  width:fit-content;
-  margin:12px auto 8px;
-  z-index:10;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:24px;padding:5px 10px;
+  box-shadow:0 2px 16px rgba(0,0,0,.15);
+  width:fit-content;margin:12px auto 8px;z-index:10;
 }
-[data-theme=dark] .float-ai-bar{box-shadow:0 2px 16px rgba(0,0,0,.4);}
-.float-ai-note-label{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.04em;padding:0 6px;white-space:nowrap;}
-.float-ai-sep{width:1px;height:14px;background:var(--border2);margin:0 4px;}
+[data-theme=dark] .float-ai-bar{
+  background:#1a1f2e;border-color:rgba(255,255,255,.18);
+  box-shadow:0 2px 20px rgba(0,0,0,.45);
+}
+.float-ai-note-label{
+  font-size:11px;color:var(--text);font-weight:700;
+  letter-spacing:.05em;padding:0 6px;white-space:nowrap;opacity:.7;
+}
+.float-ai-sep{width:1px;height:14px;background:var(--border);margin:0 4px;}
 .float-ai-btn{
-  display:flex;align-items:center;gap:5px;
-  height:28px;padding:0 10px;
+  display:flex;align-items:center;gap:5px;height:28px;padding:0 10px;
   background:none;border:none;border-radius:16px;
-  font-size:12px;color:var(--text2);
-  font-family:'DM Sans',sans-serif;
-  cursor:pointer;transition:.12s;white-space:nowrap;
+  font-size:12px;font-weight:600;color:var(--text);
+  font-family:'DM Sans',sans-serif;cursor:pointer;transition:.12s;white-space:nowrap;
 }
-.float-ai-btn:hover{background:var(--bg2);color:var(--text);}
-.float-ai-btn svg{flex-shrink:0;opacity:.7;}
+.float-ai-btn:hover{background:var(--accent2);color:var(--accent);}
+.float-ai-btn svg{flex-shrink:0;opacity:1;}
 
-/* ── ED ICON BUTTONS ── */
-.ed-topbar-left{display:flex;align-items:center;gap:2px;flex:1;}
-.ed-icon-btn{
-  width:28px;height:28px;
-  display:flex;align-items:center;justify-content:center;
-  background:none;border:none;border-radius:6px;
-  color:var(--text3);cursor:pointer;transition:.12s;
-}
-.ed-icon-btn:hover{background:var(--bg2);color:var(--text2);}
-.ed-del-btn{color:var(--text3);margin-left:4px;}
-.ed-del-btn:hover{background:rgba(192,57,43,.08);color:#c0392b;}
 
-/* ── ONBOARDING TOUR ── */
-.tour-overlay{position:fixed;inset:0;z-index:8000;pointer-events:none;}
-.tour-highlight{position:fixed;border-radius:8px;box-shadow:0 0 0 3px #8b6bbf,0 0 0 9999px rgba(0,0,0,.55);z-index:8001;pointer-events:none;transition:all .3s ease;}
-.tour-tooltip{position:fixed;background:#1a1228;border:1px solid rgba(138,107,191,.4);border-radius:12px;padding:14px 16px;z-index:8002;width:220px;box-shadow:0 8px 24px rgba(0,0,0,.4);}
-.tour-tooltip-title{font-size:11px;font-weight:600;color:#8b6bbf;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-family:'DM Sans',sans-serif;}
-.tour-tooltip-text{font-size:13px;color:#c4a0e8;line-height:1.5;font-family:'DM Sans',sans-serif;margin-bottom:12px;}
-.tour-tooltip-footer{display:flex;align-items:center;justify-content:space-between;}
-.tour-step-count{font-size:11px;color:#5a4a7a;font-family:'DM Sans',sans-serif;}
-.tour-btns{display:flex;gap:8px;}
-.tour-skip{font-size:12px;color:#5a4a7a;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;}
-.tour-skip:hover{color:#9090b0;}
-.tour-next{font-size:12px;color:#fff;background:#6a4a8a;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;}
-.tour-next:hover{background:#7a5a9a;}
-.tour-arrow{position:fixed;z-index:8002;width:0;height:0;}
-
-.merge-pill-transcript{background:rgba(180,50,50,.1);color:#c0392b;border-color:rgba(180,50,50,.2);}
-.merge-pill-transcript:hover{filter:brightness(.95);}
-.merge-pill-transcript.recording{background:#c0392b;color:#fff;border-color:#c0392b;animation:pulse-rec .8s ease-in-out infinite;}
-@keyframes pulse-rec{0%,100%{opacity:1;}50%{opacity:.6;}}
-
-/* ── TRANSCRIPT MODAL ── */
-.transcript-modal-box{
-  background:var(--surface);border-radius:16px;padding:24px;
-  width:460px;max-width:96vw;
-  box-shadow:0 12px 40px rgba(0,0,0,.22);border:1px solid var(--border);
-}
-.transcript-modal-box h3{font-family:'Lora',serif;font-size:17px;font-weight:500;color:var(--text);margin-bottom:6px;}
-.transcript-modal-box p{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5;}
-.transcript-rec-btn{
-  width:100%;height:44px;border-radius:10px;border:none;cursor:pointer;
-  font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;
-  transition:.15s;margin-bottom:10px;
-  background:#c0392b;color:#fff;
-}
-.transcript-rec-btn:hover{background:#a93226;}
-.transcript-rec-btn.recording{background:#e74c3c;animation:pulse-rec .8s ease-in-out infinite;}
-.transcript-drop{
-  border:2px dashed var(--border2);border-radius:10px;padding:20px;
-  text-align:center;cursor:pointer;background:var(--bg2);margin-bottom:10px;
-  font-size:13px;color:var(--text2);transition:.15s;
-}
-.transcript-drop:hover{border-color:var(--accent);}
-.transcript-lang-row{display:flex;gap:10px;margin-bottom:12px;align-items:center;}
-.transcript-lang-label{font-size:11px;color:var(--text2);white-space:nowrap;font-weight:500;}
-.transcript-status{font-size:12px;color:var(--accent);min-height:18px;margin-bottom:8px;}
-.transcript-result{
-  width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--border2);
-  border-radius:8px;padding:10px 12px;font-size:13px;font-family:'DM Sans',sans-serif;
-  color:var(--text);outline:none;resize:vertical;display:none;margin-bottom:10px;
-}
-.transcript-result.visible{display:block;}
-.tools-bar{
-  background:#f0ebfa;
-  border-bottom:1px solid rgba(138,107,191,.18);
-  flex-shrink:0;
-}
-.tools-bar-inner{
-  display:flex;align-items:center;gap:5px;
-  padding:5px 16px;overflow-x:auto;
-}
-.tools-bar-inner::-webkit-scrollbar{display:none;}
-.tools-bar-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.04em;margin-right:2px;flex-shrink:0;}
-.tools-sep{width:1px;height:16px;background:var(--border2);margin:0 4px;flex-shrink:0;}
-
-[data-theme=dark] .tools-bar{background:#120a22;border-bottom-color:rgba(138,107,191,.15);}
-
-.merge-pill-ai-merge.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.merge-pill-ai-merge.ready{background:var(--accent);color:#fff;border-color:var(--accent);}
-.merge-pill-transcript.recording{background:#c0392b;color:#fff;border-color:#c0392b;animation:pulse-rec .8s ease-in-out infinite;}
-
-/* merge select mode checkboxes */
-.ncard-merge-cb{
-  display:none;width:16px;height:16px;flex-shrink:0;
-  accent-color:var(--accent);cursor:pointer;margin:0 4px 0 6px;
-}
-.merge-select-mode .ncard-merge-cb{display:block;}
-.ncard.merge-selected{background:var(--accent2);border-color:rgba(74,122,181,.2);}
-
-/* ── PDF FLASHCARD MODAL ── */
-.pdf-flash-modal {
-  background: var(--surface); border-radius: 16px; padding: 24px;
-  width: 500px; max-width: 96vw; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 12px 40px rgba(0,0,0,.22); border: 1px solid var(--border);
-}
-.pdf-flash-modal h3 { font-family: 'Lora', serif; font-size: 17px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-.pdf-flash-modal p { font-size: 12px; color: var(--text2); margin-bottom: 14px; line-height: 1.5; }
-.pdf-drop-area {
-  border: 2px dashed var(--border2); border-radius: 10px; padding: 28px 20px;
-  text-align: center; cursor: pointer; transition: .15s; margin-bottom: 12px;
-  background: var(--bg2);
-}
-.pdf-drop-area:hover, .pdf-drop-area.dragover { border-color: var(--accent); background: var(--accent2); }
-.pdf-drop-icon { font-size: 28px; margin-bottom: 6px; }
-.pdf-drop-text { font-size: 13px; color: var(--text2); }
-.pdf-drop-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
-.pdf-or { text-align: center; font-size: 11px; color: var(--text3); margin: 8px 0; }
-.pdf-textarea {
-  width: 100%; height: 100px; background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif;
-  color: var(--text); outline: none; resize: vertical; transition: .15s;
-}
-.pdf-textarea:focus { border-color: var(--accent); }
-.pdf-options { display: flex; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
-.pdf-opt-group { flex: 1; min-width: 140px; }
-.pdf-opt-label { font-size: 11px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
-.pdf-select {
-  width: 100%; height: 34px; background: var(--bg2); border: 1px solid var(--border2);
-  border-radius: 7px; padding: 0 10px; font-size: 12px; color: var(--text);
-  font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer;
-}
-.pdf-select:focus { border-color: var(--accent); }
-.pdf-status { font-size: 12px; color: var(--accent); margin: 8px 0; min-height: 18px; }
-.pdf-flash-count { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
-
-/* ── PRO UPGRADE MODAL ── */
-.pro-modal-box {
-  background: var(--surface);
-  border-radius: 16px;
-  padding: 28px 26px 22px;
-  width: 360px;
-  max-width: 95vw;
-  box-shadow: 0 12px 40px rgba(0,0,0,.22);
-  border: 1px solid var(--border);
-  text-align: center;
-}
-.pro-modal-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  background: rgba(138,107,191,.15);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 14px;
-}
-.pro-modal-title {
-  font-family: 'Lora', serif; font-size: 18px; font-weight: 500;
-  color: var(--text); margin-bottom: 8px;
-}
-.pro-modal-desc {
-  font-size: 13px; color: var(--text2); line-height: 1.6;
-  margin-bottom: 20px;
-}
-.pro-modal-price {
-  font-size: 11px; color: var(--text3); margin-bottom: 16px;
-}
-.pro-modal-price strong { color: var(--text2); }
-.pro-modal-btn {
-  width: 100%; height: 40px; background: #6a4a8a; color: #fff;
-  border: none; border-radius: 10px; font-size: 14px; font-weight: 500;
-  font-family: 'DM Sans', sans-serif; cursor: pointer; transition: .15s;
-  margin-bottom: 8px;
-}
-.pro-modal-btn:hover { background: #7a5a9a; }
-.pro-modal-cancel {
-  width: 100%; height: 36px; background: none; color: var(--text3);
-  border: none; font-size: 13px; font-family: 'DM Sans', sans-serif;
-  cursor: pointer; transition: .15s;
-}
-.pro-modal-cancel:hover { color: var(--text2); }
-
+/* ── MERGE MODE ── */
+.merge-select-mode .ncard-merge-cb{display:flex !important;}
+.ncard-merge-cb{display:none;position:absolute;left:8px;top:50%;transform:translateY(-50%);width:15px;height:15px;cursor:pointer;accent-color:var(--accent);}
+.merge-selected{background:var(--bg2) !important;border-left-color:var(--accent) !important;}
+.ncard{position:relative;}
 </style>
 </head>
 <body>
@@ -1153,7 +1091,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 
 <!-- ── LANDING PAGE ── -->
 <div id="landing-page" style="opacity:0;pointer-events:none;">
-  <nav class="lp-nav">
+  <div class="lp-nav-border"><nav class="lp-nav">
     <span class="lp-logo">not<span>·</span>that</span>
     <div class="lp-nav-btns">
       <div class="lp-lang-toggle">
@@ -1163,19 +1101,22 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
       <button class="lp-signin-btn" id="LP_SIGNIN" onclick="hideLanding('login')">Sign in</button>
       <button class="lp-cta-btn" id="LP_CTA_NAV" onclick="hideLanding('register')">Sign up - free</button>
     </div>
-  </nav>
+  </nav></div>
 
+  <!-- HERO -->
   <div class="lp-hero">
     <div class="lp-badge" id="LP_BADGE">Early Access</div>
-    <h1 class="lp-h1" id="LP_H1">note that, easily.<br><span>lose nothing, finally.</span></h1>
-    <p class="lp-sub" id="LP_SUB">Take notes. Let AI do the rest.</p>
+    <h1 class="lp-h1" id="LP_H1">Note that, easily.<br><span>Lose nothing, finally.</span></h1>
+    <p class="lp-sub" id="LP_SUB">Take notes in any shape - voice, text, scattered fragments. Let AI tidy, summarize, translate, and turn them into something you'll actually open again.</p>
     <div class="lp-hero-btns">
-      <button class="lp-btn-primary" id="LP_BTN_START" onclick="hideLanding('register')">Start for free</button>
-      <button class="lp-btn-secondary" id="LP_BTN_FEAT" onclick="document.getElementById('lp-features-section').scrollIntoView({behavior:'smooth'})">See features</button>
+      <button class="lp-btn-primary" id="LP_BTN_START" onclick="hideLanding('register')">Start for free →</button>
+      <button class="lp-btn-secondary" id="LP_BTN_FEAT" onclick="document.getElementById('lp-features-section').scrollIntoView({behavior:'smooth'})">See how it works</button>
     </div>
   </div>
 
+  <!-- APP PREVIEW -->
   <div class="lp-preview">
+    <div class="lp-preview-card">
     <div class="lp-preview-bar">
       <div class="lp-dot" style="background:#e74c3c;"></div>
       <div class="lp-dot" style="background:#f39c12;"></div>
@@ -1183,90 +1124,158 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
     </div>
     <div class="lp-preview-inner">
       <div class="lp-preview-left">
-        <div style="font-size:10px;color:#c4a0e8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Personal</div>
+        <div style="font-size:10px;color:#c4a0e8;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;" id="LP_PREV_PERSONAL">Personal</div>
         <div style="background:#2a1f3d;border-radius:6px;padding:8px 10px;margin-bottom:6px;border-left:3px solid #8b6bbf;">
-          <div style="font-size:12px;color:#e8e0f0;margin-bottom:2px;">Book notes</div>
-          <div style="font-size:10px;color:#5a4a7a;">Just now</div>
+          <div style="font-size:12px;color:#e8e0f0;margin-bottom:2px;" id="LP_PREV_NOTE1">Book notes</div>
+          <div style="font-size:10px;color:#5a4a7a;" id="LP_PREV_NOW">Just now</div>
         </div>
         <div style="padding:8px 10px;margin-bottom:6px;">
-          <div style="font-size:12px;color:#9090b0;margin-bottom:2px;">Weekly plan</div>
-          <div style="font-size:10px;color:#3a3a5a;">Yesterday</div>
+          <div style="font-size:12px;color:#9090b0;margin-bottom:2px;" id="LP_PREV_NOTE2">Weekly plan</div>
+          <div style="font-size:10px;color:#3a3a5a;" id="LP_PREV_YEST">Yesterday</div>
         </div>
-        <div style="font-size:10px;color:#c4773b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;">Work</div>
+        <div style="font-size:10px;color:#c4773b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:10px 0 6px;" id="LP_PREV_WORK">Work</div>
+        <div style="padding:8px 10px;margin-bottom:6px;">
+          <div style="font-size:12px;color:#9090b0;margin-bottom:2px;" id="LP_PREV_NOTE3">Meeting notes</div>
+          <div style="font-size:10px;color:#3a3a5a;" id="LP_PREV_2DAYS">2 days ago</div>
+        </div>
         <div style="padding:8px 10px;">
-          <div style="font-size:12px;color:#9090b0;margin-bottom:2px;">Meeting notes</div>
-          <div style="font-size:10px;color:#3a3a5a;">2 days ago</div>
+          <div style="font-size:12px;color:#9090b0;margin-bottom:2px;" id="LP_PREV_NOTE4">Onboarding ideas</div>
+          <div style="font-size:10px;color:#3a3a5a;">Apr 21</div>
         </div>
       </div>
       <div class="lp-preview-right">
         <div style="font-size:20px;color:#f0eaf8;margin-bottom:4px;font-family:'Lora',serif;">Book notes</div>
-        <div style="font-size:11px;color:#5a4a7a;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05);">April 14, 2026</div>
-        <div style="font-size:13px;color:#9090b0;line-height:1.8;">
-          Atomic Habits — James Clear<br><br>
-          Small changes lead to remarkable results. The key is building systems, not setting goals...
-        </div>
+        <div style="font-size:11px;color:#5a4a7a;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05);">APRIL 14, 2026 · 09:42 AM</div>
+        <div style="font-size:13px;font-style:italic;color:#c4a0e8;margin-bottom:10px;">"Atomic Habits - James Clear"</div>
+        <div style="font-size:13px;color:#9090b0;line-height:1.8;margin-bottom:6px;">Small changes lead to remarkable results. The key is building systems, not setting goals.</div>
+        <div style="font-size:13px;color:#9090b0;line-height:1.8;">Identity-based habits stick. You don't rise to the level of your goals; you fall to the level of your systems.</div>
         <div style="display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);flex-wrap:wrap;">
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Summarize</span>
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Flashcard</span>
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">Transcript</span>
-          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">AI Merge</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">✦ Summarize</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">▭ Flashcard</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">◉ Transcript</span>
+          <span style="background:#2a1f3d;color:#c4a0e8;font-size:11px;padding:4px 10px;border-radius:6px;">⇄ AI Merge</span>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="lp-testimonials">
+    <div class="lp-section-label" id="LP_TEST_LABEL">Stories from Early Access</div>
+    <h2 class="lp-section-title" id="LP_TEST_TITLE">Built for the way <em>you<br>actually take notes.</em></h2>
+    <p class="lp-section-sub" id="LP_TEST_SUB">Three small features stop being three things to learn and become one habit. Here's what that looks like for the people already using not·that every day.</p>
+    <div class="lp-testimonial-list">
+      <div class="lp-testimonial">
+        <div class="lp-testi-header">
+          <div class="lp-testi-avatar" style="background:#8b6bbf;">M</div>
+          <div>
+            <div class="lp-testi-name">Merve</div>
+            <div class="lp-testi-role" id="LP_T1_ROLE">Product Designer · Istanbul</div>
+          </div>
+        </div>
+        <p class="lp-testi-quote" id="LP_T1_QUOTE">"I used to copy notes into ChatGPT, then back. Now <em>summary, bullet points, and a quick translation</em> happen right inside the note. I never leave the app."</p>
+        <div class="lp-testi-tags">
+          <span>AI Summarize</span><span>Bullet → Tasks</span><span>Translate</span>
+        </div>
+      </div>
+      <div class="lp-testimonial">
+        <div class="lp-testi-header">
+          <div class="lp-testi-avatar" style="background:#4a7ab5;">B</div>
+          <div>
+            <div class="lp-testi-name">Boğaç</div>
+            <div class="lp-testi-role" id="LP_T2_ROLE">Learning German · Berlin</div>
+          </div>
+        </div>
+        <p class="lp-testi-quote" id="LP_T2_QUOTE">"Reading German articles, I used to look up unknown words one by one. Now I <em>paste the whole text and the words I don't know come back as flashcards.</em> Study mode, ready."</p>
+        <div class="lp-testi-tags">
+          <span>Text → Flashcard</span><span>Word · meaning</span><span>Study Mode</span>
+        </div>
+      </div>
+      <div class="lp-testimonial">
+        <div class="lp-testi-header">
+          <div class="lp-testi-avatar" style="background:#2d8a4e;">A</div>
+          <div>
+            <div class="lp-testi-name">Ali</div>
+            <div class="lp-testi-role" id="LP_T3_ROLE">Eng Manager · Remote</div>
+          </div>
+        </div>
+        <p class="lp-testi-quote" id="LP_T3_QUOTE">"I record the standup, drop it in. Voice becomes text, text becomes a <em>summary plus a clean to-do list,</em> merged into the running plan we already have."</p>
+        <div class="lp-testi-tags">
+          <span>Voice Transcript</span><span>AI Summarize</span><span>To Do Merge</span>
+        </div>
+      </div>
+      <div class="lp-testimonial">
+        <div class="lp-testi-header">
+          <div class="lp-testi-avatar" style="background:#c4773b;">D</div>
+          <div>
+            <div class="lp-testi-name">Defne</div>
+            <div class="lp-testi-role" id="LP_T4_ROLE">Founder · Early Stage</div>
+          </div>
+        </div>
+        <p class="lp-testi-quote" id="LP_T4_QUOTE">"Five scattered notes about pricing, in three workspaces, written across two weeks. One <em>AI Merge</em> later - one clean note, with the contradictions called out."</p>
+        <div class="lp-testi-tags">
+          <span>AI Merge</span><span>Cross-workspace</span><span>Conflict review</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Features -->
+  <!-- FEATURES -->
   <div class="lp-features" id="lp-features-section">
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    <h2 class="lp-feat-main-title" id="LP_FEAT_TITLE">Most needed tools. <em>One surface.</em></h2>
+    <p class="lp-feat-main-sub" id="LP_FEAT_SUB">Mix and match - most people use three or four daily.</p>
+    <div class="lp-feat-grid">
+      <div class="lp-feat">
+        <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <h3 id="LP_F1_TITLE">Text → Flashcard</h3>
+        <p id="LP_F1_DESC">Paste any text or PDF. Get flashcards instantly.</p>
       </div>
-      <h3 id="LP_F1_TITLE">Text → Flashcard</h3>
-      <p id="LP_F1_DESC">Paste any text or PDF. Get flashcards instantly.</p>
-    </div>
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <div class="lp-feat">
+        <div class="lp-feat-icon" style="background:rgba(138,107,191,.2);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b6bbf" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3 id="LP_F2_TITLE">AI Summarize</h3>
+        <p id="LP_F2_DESC">Too long to re-read? Get the key points in seconds.</p>
       </div>
-      <h3 id="LP_F2_TITLE">AI Summarize</h3>
-      <p id="LP_F2_DESC">Too long to re-read? Get the key points in seconds.</p>
-    </div>
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(74,122,181,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a7ab5" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      <div class="lp-feat">
+        <div class="lp-feat-icon" style="background:rgba(74,122,181,.2);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a7ab5" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+        </div>
+        <h3 id="LP_F3_TITLE">AI Merge</h3>
+        <p id="LP_F3_DESC">Scattered notes on the same topic? Merge them into one clean note.</p>
       </div>
-      <h3 id="LP_F3_TITLE">AI Merge</h3>
-      <p id="LP_F3_DESC">Scattered notes on the same topic? Merge them into one clean note.</p>
-    </div>
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(192,57,43,.15);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <div class="lp-feat">
+        <div class="lp-feat-icon" style="background:rgba(192,57,43,.15);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <h3 id="LP_F4_TITLE">Voice Transcript</h3>
+        <p id="LP_F4_DESC">Record or upload audio. Get instant text.</p>
       </div>
-      <h3 id="LP_F4_TITLE">Voice Transcript</h3>
-      <p id="LP_F4_DESC">Record or upload audio. Get instant text.</p>
-    </div>
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(196,119,59,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4773b" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <div class="lp-feat">
+        <div class="lp-feat-icon" style="background:rgba(196,119,59,.2);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4773b" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+        <h3 id="LP_F5_TITLE">Flash Cards</h3>
+        <p id="LP_F5_DESC">Write "word · meaning". Study mode, ready.</p>
       </div>
-      <h3 id="LP_F5_TITLE">Flash Cards</h3>
-      <p id="LP_F5_DESC">Write "word: meaning". Study mode ready.</p>
-    </div>
-    <div class="lp-feat">
-      <div class="lp-feat-icon" style="background:rgba(196,119,59,.2);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4773b" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
+      <div class="lp-feat">
+        <div class="lp-feat-icon" style="background:rgba(45,138,78,.15);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d8a4e" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 0 2-2h11"/></svg>
+        </div>
+        <h3 id="LP_F6_TITLE">Merge To-Dos</h3>
+        <p id="LP_F6_DESC">Multiple to-do lists piling up? Merge them into one clean action list.</p>
       </div>
-      <h3 id="LP_F6_TITLE">Merge To Dos</h3>
-      <p id="LP_F6_DESC">Multiple to-do lists piling up? Merge them into one clean action list.</p>
     </div>
   </div>
 
-  <!-- Pricing -->
+  <!-- PRICING -->
   <div class="lp-pricing">
-    <h2 class="lp-pricing-title" id="LP_PRICING_TITLE">Simple pricing</h2>
+    <h2 class="lp-pricing-title" id="LP_PRICING_TITLE">Simple pricing.</h2>
     <p class="lp-pricing-sub" id="LP_PRICING_SUB">Start free. Upgrade when you need more.</p>
     <div class="lp-plans">
-      <!-- Free -->
       <div class="lp-plan">
         <div class="lp-plan-name" id="LP_FREE_NAME">Free</div>
         <div class="lp-plan-price">₺0<span id="LP_FREE_PERIOD">/forever</span></div>
@@ -1274,18 +1283,17 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <li>✓ <span id="LP_FREE_F1">Unlimited notes</span></li>
           <li>✓ <span id="LP_FREE_F2">10 AI requests / day</span></li>
           <li>✓ <span id="LP_FREE_F3">3 Flashcard sets / week</span></li>
-          <li>✓ <span id="LP_FREE_F4">AI Merge — 3x / month</span></li>
-          <li>✓ <span id="LP_FREE_F5">To Do Merge — 5x / month</span></li>
+          <li>✓ <span id="LP_FREE_F4">AI Merge - 3× / month</span></li>
+          <li>✓ <span id="LP_FREE_F5">To Do Merge - 5× / month</span></li>
         </ul>
         <div class="lp-plan-btn-wrap">
           <button class="lp-plan-btn lp-plan-btn-free" id="LP_FREE_BTN" onclick="hideLanding('register')">Start for free</button>
         </div>
       </div>
-      <!-- Pro -->
       <div class="lp-plan lp-plan-pro" style="position:relative;">
-        <div class="lp-plan-badge" id="LP_PRO_BADGE" style="position:absolute;top:16px;right:16px;">⭐ Early Access</div>
+        <div class="lp-plan-badge" id="LP_PRO_BADGE" style="position:absolute;top:16px;right:16px;">⭐ Early Access - 29 TL</div>
         <div class="lp-plan-name" id="LP_PRO_NAME">Pro</div>
-        <div class="lp-plan-price">₺49<span id="LP_PRO_PERIOD">/month</span></div>
+        <div class="lp-plan-price"><span style="text-decoration:line-through;opacity:.45;font-size:0.7em;">₺49</span> <span style="color:#c4a0e8;font-size:0.8em;">₺29</span><span id="LP_PRO_PERIOD">/month</span></div>
         <ul class="lp-plan-features">
           <li>✓ <span id="LP_PRO_F2">Unlimited AI requests</span></li>
           <li>✓ <span id="LP_PRO_F3">Unlimited Flashcards</span></li>
@@ -1294,15 +1302,25 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
           <li>✓ <span id="LP_PRO_F6">Founding Member badge</span></li>
         </ul>
         <div class="lp-plan-btn-wrap">
-          <button class="lp-plan-btn lp-plan-btn-pro" id="LP_PRO_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')">Get Pro - ₺49/mo</button>
+          <button class="lp-plan-btn lp-plan-btn-pro" id="LP_PRO_BTN" onclick="window.open('https://notthat.lemonsqueezy.com/checkout/buy/d0727ec7-a9a6-45bb-9979-511abfad05f2','_blank')">Get Pro - ₺29 / mo</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- FOOTER CTA -->
+  <div class="lp-footer-wrap">
   <div class="lp-footer">
-    <h2 id="LP_FOOTER_TITLE">Try it now, for free.</h2>
-    <button class="lp-btn-primary" id="LP_FOOTER_BTN" onclick="hideLanding('register')">Create account</button>
+    <h2 class="lp-footer-cta-title" id="LP_FOOTER_TITLE">Try it now.<br><em>Free, forever.</em></h2>
+    <p class="lp-footer-cta-sub" id="LP_FOOTER_SUB_TEXT">1 minute to your first note. No credit card.</p>
+    <button class="lp-btn-primary" id="LP_FOOTER_BTN" onclick="hideLanding('register')">Create your account →</button>
+    <div class="lp-footer-links">
+      <span>© 2026 not·that</span>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:hello@notthat.net">Contact</a>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -1323,7 +1341,8 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
 </div>
 
 <!-- ── AUTH SCREEN ── -->
-<div id="auth-screen" style="display:none;">
+
+  <div id="auth-screen" style="display:none;">
   <!-- SOL: Form -->
   <div class="auth-left">
     <div class="auth-form">
@@ -2690,31 +2709,29 @@ function applyLangLabels(){
   document.getElementById('AI_BTN_1').textContent=s('summarize');
   document.getElementById('AI_BTN_1').title=s('summarizeTip');
   document.getElementById('AI_BTN_2').textContent=s('todo');
-  document.getElementById('AI_BTN_2').title=s('todoTip');
-  document.getElementById('AI_BTN_3').textContent=s('grammar');
-  document.getElementById('AI_BTN_3').title=s('grammarTip');
-  document.getElementById('AI_BTN_4').textContent=s('translate');
-  document.getElementById('AI_BTN_4').title=s('translateTip');
-  document.getElementById('TYPE_LABEL').textContent=getCurrentTypeLabel();
-  document.getElementById('TITLE_INPUT').placeholder=s('titlePh');
-  document.getElementById('BODY_INPUT').placeholder=s('bodyPh');
+  const aiBtn2=document.getElementById('AI_BTN_2');if(aiBtn2)aiBtn2.title=s('todoTip');
+  const aiBtn3=document.getElementById('AI_BTN_3');if(aiBtn3){aiBtn3.textContent=s('grammar');aiBtn3.title=s('grammarTip');}
+  const aiBtn4=document.getElementById('AI_BTN_4');if(aiBtn4){aiBtn4.textContent=s('translate');aiBtn4.title=s('translateTip');}
+  const typeLabel=document.getElementById('TYPE_LABEL');if(typeLabel)typeLabel.textContent=getCurrentTypeLabel();
+  const titleInput=document.getElementById('TITLE_INPUT');if(titleInput)titleInput.placeholder=s('titlePh');
+  const bodyInput=document.getElementById('BODY_INPUT');if(bodyInput)bodyInput.placeholder=s('bodyPh');
   const ai=document.getElementById('ADD_TODO_INPUT');if(ai)ai.placeholder=s('addItem');
-  document.getElementById('FLASH_FRONT_HINT').textContent=s('frontHint');
-  document.getElementById('FLASH_BACK_HINT').textContent=s('backHint');
+  const ffHint=document.getElementById('FLASH_FRONT_HINT');if(ffHint)ffHint.textContent=s('frontHint');
+  const fbHint=document.getElementById('FLASH_BACK_HINT');if(fbHint)fbHint.textContent=s('backHint');
   document.getElementById('LBL_CHOOSE_TODO').textContent=s('chooseTodo');
-  document.getElementById('LBL_DAILY').textContent=s('daily');
-  document.getElementById('LBL_WEEKLY').textContent=s('weekly');
-  document.getElementById('LBL_MONTHLY').textContent=s('monthly');
-  document.getElementById('LBL_FREE').textContent=s('free');
-  document.getElementById('LBL_CANCEL_TODO').textContent=s('cancel');
-  document.getElementById('LBL_MEDIA_TITLE').textContent=s('media');
-  document.getElementById('LBL_MEDIA_IMG').textContent=currentLang==='TR'?'Resim':'Image';
-  document.getElementById('LBL_MEDIA_AUD').textContent=currentLang==='TR'?'Ses Kaydet':'Record Audio';
-  document.getElementById('LBL_DOWNLOAD').textContent=s('download');
-  document.getElementById('LBL_FILTER').textContent=s('filterDate');
-  document.getElementById('MERGE_TITLE').textContent=s('sameTitle');
-  document.getElementById('MERGE_YES').textContent=s('mergeYes');
-  document.getElementById('MERGE_NO').textContent=s('mergeNo');
+  const lblDaily=document.getElementById('LBL_DAILY');if(lblDaily)lblDaily.textContent=s('daily');
+  const lblWeekly=document.getElementById('LBL_WEEKLY');if(lblWeekly)lblWeekly.textContent=s('weekly');
+  const lblMonthly=document.getElementById('LBL_MONTHLY');if(lblMonthly)lblMonthly.textContent=s('monthly');
+  const lblFree=document.getElementById('LBL_FREE');if(lblFree)lblFree.textContent=s('free');
+  const lblCancelTodo=document.getElementById('LBL_CANCEL_TODO');if(lblCancelTodo)lblCancelTodo.textContent=s('cancel');
+  const lblMediaTitle=document.getElementById('LBL_MEDIA_TITLE');if(lblMediaTitle)lblMediaTitle.textContent=s('media');
+  const lblMediaImg=document.getElementById('LBL_MEDIA_IMG');if(lblMediaImg)lblMediaImg.textContent=currentLang==='TR'?'Resim':'Image';
+  const lblMediaAud=document.getElementById('LBL_MEDIA_AUD');if(lblMediaAud)lblMediaAud.textContent=currentLang==='TR'?'Ses Kaydet':'Record Audio';
+  const lblDownload=document.getElementById('LBL_DOWNLOAD');if(lblDownload)lblDownload.textContent=s('download');
+  const lblFilter=document.getElementById('LBL_FILTER');if(lblFilter)lblFilter.textContent=s('filterDate');
+  const mergeTitle=document.getElementById('MERGE_TITLE');if(mergeTitle)mergeTitle.textContent=s('sameTitle');
+  const mergeYes=document.getElementById('MERGE_YES');if(mergeYes)mergeYes.textContent=s('mergeYes');
+  const mergeNo=document.getElementById('MERGE_NO');if(mergeNo)mergeNo.textContent=s('mergeNo');
   document.getElementById('LBL_MERGE_TODO_TITLE').textContent=currentLang==='TR'?'To Do\'ları Birleştir':'Merge To Do Cards';
   document.getElementById('LBL_MERGE_TODO_SUB').textContent=currentLang==='TR'
     ?'Birleştirmek istediğin To Do kartlarını seç. Sadece tamamlanmamış maddeler yeni karta gelir.'
@@ -4757,7 +4774,7 @@ const lpStrings = {
     proF2:'Unlimited AI requests',
     proF3:'Unlimited Flashcards', proF4:'Unlimited AI Merge',
     proF5:'Unlimited To Do Merge', proF6:'Founding Member badge',
-    proBtn:'Get Pro - ₺49/mo',
+    proBtn:'Get Pro - ₺29 / mo',
     footerTitle:'Try it now, for free.',
     footerBtn:'Create account'
   },
@@ -4781,7 +4798,7 @@ const lpStrings = {
     proF2:'Sınırsız AI isteği',
     proF3:'Sınırsız Flashcard', proF4:'Sınırsız AI Birleştir',
     proF5:'Sınırsız To Do Birleştir', proF6:'Kurucu Üye rozeti',
-    proBtn:'Pro\'ya geç - ₺49/ay',
+    proBtn:'Pro\'ya geç - ₺29 / ay',
     footerTitle:'Şimdi dene, ücretsiz.',
     footerBtn:'Hesap oluştur'
   }

@@ -3187,16 +3187,17 @@ function updateFolderPill(n){document.getElementById('FOLDER_PILL').textContent=
 function showNormalView(){
   show('NORMAL_VIEW');hide('TODO_VIEW');
   document.getElementById('TYPE_PILL').style.background='var(--accent2)';
-  document.getElementById('TYPE_PILL').style.borderColor='var(--accent)';
-  document.getElementById('TYPE_PILL').style.color='var(--accent-text)';
-  document.getElementById('TYPE_LABEL').textContent=s('generalNote');
+  const typePill2=document.getElementById('TYPE_PILL');
+  const typeLabel2=document.getElementById('TYPE_LABEL');
+  if(typePill2){typePill2.style.background='';typePill2.style.borderColor='var(--accent)';typePill2.style.color='var(--accent-text)';}
+  if(typeLabel2)typeLabel2.textContent=s('generalNote');
 }
 function showTodoView(n){
   hide('NORMAL_VIEW');show('TODO_VIEW');
-  document.getElementById('TYPE_PILL').style.background='var(--work2)';
-  document.getElementById('TYPE_PILL').style.borderColor='var(--work)';
-  document.getElementById('TYPE_PILL').style.color='var(--work-text)';
-  document.getElementById('TYPE_LABEL').textContent=s('todoNote');
+  const typePill=document.getElementById('TYPE_PILL');
+  const typeLabel=document.getElementById('TYPE_LABEL');
+  if(typePill){typePill.style.background='var(--work2)';typePill.style.borderColor='var(--work)';typePill.style.color='var(--work-text)';}
+  if(typeLabel)typeLabel.textContent=s('todoNote');
   document.getElementById('TODO_TITLE').value=n.title;
   document.getElementById('TODO_TITLE').style.color='var(--work)';
   autoResize(document.getElementById('TODO_TITLE'));

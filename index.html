@@ -1389,26 +1389,14 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
   <!-- SAĞ: Video -->
   <div class="auth-right">
     <div class="auth-right-logo">not<span>·</span>that</div>
-    <div class="auth-video-wrap" style="position:relative;" onclick="unmuteVideo()">
-      <video id="AUTH_VIDEO" autoplay muted loop playsinline controls
-        style="width:100%;display:block;"
-        src="https://irnnpsvkjectyoujyggq.supabase.co/storage/v1/object/public/not-that/notthat_web.mp4">
-      </video>
-      <div id="VIDEO_UNMUTE_HINT" style="
-        position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
-        background:rgba(0,0,0,.55);color:#fff;font-size:11px;
-        padding:5px 12px;border-radius:99px;pointer-events:none;
-        font-family:'DM Sans',sans-serif;white-space:nowrap;
-        backdrop-filter:blur(4px);
-      ">🔇 Ses için tıkla</div>
+    <div class="auth-video-wrap" style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;">
+      <iframe
+        src="https://www.youtube.com/embed/z_S4JFUcqHs?autoplay=1&mute=1&loop=1&playlist=z_S4JFUcqHs&controls=1&modestbranding=1&rel=0"
+        style="width:100%;height:100%;border:none;display:block;"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
     </div>
-    <script>
-    function unmuteVideo(){
-      const v=document.getElementById('AUTH_VIDEO');
-      const hint=document.getElementById('VIDEO_UNMUTE_HINT');
-      if(v&&v.muted){v.muted=false;if(hint)hint.style.display='none';}
-    }
-    </script>
     <div class="auth-features">
       <div class="auth-feat"><div class="auth-feat-dot"></div>Personal &amp; work notes</div>
       <div class="auth-feat"><div class="auth-feat-dot"></div>AI tools</div>
@@ -1552,7 +1540,7 @@ mark{background:rgba(74,122,181,.2);border-radius:2px;padding:0 1px;}
         </button>
         <div class="vsep"></div>
         <div class="sync-dot" id="SYNC_DOT" title="Senkronizasyon"></div>
-        <div class="user-pill" id="USER_PILL" onclick="signOut()" style="display:flex;" title="Çıkış yap">
+        <div class="user-pill" id="USER_PILL" onclick="signOut()" style="display:none;" title="Çıkış yap">
           <div class="user-avatar" id="USER_AVATAR"></div>
           <span id="USER_EMAIL_SHORT"></span>
         </div>
@@ -2202,6 +2190,7 @@ async function onSignedIn() {
   localStorage.setItem('nt_landing_seen', '1');
   history.replaceState(null, '', window.location.pathname.replace(/\/$/, '') || '/');
   const email = currentUser.email || '';
+  localStorage.setItem('nt_last_email', email);
   const username = email.split('@')[0] || '';
   const initials = username.charAt(0).toUpperCase() || '·';
   const pill = document.getElementById('USER_PILL');
@@ -5045,7 +5034,26 @@ async function init(){
       }
     } catch(e) {
       console.error('Session error:', e);
-      showLanding();
+      // Supabase bağlanamasa da localStorage'daki notları göster
+      notes = JSON.parse(localStorage.getItem('nt_notes') || '[]');
+      favCards = JSON.parse(localStorage.getItem('nt_favs') || '[]');
+      favNotes = JSON.parse(localStorage.getItem('nt_favnotes') || '[]');
+      if (notes.length > 0) {
+        // Daha önce giriş yapılmış, notları göster
+        const savedEmail = localStorage.getItem('nt_last_email') || '';
+        const username = savedEmail.split('@')[0] || '·';
+        const avatar = document.getElementById('USER_AVATAR');
+        const emailShort = document.getElementById('USER_EMAIL_SHORT');
+        const pill = document.getElementById('USER_PILL');
+        if (avatar) avatar.textContent = username.charAt(0).toUpperCase() || '·';
+        if (emailShort) emailShort.textContent = username;
+        if (pill) pill.style.display = 'flex';
+        renderAllCards();
+        hide('EDITOR_AREA'); show('EMPTY_STATE');
+        setLang(currentLang);
+      } else {
+        showLanding();
+      }
     }
 
     // Auth state değişikliklerini dinle
